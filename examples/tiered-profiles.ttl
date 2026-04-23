@@ -1,0 +1,140 @@
+@prefix ex: <https://example.org/sparql/tiered/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix sel: <https://w3id.org/sparql-endpoint-limits#> .
+
+ex:service a sd:Service ;
+  sd:endpoint <https://tiered.example.org/sparql> ;
+  sd:supportedLanguage sd:SPARQLQuery ;
+  sel:hasLimitProfile ex:freeProfile, ex:proProfile, ex:enterpriseProfile ;
+  sel:hasLimit ex:globalConnectionCap .
+
+ex:globalConnectionCap a sel:Limit, sel:ConnectionLimit ;
+  sel:metric sel:concurrentConnections ;
+  sel:maxValue "500"^^xsd:decimal ;
+  sel:unit "connections"^^xsd:token ;
+  sel:hasScope sel:GlobalScope ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:returnsStatusCode "503"^^xsd:integer ;
+  sel:appliesToOperation sel:ProtocolOperation .
+
+ex:freeProfile a sel:LimitProfile ;
+  sel:profileLimit ex:freeRate, ex:freeResultSize, ex:freeDailyQuota .
+
+ex:freeRate a sel:Limit, sel:RateLimit ;
+  sel:metric sel:requestsPerWindow ;
+  sel:maxValue "20"^^xsd:decimal ;
+  sel:windowDuration "PT1M"^^xsd:duration ;
+  sel:unit "requests"^^xsd:token ;
+  sel:hasScope sel:PerAPIKey ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:returnsStatusCode "429"^^xsd:integer ;
+  sel:appliesToOperation sel:ProtocolOperation .
+
+ex:freeResultSize a sel:Limit, sel:ResultSizeLimit ;
+  sel:metric sel:resultRows ;
+  sel:maxValue "1000"^^xsd:decimal ;
+  sel:unit "rows"^^xsd:token ;
+  sel:hasScope sel:PerRequest ;
+  sel:enforcement sel:TruncateResult ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:QueryOperation .
+
+ex:freeDailyQuota a sel:Limit, sel:QuotaLimit ;
+  sel:metric sel:requestsPerDay ;
+  sel:maxValue "10000"^^xsd:decimal ;
+  sel:windowDuration "P1D"^^xsd:duration ;
+  sel:unit "requests"^^xsd:token ;
+  sel:hasScope sel:PerAPIKey ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:ProtocolOperation .
+
+ex:proProfile a sel:LimitProfile ;
+  sel:profileLimit ex:proRate, ex:proResultSize, ex:proDailyQuota, ex:proCostModel .
+
+ex:proRate a sel:Limit, sel:RateLimit ;
+  sel:metric sel:requestsPerWindow ;
+  sel:maxValue "120"^^xsd:decimal ;
+  sel:burstValue "40"^^xsd:decimal ;
+  sel:windowDuration "PT1M"^^xsd:duration ;
+  sel:unit "requests"^^xsd:token ;
+  sel:hasScope sel:PerAPIKey ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:ProtocolOperation .
+
+ex:proResultSize a sel:Limit, sel:ResultSizeLimit ;
+  sel:metric sel:resultBytes ;
+  sel:maxValue "25000000"^^xsd:decimal ;
+  sel:unit "bytes"^^xsd:token ;
+  sel:hasScope sel:PerRequest ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:QueryOperation .
+
+ex:proDailyQuota a sel:Limit, sel:QuotaLimit ;
+  sel:metric sel:requestsPerDay ;
+  sel:maxValue "500000"^^xsd:decimal ;
+  sel:windowDuration "P1D"^^xsd:duration ;
+  sel:unit "requests"^^xsd:token ;
+  sel:hasScope sel:PerAPIKey ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:ProtocolOperation .
+
+ex:proCostModel a sel:Limit, sel:CostModelLimit ;
+  sel:metric sel:estimatedCostUnits ;
+  sel:maxValue "400000"^^xsd:decimal ;
+  sel:unit "cost-units"^^xsd:token ;
+  sel:costModel ex:costModelV4 ;
+  sel:hasScope sel:PerRequest ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:QueryOperation .
+
+ex:enterpriseProfile a sel:LimitProfile ;
+  sel:profileLimit ex:entRate, ex:entResultSize, ex:entCostModel, ex:entFederationDepth .
+
+ex:entRate a sel:Limit, sel:RateLimit ;
+  sel:metric sel:requestsPerWindow ;
+  sel:maxValue "500"^^xsd:decimal ;
+  sel:burstValue "200"^^xsd:decimal ;
+  sel:windowDuration "PT1M"^^xsd:duration ;
+  sel:unit "requests"^^xsd:token ;
+  sel:hasScope sel:PerAPIKey ;
+  sel:enforcement sel:ThrottleResponse ;
+  sel:hardLimit "false"^^xsd:boolean ;
+  sel:appliesToOperation sel:ProtocolOperation .
+
+ex:entResultSize a sel:Limit, sel:ResultSizeLimit ;
+  sel:metric sel:resultBytes ;
+  sel:maxValue "100000000"^^xsd:decimal ;
+  sel:unit "bytes"^^xsd:token ;
+  sel:hasScope sel:PerRequest ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:QueryOperation .
+
+ex:entCostModel a sel:Limit, sel:CostModelLimit ;
+  sel:metric sel:estimatedCostUnits ;
+  sel:maxValue "2500000"^^xsd:decimal ;
+  sel:unit "cost-units"^^xsd:token ;
+  sel:costModel ex:costModelV4 ;
+  sel:hasScope sel:PerRequest ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:QueryOperation .
+
+ex:entFederationDepth a sel:Limit, sel:FederatedQueryLimit ;
+  sel:metric sel:subqueryDepth ;
+  sel:maxValue "8"^^xsd:decimal ;
+  sel:unit "depth"^^xsd:token ;
+  sel:hasScope sel:PerRequest ;
+  sel:enforcement sel:RejectRequest ;
+  sel:hardLimit "true"^^xsd:boolean ;
+  sel:appliesToOperation sel:FederationOperation .
+
+ex:costModelV4 a sel:CostModel .

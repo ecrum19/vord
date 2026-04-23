@@ -1,0 +1,36 @@
+PREFIX sel: <https://w3id.org/sparql-endpoint-limits#>
+PREFIX sd: <http://www.w3.org/ns/sparql-service-description#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start = @<ServiceWithLimits>
+
+<ServiceWithLimits> EXTRA a {
+  a [sd:Service] ;
+  (
+    sel:hasLimit @<Limit> +
+  |
+    sel:hasLimitProfile @<LimitProfile> +
+  )
+}
+
+<LimitProfile> EXTRA a {
+  a [sel:LimitProfile] ;
+  sel:profileLimit @<Limit> +
+}
+
+<Limit> EXTRA a {
+  a [sel:Limit] ;
+  sel:metric IRI ;
+  sel:maxValue xsd:decimal ;
+  sel:hardLimit xsd:boolean ;
+  sel:hasScope IRI ;
+  sel:enforcement IRI ;
+  sel:unit xsd:token ? ;
+  sel:windowDuration xsd:duration ? ;
+  sel:retryAfterHint xsd:duration ? ;
+  sel:returnsStatusCode xsd:integer ? ;
+  sel:signalsHeader IRI * ;
+  sel:appliesToOperation IRI * ;
+  sel:costModel IRI ? ;
+  sel:burstValue xsd:decimal ?
+}

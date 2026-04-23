@@ -1,0 +1,314 @@
+@prefix sel: <https://w3id.org/sparql-endpoint-limits#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix http: <http://www.w3.org/2011/http#> .
+
+<https://w3id.org/sparql-endpoint-limits#> a owl:Ontology ;
+  dcterms:title "SPARQL Endpoint Limits Vocabulary"@en ;
+  dcterms:description "Vocabulary for describing operational limits of SPARQL services, aligned with SPARQL Service Description and validated with SHACL/ShEx."@en ;
+  dcterms:created "2026-04-23"^^xsd:date ;
+  dcterms:conformsTo <https://www.w3.org/TR/sparql12-service-description/> ;
+  dcterms:conformsTo <https://www.w3.org/TR/shacl/> ;
+  dcterms:conformsTo <https://www.w3.org/ns/shex> ;
+  rdfs:seeAlso <https://www.w3.org/TR/owl-time/> ;
+  rdfs:seeAlso <https://www.w3.org/TR/HTTP-in-RDF10/> .
+
+sel:Limit a owl:Class ;
+  rdfs:label "Limit"@en ;
+  rdfs:comment "A machine-readable operational limit or policy threshold for a SPARQL endpoint."@en ;
+  rdfs:subClassOf sd:Feature .
+
+sel:LimitProfile a owl:Class ;
+  rdfs:label "Limit Profile"@en ;
+  rdfs:comment "A named collection of limits, e.g., a plan tier, user class, or API key policy."@en .
+
+sel:RateLimit a owl:Class ;
+  rdfs:label "Rate Limit"@en ;
+  rdfs:comment "Limit on request frequency over time."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:ResultSizeLimit a owl:Class ;
+  rdfs:label "Result Size Limit"@en ;
+  rdfs:comment "Limit on result payload size, rows, or tuples."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:QuerySizeLimit a owl:Class ;
+  rdfs:label "Query Size Limit"@en ;
+  rdfs:comment "Limit on incoming query length, VALUES cardinality, or literal size."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:CostModelLimit a owl:Class ;
+  rdfs:label "Cost Model Limit"@en ;
+  rdfs:comment "Limit based on internal query optimizer or execution cost estimation."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:ServerLoadLimit a owl:Class ;
+  rdfs:label "Server Load Limit"@en ;
+  rdfs:comment "Limit activated by host or cluster load conditions."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:ConnectionLimit a owl:Class ;
+  rdfs:label "Connection Limit"@en ;
+  rdfs:comment "Limit on simultaneous open connections or active query executions."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:TimeoutLimit a owl:Class ;
+  rdfs:label "Timeout Limit"@en ;
+  rdfs:comment "Maximum allowed execution or waiting time."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:QueueLimit a owl:Class ;
+  rdfs:label "Queue Limit"@en ;
+  rdfs:comment "Limit on queue depth or queue wait characteristics."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:QuotaLimit a owl:Class ;
+  rdfs:label "Quota Limit"@en ;
+  rdfs:comment "Rolling or fixed quota over a longer period (day, week, month)."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:FederatedQueryLimit a owl:Class ;
+  rdfs:label "Federated Query Limit"@en ;
+  rdfs:comment "Limit on federation fan-out or nested subquery depth."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:UpdateLimit a owl:Class ;
+  rdfs:label "Update Limit"@en ;
+  rdfs:comment "Limit on SPARQL Update payload characteristics."@en ;
+  rdfs:subClassOf sel:Limit .
+
+sel:Metric a owl:Class ;
+  rdfs:label "Metric"@en ;
+  rdfs:comment "Measurable dimension that a limit constrains."@en ;
+  rdfs:subClassOf skos:Concept .
+
+sel:Scope a owl:Class ;
+  rdfs:label "Scope"@en ;
+  rdfs:comment "Scope at which a limit is evaluated (e.g., per user, global)."@en ;
+  rdfs:subClassOf skos:Concept .
+
+sel:EnforcementMode a owl:Class ;
+  rdfs:label "Enforcement Mode"@en ;
+  rdfs:comment "Operational behavior when a limit is reached."@en ;
+  rdfs:subClassOf skos:Concept .
+
+sel:OperationKind a owl:Class ;
+  rdfs:label "Operation Kind"@en ;
+  rdfs:comment "SPARQL operation category that a limit applies to."@en ;
+  rdfs:subClassOf skos:Concept .
+
+sel:CostModel a owl:Class ;
+  rdfs:label "Cost Model"@en ;
+  rdfs:comment "Identifier for an implementation-specific cost model used by an endpoint."@en .
+
+sel:hasLimit a owl:ObjectProperty ;
+  rdfs:label "has limit"@en ;
+  rdfs:comment "Relates a SPARQL service to a limit statement."@en ;
+  rdfs:domain sd:Service ;
+  rdfs:range sel:Limit ;
+  rdfs:subPropertyOf sd:feature .
+
+sel:hasLimitProfile a owl:ObjectProperty ;
+  rdfs:label "has limit profile"@en ;
+  rdfs:comment "Relates a SPARQL service to one or more named limit profiles."@en ;
+  rdfs:domain sd:Service ;
+  rdfs:range sel:LimitProfile .
+
+sel:profileLimit a owl:ObjectProperty ;
+  rdfs:label "profile limit"@en ;
+  rdfs:comment "Relates a limit profile to limits included in that profile."@en ;
+  rdfs:domain sel:LimitProfile ;
+  rdfs:range sel:Limit .
+
+sel:metric a owl:ObjectProperty ;
+  rdfs:label "metric"@en ;
+  rdfs:comment "Metric constrained by this limit."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range sel:Metric .
+
+sel:hasScope a owl:ObjectProperty ;
+  rdfs:label "has scope"@en ;
+  rdfs:comment "Scope in which the limit is enforced."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range sel:Scope .
+
+sel:enforcement a owl:ObjectProperty ;
+  rdfs:label "enforcement"@en ;
+  rdfs:comment "Action taken when the limit is reached."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range sel:EnforcementMode .
+
+sel:appliesToOperation a owl:ObjectProperty ;
+  rdfs:label "applies to operation"@en ;
+  rdfs:comment "Operation kind to which the limit applies."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range sel:OperationKind .
+
+sel:costModel a owl:ObjectProperty ;
+  rdfs:label "cost model"@en ;
+  rdfs:comment "Cost model used to interpret an internal cost-model limit."@en ;
+  rdfs:domain sel:CostModelLimit ;
+  rdfs:range sel:CostModel .
+
+sel:signalsHeader a owl:ObjectProperty ;
+  rdfs:label "signals header"@en ;
+  rdfs:comment "HTTP header name used by the endpoint to signal this limit status."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range http:HeaderName ;
+  rdfs:seeAlso http:hdrName .
+
+sel:maxValue a owl:DatatypeProperty ;
+  rdfs:label "maximum value"@en ;
+  rdfs:comment "Primary threshold value for this limit."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:decimal .
+
+sel:minValue a owl:DatatypeProperty ;
+  rdfs:label "minimum value"@en ;
+  rdfs:comment "Optional minimum threshold for this limit."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:decimal .
+
+sel:burstValue a owl:DatatypeProperty ;
+  rdfs:label "burst value"@en ;
+  rdfs:comment "Additional burst threshold for short spikes."@en ;
+  rdfs:domain sel:RateLimit ;
+  rdfs:range xsd:decimal .
+
+sel:unit a owl:DatatypeProperty ;
+  rdfs:label "unit"@en ;
+  rdfs:comment "Unit token for maxValue, e.g., bytes, rows, requests, cost-units."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:token .
+
+sel:windowDuration a owl:DatatypeProperty ;
+  rdfs:label "window duration"@en ;
+  rdfs:comment "Duration window for evaluating this limit (xsd:duration)."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:duration ;
+  rdfs:seeAlso time:hasXSDDuration .
+
+sel:retryAfterHint a owl:DatatypeProperty ;
+  rdfs:label "retry after hint"@en ;
+  rdfs:comment "Suggested waiting duration before retry (xsd:duration)."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:duration ;
+  rdfs:seeAlso time:hasXSDDuration .
+
+sel:returnsStatusCode a owl:DatatypeProperty ;
+  rdfs:label "returns status code"@en ;
+  rdfs:comment "HTTP status code commonly used when this limit is exceeded (e.g., 429)."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:integer ;
+  rdfs:seeAlso http:statusCodeValue .
+
+sel:hardLimit a owl:DatatypeProperty ;
+  rdfs:label "hard limit"@en ;
+  rdfs:comment "True if the threshold is strictly enforced; false if advisory or load-dependent."@en ;
+  rdfs:domain sel:Limit ;
+  rdfs:range xsd:boolean .
+
+sel:PerClientIP a sel:Scope, skos:Concept ;
+  skos:prefLabel "Per Client IP"@en .
+
+sel:PerAPIKey a sel:Scope, skos:Concept ;
+  skos:prefLabel "Per API Key"@en .
+
+sel:PerUser a sel:Scope, skos:Concept ;
+  skos:prefLabel "Per User"@en .
+
+sel:PerRequest a sel:Scope, skos:Concept ;
+  skos:prefLabel "Per Request"@en .
+
+sel:GlobalScope a sel:Scope, skos:Concept ;
+  skos:prefLabel "Global"@en .
+
+sel:RejectRequest a sel:EnforcementMode, skos:Concept ;
+  skos:prefLabel "Reject Request"@en .
+
+sel:TruncateResult a sel:EnforcementMode, skos:Concept ;
+  skos:prefLabel "Truncate Result"@en .
+
+sel:QueueRequest a sel:EnforcementMode, skos:Concept ;
+  skos:prefLabel "Queue Request"@en .
+
+sel:ThrottleResponse a sel:EnforcementMode, skos:Concept ;
+  skos:prefLabel "Throttle Response"@en .
+
+sel:DegradeQuality a sel:EnforcementMode, skos:Concept ;
+  skos:prefLabel "Degrade Quality"@en .
+
+sel:QueryOperation a sel:OperationKind, skos:Concept ;
+  skos:prefLabel "SPARQL Query"@en .
+
+sel:UpdateOperation a sel:OperationKind, skos:Concept ;
+  skos:prefLabel "SPARQL Update"@en .
+
+sel:ProtocolOperation a sel:OperationKind, skos:Concept ;
+  skos:prefLabel "SPARQL Protocol"@en .
+
+sel:GraphStoreOperation a sel:OperationKind, skos:Concept ;
+  skos:prefLabel "Graph Store Protocol"@en .
+
+sel:FederationOperation a sel:OperationKind, skos:Concept ;
+  skos:prefLabel "Federated Query Execution"@en .
+
+sel:requestsPerWindow a sel:Metric, skos:Concept ;
+  skos:prefLabel "Requests per Window"@en .
+
+sel:requestsPerDay a sel:Metric, skos:Concept ;
+  skos:prefLabel "Requests per Day"@en .
+
+sel:resultRows a sel:Metric, skos:Concept ;
+  skos:prefLabel "Result Rows"@en .
+
+sel:resultBytes a sel:Metric, skos:Concept ;
+  skos:prefLabel "Result Bytes"@en .
+
+sel:queryBytes a sel:Metric, skos:Concept ;
+  skos:prefLabel "Query Bytes"@en .
+
+sel:valuesItems a sel:Metric, skos:Concept ;
+  skos:prefLabel "VALUES Items"@en .
+
+sel:literalBytes a sel:Metric, skos:Concept ;
+  skos:prefLabel "Literal Bytes"@en .
+
+sel:estimatedCostUnits a sel:Metric, skos:Concept ;
+  skos:prefLabel "Estimated Cost Units"@en .
+
+sel:cpuLoadRatio a sel:Metric, skos:Concept ;
+  skos:prefLabel "CPU Load Ratio"@en .
+
+sel:activeQueryCount a sel:Metric, skos:Concept ;
+  skos:prefLabel "Active Query Count"@en .
+
+sel:concurrentConnections a sel:Metric, skos:Concept ;
+  skos:prefLabel "Concurrent Connections"@en .
+
+sel:concurrentQueries a sel:Metric, skos:Concept ;
+  skos:prefLabel "Concurrent Queries"@en .
+
+sel:executionSeconds a sel:Metric, skos:Concept ;
+  skos:prefLabel "Execution Seconds"@en .
+
+sel:queueDepth a sel:Metric, skos:Concept ;
+  skos:prefLabel "Queue Depth"@en .
+
+sel:queueWaitSeconds a sel:Metric, skos:Concept ;
+  skos:prefLabel "Queue Wait Seconds"@en .
+
+sel:subqueryDepth a sel:Metric, skos:Concept ;
+  skos:prefLabel "Subquery Depth"@en .
+
+sel:federatedServiceCount a sel:Metric, skos:Concept ;
+  skos:prefLabel "Federated Service Count"@en .
+
+sel:updateBytes a sel:Metric, skos:Concept ;
+  skos:prefLabel "Update Bytes"@en .
