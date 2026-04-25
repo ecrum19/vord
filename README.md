@@ -139,6 +139,37 @@ The ShEx model validates:
 - profile resources with one or more limits
 - base required fields for each limit
 
+## Running Tests
+
+This repository includes automated tests in `tests/test_vocabulary.py`.
+
+The test suite checks:
+
+- key ontology terms exist in `vocab/sel.ttl`
+- example graphs conform to `shapes/sel.shacl.ttl`
+- invalid data (missing `sel:metric`) fails SHACL validation
+
+### 1. Create and activate a virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 2. Install test dependencies
+
+```bash
+pip install -r requirements-test.txt
+```
+
+### 3. Run the tests
+
+```bash
+pytest -q
+```
+
+You should see all tests passing. If a test fails, the SHACL validation report text is included in the failure output to help diagnose the data or shape issue.
+
 ## Alignment Notes
 
 ### SPARQL Service Description
