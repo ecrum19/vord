@@ -1,4 +1,4 @@
-# SPARQL Endpoint Limits Vocabulary
+# VORD: Vocabulary of Restrictive Datasets
 
 `sparql_endpoint_limits_vocabulary` is a modular RDF vocabulary for describing operational limits of SPARQL endpoints in a reusable, machine-readable way.
 
@@ -18,9 +18,9 @@ This vocabulary models endpoint constraints such as:
 
 ## Repository Structure
 
-- `vocab/sel.ttl`: core ontology/vocabulary terms
-- `shapes/sel.shacl.ttl`: SHACL constraints for validating instances
-- `shex/sel.shex`: companion ShEx schema
+- `vocab/vord.ttl`: core ontology/vocabulary terms
+- `shapes/vord.shacl.ttl`: SHACL constraints for validating instances
+- `shex/vord.shex`: companion ShEx schema
 - `examples/basic-service.ttl`: one endpoint with direct limits
 - `examples/tiered-profiles.ttl`: endpoint with tiered limit profiles
 
@@ -35,103 +35,103 @@ This vocabulary models endpoint constraints such as:
 
 2. Keep limit metadata generic and extensible.
 - Every limit uses the same core pattern: metric + threshold + scope + enforcement.
-- Metric vocabulary is controlled via reusable instances (`sel:Metric` individuals).
-- Domain-specific classes (e.g., `sel:RateLimit`, `sel:CostModelLimit`) make intent explicit.
+- Metric vocabulary is controlled via reusable instances (`vord:Metric` individuals).
+- Domain-specific classes (e.g., `vord:RateLimit`, `vord:CostModelLimit`) make intent explicit.
 
 3. Integrate naturally with service descriptions.
-- `sel:Limit` is a subclass of `sd:Feature`.
-- `sel:hasLimit` is a subproperty of `sd:feature`.
+- `vord:Limit` is a subclass of `sd:Feature`.
+- `vord:hasLimit` is a subproperty of `sd:feature`.
 
 ## Core Model
 
 ### Main classes
 
-- `sel:Limit`: abstract limit feature (subclass of `sd:Feature`)
-- `sel:LimitProfile`: named set of limits (for free/pro/enterprise tiers)
+- `vord:Limit`: abstract limit feature (subclass of `sd:Feature`)
+- `vord:LimitProfile`: named set of limits (for free/pro/enterprise tiers)
 - concrete subclasses:
-  - `sel:RateLimit`
-  - `sel:ResultSizeLimit`
-  - `sel:QuerySizeLimit`
-  - `sel:CostModelLimit`
-  - `sel:ServerLoadLimit`
-  - `sel:ConnectionLimit`
-  - `sel:TimeoutLimit`
-  - `sel:QueueLimit`
-  - `sel:QuotaLimit`
-  - `sel:FederatedQueryLimit`
-  - `sel:UpdateLimit`
+  - `vord:RateLimit`
+  - `vord:ResultSizeLimit`
+  - `vord:QuerySizeLimit`
+  - `vord:CostModelLimit`
+  - `vord:ServerLoadLimit`
+  - `vord:ConnectionLimit`
+  - `vord:TimeoutLimit`
+  - `vord:QueueLimit`
+  - `vord:QuotaLimit`
+  - `vord:FederatedQueryLimit`
+  - `vord:UpdateLimit`
 
 ### Core properties
 
-- `sel:hasLimit` (`sd:Service -> sel:Limit`)
-- `sel:hasLimitProfile` (`sd:Service -> sel:LimitProfile`)
-- `sel:profileLimit` (`sel:LimitProfile -> sel:Limit`)
-- `sel:metric` (`sel:Limit -> sel:Metric`)
-- `sel:maxValue` (numeric threshold)
-- `sel:unit` (token, e.g., `bytes`, `requests`, `cost-units`)
-- `sel:windowDuration` (`xsd:duration`)
-- `sel:burstValue` (for burst rate policies)
-- `sel:hasScope` (`sel:Scope`)
-- `sel:enforcement` (`sel:EnforcementMode`)
-- `sel:hardLimit` (`xsd:boolean`)
-- `sel:returnsStatusCode` (`xsd:integer`)
-- `sel:signalsHeader` (`http:HeaderName`)
-- `sel:retryAfterHint` (`xsd:duration`)
-- `sel:costModel` (`sel:CostModel`)
+- `vord:hasLimit` (`sd:Service -> vord:Limit`)
+- `vord:hasLimitProfile` (`sd:Service -> vord:LimitProfile`)
+- `vord:profileLimit` (`vord:LimitProfile -> vord:Limit`)
+- `vord:metric` (`vord:Limit -> vord:Metric`)
+- `vord:maxValue` (numeric threshold)
+- `vord:unit` (token, e.g., `bytes`, `requests`, `cost-units`)
+- `vord:windowDuration` (`xsd:duration`)
+- `vord:burstValue` (for burst rate policies)
+- `vord:hasScope` (`vord:Scope`)
+- `vord:enforcement` (`vord:EnforcementMode`)
+- `vord:hardLimit` (`xsd:boolean`)
+- `vord:returnsStatusCode` (`xsd:integer`)
+- `vord:signalsHeader` (`http:HeaderName`)
+- `vord:retryAfterHint` (`xsd:duration`)
+- `vord:costModel` (`vord:CostModel`)
 
 ## How To Use
 
 ### 1. Attach limits directly to a service
 
-Use `sel:hasLimit` from an `sd:Service` resource.
+Use `vord:hasLimit` from an `sd:Service` resource.
 
 ### 2. Attach tiered profiles
 
-Use `sel:hasLimitProfile` for named plans/tokens/client classes, and put limits in each profile using `sel:profileLimit`.
+Use `vord:hasLimitProfile` for named plans/tokens/client classes, and put limits in each profile using `vord:profileLimit`.
 
 ### 3. Pick a metric and threshold
 
-Choose a `sel:Metric` individual and provide a `sel:maxValue`.
+Choose a `vord:Metric` individual and provide a `vord:maxValue`.
 
 ### 4. Specify semantics explicitly
 
-Set `sel:hasScope`, `sel:enforcement`, and `sel:hardLimit` so clients can reason about operational behavior.
+Set `vord:hasScope`, `vord:enforcement`, and `vord:hardLimit` so clients can reason about operational behavior.
 
 ## Required Categories Covered
 
 The vocabulary includes direct support for your required categories:
 
-- rate limit: `sel:RateLimit` + `sel:requestsPerWindow` / `sel:requestsPerDay`
-- result-size limit: `sel:ResultSizeLimit` + `sel:resultRows` / `sel:resultBytes`
-- query-size / values-size limit: `sel:QuerySizeLimit` + `sel:queryBytes`, `sel:valuesItems`, `sel:literalBytes`
-- internal cost-model limit: `sel:CostModelLimit` + `sel:estimatedCostUnits` + `sel:costModel`
-- server-load limit: `sel:ServerLoadLimit` + `sel:cpuLoadRatio` or `sel:activeQueryCount`
-- simultaneous connections: `sel:ConnectionLimit` + `sel:concurrentConnections` / `sel:concurrentQueries`
+- rate limit: `vord:RateLimit` + `vord:requestsPerWindow` / `vord:requestsPerDay`
+- result-size limit: `vord:ResultSizeLimit` + `vord:resultRows` / `vord:resultBytes`
+- query-size / values-size limit: `vord:QuerySizeLimit` + `vord:queryBytes`, `vord:valuesItems`, `vord:literalBytes`
+- internal cost-model limit: `vord:CostModelLimit` + `vord:estimatedCostUnits` + `vord:costModel`
+- server-load limit: `vord:ServerLoadLimit` + `vord:cpuLoadRatio` or `vord:activeQueryCount`
+- simultaneous connections: `vord:ConnectionLimit` + `vord:concurrentConnections` / `vord:concurrentQueries`
 - additional practical limits:
-  - `sel:TimeoutLimit`
-  - `sel:QueueLimit`
-  - `sel:QuotaLimit`
-  - `sel:FederatedQueryLimit`
-  - `sel:UpdateLimit`
+  - `vord:TimeoutLimit`
+  - `vord:QueueLimit`
+  - `vord:QuotaLimit`
+  - `vord:FederatedQueryLimit`
+  - `vord:UpdateLimit`
 
 ## SHACL Validation
 
-`shapes/sel.shacl.ttl` includes:
+`shapes/vord.shacl.ttl` includes:
 
-- generic shape for all `sel:Limit` instances
+- generic shape for all `vord:Limit` instances
 - service shape (`sd:Service`) requiring either direct limits or profiles
 - class-specific metric constraints using `sh:in`
 - cardinality and datatype checks for core fields
 
 Typical usage with a SHACL engine is:
 
-1. load data graph + `vocab/sel.ttl` + `shapes/sel.shacl.ttl`
+1. load data graph + `vocab/vord.ttl` + `shapes/vord.shacl.ttl`
 2. run SHACL validation
 3. inspect violations (missing metric, wrong datatype, invalid metric for class, etc.)
 
 ## ShEx Validation
 
-`shex/sel.shex` provides a compact companion schema for lightweight validation workflows.
+`shex/vord.shex` provides a compact companion schema for lightweight validation workflows.
 
 The ShEx model validates:
 
@@ -145,9 +145,9 @@ This repository includes automated tests in `tests/test_vocabulary.py`.
 
 The test suite checks:
 
-- key ontology terms exist in `vocab/sel.ttl`
-- example graphs conform to `shapes/sel.shacl.ttl`
-- invalid data (missing `sel:metric`) fails SHACL validation
+- key ontology terms exist in `vocab/vord.ttl`
+- example graphs conform to `shapes/vord.shacl.ttl`
+- invalid data (missing `vord:metric`) fails SHACL validation
 
 ### 1. Create and activate a virtual environment
 
@@ -174,8 +174,8 @@ You should see all tests passing. If a test fails, the SHACL validation report t
 
 ### SPARQL Service Description
 
-- `sel:Limit rdfs:subClassOf sd:Feature`
-- `sel:hasLimit rdfs:subPropertyOf sd:feature`
+- `vord:Limit rdfs:subClassOf sd:Feature`
+- `vord:hasLimit rdfs:subPropertyOf sd:feature`
 
 This allows `sel` data to remain compatible with existing service-description processing.
 
@@ -186,35 +186,35 @@ This allows `sel` data to remain compatible with existing service-description pr
 
 ### OWL-Time and HTTP
 
-- Durations are represented with `xsd:duration`; `sel:windowDuration` and `sel:retryAfterHint` are annotated with `rdfs:seeAlso time:hasXSDDuration`.
-- HTTP signaling can be described via `sel:returnsStatusCode` and `sel:signalsHeader` (`http:HeaderName`).
+- Durations are represented with `xsd:duration`; `vord:windowDuration` and `vord:retryAfterHint` are annotated with `rdfs:seeAlso time:hasXSDDuration`.
+- HTTP signaling can be described via `vord:returnsStatusCode` and `vord:signalsHeader` (`http:HeaderName`).
 
 ## Minimal Example
 
 ```turtle
 @prefix ex: <https://example.org/service/> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-@prefix sel: <https://w3id.org/sparql-endpoint-limits#> .
+@prefix vord: <https://w3id.org/vord#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 ex:endpoint a sd:Service ;
   sd:endpoint <https://example.org/sparql> ;
-  sel:hasLimit ex:rateLimit .
+  vord:hasLimit ex:rateLimit .
 
-ex:rateLimit a sel:Limit, sel:RateLimit ;
-  sel:metric sel:requestsPerWindow ;
-  sel:maxValue "120"^^xsd:decimal ;
-  sel:windowDuration "PT1M"^^xsd:duration ;
-  sel:hasScope sel:PerClientIP ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean .
+ex:rateLimit a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "120"^^xsd:decimal ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean .
 ```
 
 ## Extension Guidance
 
 When extending this vocabulary:
 
-1. Prefer adding new `sel:Metric` individuals before creating new classes.
-2. Create new subclasses of `sel:Limit` only when behavior semantics materially differ.
+1. Prefer adding new `vord:Metric` individuals before creating new classes.
+2. Create new subclasses of `vord:Limit` only when behavior semantics materially differ.
 3. Add corresponding SHACL constraints for any new subclass/metric policy.
 4. Keep Service Description compatibility by preserving `sd:Service` + `sd:feature` integration.

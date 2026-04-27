@@ -1,0 +1,174 @@
+@prefix vord: <https://w3id.org/vord#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+vord:ServiceWithLimitsShape a sh:NodeShape ;
+  sh:targetClass sd:Service ;
+  sh:or (
+    [ sh:property [ sh:path vord:hasLimit ; sh:minCount 1 ] ]
+    [ sh:property [ sh:path vord:hasLimitProfile ; sh:minCount 1 ] ]
+  ) ;
+  sh:property [
+    sh:path vord:hasLimit ;
+    sh:class vord:Limit ;
+  ] ;
+  sh:property [
+    sh:path vord:hasLimitProfile ;
+    sh:class vord:LimitProfile ;
+  ] .
+
+vord:LimitProfileShape a sh:NodeShape ;
+  sh:targetClass vord:LimitProfile ;
+  sh:property [
+    sh:path vord:profileLimit ;
+    sh:minCount 1 ;
+    sh:class vord:Limit ;
+  ] .
+
+vord:LimitShape a sh:NodeShape ;
+  sh:targetClass vord:Limit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class vord:Metric ;
+  ] ;
+  sh:property [
+    sh:path vord:maxValue ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:decimal ;
+  ] ;
+  sh:property [
+    sh:path vord:hardLimit ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:boolean ;
+  ] ;
+  sh:property [
+    sh:path vord:hasScope ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class vord:Scope ;
+  ] ;
+  sh:property [
+    sh:path vord:enforcement ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class vord:EnforcementMode ;
+  ] ;
+  sh:property [
+    sh:path vord:unit ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:token ;
+  ] ;
+  sh:property [
+    sh:path vord:windowDuration ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:duration ;
+  ] ;
+  sh:property [
+    sh:path vord:retryAfterHint ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:duration ;
+  ] ;
+  sh:property [
+    sh:path vord:returnsStatusCode ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+  ] .
+
+vord:RateLimitShape a sh:NodeShape ;
+  sh:targetClass vord:RateLimit ;
+  sh:property [
+    sh:path vord:windowDuration ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:duration ;
+  ] ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:requestsPerWindow vord:requestsPerDay ) ;
+  ] ;
+  sh:property [
+    sh:path vord:burstValue ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:decimal ;
+  ] .
+
+vord:ResultSizeLimitShape a sh:NodeShape ;
+  sh:targetClass vord:ResultSizeLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:resultRows vord:resultBytes ) ;
+  ] .
+
+vord:QuerySizeLimitShape a sh:NodeShape ;
+  sh:targetClass vord:QuerySizeLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:queryBytes vord:valuesItems vord:literalBytes ) ;
+  ] .
+
+vord:CostModelLimitShape a sh:NodeShape ;
+  sh:targetClass vord:CostModelLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:estimatedCostUnits ) ;
+  ] ;
+  sh:property [
+    sh:path vord:costModel ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class vord:CostModel ;
+  ] .
+
+vord:ServerLoadLimitShape a sh:NodeShape ;
+  sh:targetClass vord:ServerLoadLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:cpuLoadRatio vord:activeQueryCount ) ;
+  ] .
+
+vord:ConnectionLimitShape a sh:NodeShape ;
+  sh:targetClass vord:ConnectionLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:concurrentConnections vord:concurrentQueries ) ;
+  ] .
+
+vord:TimeoutLimitShape a sh:NodeShape ;
+  sh:targetClass vord:TimeoutLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:executionSeconds vord:queueWaitSeconds ) ;
+  ] .
+
+vord:QueueLimitShape a sh:NodeShape ;
+  sh:targetClass vord:QueueLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:queueDepth vord:queueWaitSeconds ) ;
+  ] .
+
+vord:QuotaLimitShape a sh:NodeShape ;
+  sh:targetClass vord:QuotaLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:requestsPerDay ) ;
+  ] .
+
+vord:FederatedQueryLimitShape a sh:NodeShape ;
+  sh:targetClass vord:FederatedQueryLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:subqueryDepth vord:federatedServiceCount ) ;
+  ] .
+
+vord:UpdateLimitShape a sh:NodeShape ;
+  sh:targetClass vord:UpdateLimit ;
+  sh:property [
+    sh:path vord:metric ;
+    sh:in ( vord:updateBytes ) ;
+  ] .

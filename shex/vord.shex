@@ -1,0 +1,36 @@
+PREFIX vord: <https://w3id.org/vord#>
+PREFIX sd: <http://www.w3.org/ns/sparql-service-description#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start = @<ServiceWithLimits>
+
+<ServiceWithLimits> EXTRA a {
+  a [sd:Service] ;
+  (
+    vord:hasLimit @<Limit> +
+  |
+    vord:hasLimitProfile @<LimitProfile> +
+  )
+}
+
+<LimitProfile> EXTRA a {
+  a [vord:LimitProfile] ;
+  vord:profileLimit @<Limit> +
+}
+
+<Limit> EXTRA a {
+  a [vord:Limit] ;
+  vord:metric IRI ;
+  vord:maxValue xsd:decimal ;
+  vord:hardLimit xsd:boolean ;
+  vord:hasScope IRI ;
+  vord:enforcement IRI ;
+  vord:unit xsd:token ? ;
+  vord:windowDuration xsd:duration ? ;
+  vord:retryAfterHint xsd:duration ? ;
+  vord:returnsStatusCode xsd:integer ? ;
+  vord:signalsHeader IRI * ;
+  vord:appliesToOperation IRI * ;
+  vord:costModel IRI ? ;
+  vord:burstValue xsd:decimal ?
+}

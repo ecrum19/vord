@@ -2,13 +2,13 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-@prefix sel: <https://w3id.org/sparql-endpoint-limits#> .
+@prefix vord: <https://w3id.org/vord#> .
 
 ex:service a sd:Service ;
   sd:endpoint <https://example.org/sparql> ;
   sd:supportedLanguage sd:SPARQLQuery, sd:SPARQLUpdate ;
   sd:feature sd:BasicFederatedQuery ;
-  sel:hasLimit
+  vord:hasLimit
     ex:rateLimit,
     ex:resultLimit,
     ex:querySizeLimit,
@@ -20,103 +20,103 @@ ex:service a sd:Service ;
     ex:federationLimit,
     ex:updateLimit .
 
-ex:internalCostModelV3 a sel:CostModel ;
+ex:internalCostModelV3 a vord:CostModel ;
   rdfs:label "Internal Cost Model v3"@en .
 
-ex:rateLimit a sel:Limit, sel:RateLimit ;
-  sel:metric sel:requestsPerWindow ;
-  sel:maxValue "60"^^xsd:decimal ;
-  sel:burstValue "15"^^xsd:decimal ;
-  sel:unit "requests"^^xsd:token ;
-  sel:windowDuration "PT1M"^^xsd:duration ;
-  sel:hasScope sel:PerClientIP ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:returnsStatusCode "429"^^xsd:integer ;
-  sel:signalsHeader <http://www.w3.org/2011/http-headers#retry-after> ;
-  sel:retryAfterHint "PT30S"^^xsd:duration ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:rateLimit a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "60"^^xsd:decimal ;
+  vord:burstValue "15"^^xsd:decimal ;
+  vord:unit "requests"^^xsd:token ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:signalsHeader <http://www.w3.org/2011/http-headers#retry-after> ;
+  vord:retryAfterHint "PT30S"^^xsd:duration ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:resultLimit a sel:Limit, sel:ResultSizeLimit ;
-  sel:metric sel:resultBytes ;
-  sel:maxValue "10000000"^^xsd:decimal ;
-  sel:unit "bytes"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:TruncateResult ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:resultLimit a vord:Limit, vord:ResultSizeLimit ;
+  vord:metric vord:resultBytes ;
+  vord:maxValue "10000000"^^xsd:decimal ;
+  vord:unit "bytes"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:TruncateResult ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:querySizeLimit a sel:Limit, sel:QuerySizeLimit ;
-  sel:metric sel:queryBytes ;
-  sel:maxValue "131072"^^xsd:decimal ;
-  sel:unit "bytes"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:querySizeLimit a vord:Limit, vord:QuerySizeLimit ;
+  vord:metric vord:queryBytes ;
+  vord:maxValue "131072"^^xsd:decimal ;
+  vord:unit "bytes"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:costLimit a sel:Limit, sel:CostModelLimit ;
-  sel:metric sel:estimatedCostUnits ;
-  sel:maxValue "150000"^^xsd:decimal ;
-  sel:unit "cost-units"^^xsd:token ;
-  sel:costModel ex:internalCostModelV3 ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:costLimit a vord:Limit, vord:CostModelLimit ;
+  vord:metric vord:estimatedCostUnits ;
+  vord:maxValue "150000"^^xsd:decimal ;
+  vord:unit "cost-units"^^xsd:token ;
+  vord:costModel ex:internalCostModelV3 ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:serverLoadLimit a sel:Limit, sel:ServerLoadLimit ;
-  sel:metric sel:cpuLoadRatio ;
-  sel:maxValue "0.85"^^xsd:decimal ;
-  sel:unit "ratio"^^xsd:token ;
-  sel:hasScope sel:GlobalScope ;
-  sel:enforcement sel:DegradeQuality ;
-  sel:hardLimit "false"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:serverLoadLimit a vord:Limit, vord:ServerLoadLimit ;
+  vord:metric vord:cpuLoadRatio ;
+  vord:maxValue "0.85"^^xsd:decimal ;
+  vord:unit "ratio"^^xsd:token ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:DegradeQuality ;
+  vord:hardLimit "false"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:connectionLimit a sel:Limit, sel:ConnectionLimit ;
-  sel:metric sel:concurrentConnections ;
-  sel:maxValue "200"^^xsd:decimal ;
-  sel:unit "connections"^^xsd:token ;
-  sel:hasScope sel:GlobalScope ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:returnsStatusCode "503"^^xsd:integer ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:connectionLimit a vord:Limit, vord:ConnectionLimit ;
+  vord:metric vord:concurrentConnections ;
+  vord:maxValue "200"^^xsd:decimal ;
+  vord:unit "connections"^^xsd:token ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "503"^^xsd:integer ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:timeoutLimit a sel:Limit, sel:TimeoutLimit ;
-  sel:metric sel:executionSeconds ;
-  sel:maxValue "30"^^xsd:decimal ;
-  sel:unit "seconds"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:returnsStatusCode "503"^^xsd:integer ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:timeoutLimit a vord:Limit, vord:TimeoutLimit ;
+  vord:metric vord:executionSeconds ;
+  vord:maxValue "30"^^xsd:decimal ;
+  vord:unit "seconds"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "503"^^xsd:integer ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:queueLimit a sel:Limit, sel:QueueLimit ;
-  sel:metric sel:queueDepth ;
-  sel:maxValue "100"^^xsd:decimal ;
-  sel:unit "queries"^^xsd:token ;
-  sel:hasScope sel:GlobalScope ;
-  sel:enforcement sel:QueueRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:queueLimit a vord:Limit, vord:QueueLimit ;
+  vord:metric vord:queueDepth ;
+  vord:maxValue "100"^^xsd:decimal ;
+  vord:unit "queries"^^xsd:token ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:QueueRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:federationLimit a sel:Limit, sel:FederatedQueryLimit ;
-  sel:metric sel:federatedServiceCount ;
-  sel:maxValue "5"^^xsd:decimal ;
-  sel:unit "services"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:FederationOperation .
+ex:federationLimit a vord:Limit, vord:FederatedQueryLimit ;
+  vord:metric vord:federatedServiceCount ;
+  vord:maxValue "5"^^xsd:decimal ;
+  vord:unit "services"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:FederationOperation .
 
-ex:updateLimit a sel:Limit, sel:UpdateLimit ;
-  sel:metric sel:updateBytes ;
-  sel:maxValue "1048576"^^xsd:decimal ;
-  sel:unit "bytes"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:UpdateOperation .
+ex:updateLimit a vord:Limit, vord:UpdateLimit ;
+  vord:metric vord:updateBytes ;
+  vord:maxValue "1048576"^^xsd:decimal ;
+  vord:unit "bytes"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:UpdateOperation .

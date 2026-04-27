@@ -6,14 +6,14 @@ from rdflib.namespace import OWL, RDF
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VOCAB_PATH = ROOT / "vocab" / "sel.ttl"
-SHAPES_PATH = ROOT / "shapes" / "sel.shacl.ttl"
+VOCAB_PATH = ROOT / "vocab" / "vord.ttl"
+SHAPES_PATH = ROOT / "shapes" / "vord.shacl.ttl"
 EXAMPLE_PATHS = [
     ROOT / "examples" / "basic-service.ttl",
     ROOT / "examples" / "tiered-profiles.ttl",
 ]
 
-SEL = Namespace("https://w3id.org/sparql-endpoint-limits#")
+VORD = Namespace("https://w3id.org/vord#")
 
 
 def _load_graph(path: Path) -> Graph:
@@ -42,26 +42,26 @@ def test_core_classes_and_properties_exist():
     vocab = _load_graph(VOCAB_PATH)
 
     expected_classes = [
-        SEL.Limit,
-        SEL.LimitProfile,
-        SEL.RateLimit,
-        SEL.ResultSizeLimit,
-        SEL.QuerySizeLimit,
-        SEL.CostModelLimit,
-        SEL.ServerLoadLimit,
-        SEL.ConnectionLimit,
+        VORD.Limit,
+        VORD.LimitProfile,
+        VORD.RateLimit,
+        VORD.ResultSizeLimit,
+        VORD.QuerySizeLimit,
+        VORD.CostModelLimit,
+        VORD.ServerLoadLimit,
+        VORD.ConnectionLimit,
     ]
 
     expected_properties = [
-        SEL.hasLimit,
-        SEL.hasLimitProfile,
-        SEL.profileLimit,
-        SEL.metric,
-        SEL.maxValue,
-        SEL.windowDuration,
-        SEL.hasScope,
-        SEL.enforcement,
-        SEL.hardLimit,
+        VORD.hasLimit,
+        VORD.hasLimitProfile,
+        VORD.profileLimit,
+        VORD.metric,
+        VORD.maxValue,
+        VORD.windowDuration,
+        VORD.hasScope,
+        VORD.enforcement,
+        VORD.hardLimit,
     ]
 
     for class_uri in expected_classes:
@@ -92,25 +92,25 @@ def test_example_graphs_conform_to_shacl():
 
 
 def test_invalid_limit_missing_metric_fails_validation():
-    """A limit without sel:metric must fail the SHACL constraints."""
+    """A limit without vord:metric must fail the SHACL constraints."""
     invalid_data = Graph()
     invalid_data.parse(
         data="""
         @prefix ex: <https://example.org/invalid/> .
         @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-        @prefix sel: <https://w3id.org/sparql-endpoint-limits#> .
+        @prefix vord: <https://w3id.org/vord#> .
         @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
         ex:service a sd:Service ;
           sd:endpoint <https://example.org/sparql> ;
-          sel:hasLimit ex:badLimit .
+          vord:hasLimit ex:badLimit .
 
-        ex:badLimit a sel:Limit, sel:RateLimit ;
-          sel:maxValue "10"^^xsd:decimal ;
-          sel:windowDuration "PT1M"^^xsd:duration ;
-          sel:hasScope sel:PerClientIP ;
-          sel:enforcement sel:RejectRequest ;
-          sel:hardLimit "true"^^xsd:boolean .
+        ex:badLimit a vord:Limit, vord:RateLimit ;
+          vord:maxValue "10"^^xsd:decimal ;
+          vord:windowDuration "PT1M"^^xsd:duration ;
+          vord:hasScope vord:PerClientIP ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardLimit "true"^^xsd:boolean .
         """,
         format="turtle",
     )

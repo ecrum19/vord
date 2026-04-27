@@ -1,140 +1,140 @@
 @prefix ex: <https://example.org/sparql/tiered/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-@prefix sel: <https://w3id.org/sparql-endpoint-limits#> .
+@prefix vord: <https://w3id.org/vord#> .
 
 ex:service a sd:Service ;
   sd:endpoint <https://tiered.example.org/sparql> ;
   sd:supportedLanguage sd:SPARQLQuery ;
-  sel:hasLimitProfile ex:freeProfile, ex:proProfile, ex:enterpriseProfile ;
-  sel:hasLimit ex:globalConnectionCap .
+  vord:hasLimitProfile ex:freeProfile, ex:proProfile, ex:enterpriseProfile ;
+  vord:hasLimit ex:globalConnectionCap .
 
-ex:globalConnectionCap a sel:Limit, sel:ConnectionLimit ;
-  sel:metric sel:concurrentConnections ;
-  sel:maxValue "500"^^xsd:decimal ;
-  sel:unit "connections"^^xsd:token ;
-  sel:hasScope sel:GlobalScope ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:returnsStatusCode "503"^^xsd:integer ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:globalConnectionCap a vord:Limit, vord:ConnectionLimit ;
+  vord:metric vord:concurrentConnections ;
+  vord:maxValue "500"^^xsd:decimal ;
+  vord:unit "connections"^^xsd:token ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "503"^^xsd:integer ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:freeProfile a sel:LimitProfile ;
-  sel:profileLimit ex:freeRate, ex:freeResultSize, ex:freeDailyQuota .
+ex:freeProfile a vord:LimitProfile ;
+  vord:profileLimit ex:freeRate, ex:freeResultSize, ex:freeDailyQuota .
 
-ex:freeRate a sel:Limit, sel:RateLimit ;
-  sel:metric sel:requestsPerWindow ;
-  sel:maxValue "20"^^xsd:decimal ;
-  sel:windowDuration "PT1M"^^xsd:duration ;
-  sel:unit "requests"^^xsd:token ;
-  sel:hasScope sel:PerAPIKey ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:returnsStatusCode "429"^^xsd:integer ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:freeRate a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "20"^^xsd:decimal ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:unit "requests"^^xsd:token ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:freeResultSize a sel:Limit, sel:ResultSizeLimit ;
-  sel:metric sel:resultRows ;
-  sel:maxValue "1000"^^xsd:decimal ;
-  sel:unit "rows"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:TruncateResult ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:freeResultSize a vord:Limit, vord:ResultSizeLimit ;
+  vord:metric vord:resultRows ;
+  vord:maxValue "1000"^^xsd:decimal ;
+  vord:unit "rows"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:TruncateResult ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:freeDailyQuota a sel:Limit, sel:QuotaLimit ;
-  sel:metric sel:requestsPerDay ;
-  sel:maxValue "10000"^^xsd:decimal ;
-  sel:windowDuration "P1D"^^xsd:duration ;
-  sel:unit "requests"^^xsd:token ;
-  sel:hasScope sel:PerAPIKey ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:freeDailyQuota a vord:Limit, vord:QuotaLimit ;
+  vord:metric vord:requestsPerDay ;
+  vord:maxValue "10000"^^xsd:decimal ;
+  vord:windowDuration "P1D"^^xsd:duration ;
+  vord:unit "requests"^^xsd:token ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:proProfile a sel:LimitProfile ;
-  sel:profileLimit ex:proRate, ex:proResultSize, ex:proDailyQuota, ex:proCostModel .
+ex:proProfile a vord:LimitProfile ;
+  vord:profileLimit ex:proRate, ex:proResultSize, ex:proDailyQuota, ex:proCostModel .
 
-ex:proRate a sel:Limit, sel:RateLimit ;
-  sel:metric sel:requestsPerWindow ;
-  sel:maxValue "120"^^xsd:decimal ;
-  sel:burstValue "40"^^xsd:decimal ;
-  sel:windowDuration "PT1M"^^xsd:duration ;
-  sel:unit "requests"^^xsd:token ;
-  sel:hasScope sel:PerAPIKey ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:proRate a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "120"^^xsd:decimal ;
+  vord:burstValue "40"^^xsd:decimal ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:unit "requests"^^xsd:token ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:proResultSize a sel:Limit, sel:ResultSizeLimit ;
-  sel:metric sel:resultBytes ;
-  sel:maxValue "25000000"^^xsd:decimal ;
-  sel:unit "bytes"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:proResultSize a vord:Limit, vord:ResultSizeLimit ;
+  vord:metric vord:resultBytes ;
+  vord:maxValue "25000000"^^xsd:decimal ;
+  vord:unit "bytes"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:proDailyQuota a sel:Limit, sel:QuotaLimit ;
-  sel:metric sel:requestsPerDay ;
-  sel:maxValue "500000"^^xsd:decimal ;
-  sel:windowDuration "P1D"^^xsd:duration ;
-  sel:unit "requests"^^xsd:token ;
-  sel:hasScope sel:PerAPIKey ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:proDailyQuota a vord:Limit, vord:QuotaLimit ;
+  vord:metric vord:requestsPerDay ;
+  vord:maxValue "500000"^^xsd:decimal ;
+  vord:windowDuration "P1D"^^xsd:duration ;
+  vord:unit "requests"^^xsd:token ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:proCostModel a sel:Limit, sel:CostModelLimit ;
-  sel:metric sel:estimatedCostUnits ;
-  sel:maxValue "400000"^^xsd:decimal ;
-  sel:unit "cost-units"^^xsd:token ;
-  sel:costModel ex:costModelV4 ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:proCostModel a vord:Limit, vord:CostModelLimit ;
+  vord:metric vord:estimatedCostUnits ;
+  vord:maxValue "400000"^^xsd:decimal ;
+  vord:unit "cost-units"^^xsd:token ;
+  vord:costModel ex:costModelV4 ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:enterpriseProfile a sel:LimitProfile ;
-  sel:profileLimit ex:entRate, ex:entResultSize, ex:entCostModel, ex:entFederationDepth .
+ex:enterpriseProfile a vord:LimitProfile ;
+  vord:profileLimit ex:entRate, ex:entResultSize, ex:entCostModel, ex:entFederationDepth .
 
-ex:entRate a sel:Limit, sel:RateLimit ;
-  sel:metric sel:requestsPerWindow ;
-  sel:maxValue "500"^^xsd:decimal ;
-  sel:burstValue "200"^^xsd:decimal ;
-  sel:windowDuration "PT1M"^^xsd:duration ;
-  sel:unit "requests"^^xsd:token ;
-  sel:hasScope sel:PerAPIKey ;
-  sel:enforcement sel:ThrottleResponse ;
-  sel:hardLimit "false"^^xsd:boolean ;
-  sel:appliesToOperation sel:ProtocolOperation .
+ex:entRate a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "500"^^xsd:decimal ;
+  vord:burstValue "200"^^xsd:decimal ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:unit "requests"^^xsd:token ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:ThrottleResponse ;
+  vord:hardLimit "false"^^xsd:boolean ;
+  vord:appliesToOperation vord:ProtocolOperation .
 
-ex:entResultSize a sel:Limit, sel:ResultSizeLimit ;
-  sel:metric sel:resultBytes ;
-  sel:maxValue "100000000"^^xsd:decimal ;
-  sel:unit "bytes"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:entResultSize a vord:Limit, vord:ResultSizeLimit ;
+  vord:metric vord:resultBytes ;
+  vord:maxValue "100000000"^^xsd:decimal ;
+  vord:unit "bytes"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:entCostModel a sel:Limit, sel:CostModelLimit ;
-  sel:metric sel:estimatedCostUnits ;
-  sel:maxValue "2500000"^^xsd:decimal ;
-  sel:unit "cost-units"^^xsd:token ;
-  sel:costModel ex:costModelV4 ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:QueryOperation .
+ex:entCostModel a vord:Limit, vord:CostModelLimit ;
+  vord:metric vord:estimatedCostUnits ;
+  vord:maxValue "2500000"^^xsd:decimal ;
+  vord:unit "cost-units"^^xsd:token ;
+  vord:costModel ex:costModelV4 ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:QueryOperation .
 
-ex:entFederationDepth a sel:Limit, sel:FederatedQueryLimit ;
-  sel:metric sel:subqueryDepth ;
-  sel:maxValue "8"^^xsd:decimal ;
-  sel:unit "depth"^^xsd:token ;
-  sel:hasScope sel:PerRequest ;
-  sel:enforcement sel:RejectRequest ;
-  sel:hardLimit "true"^^xsd:boolean ;
-  sel:appliesToOperation sel:FederationOperation .
+ex:entFederationDepth a vord:Limit, vord:FederatedQueryLimit ;
+  vord:metric vord:subqueryDepth ;
+  vord:maxValue "8"^^xsd:decimal ;
+  vord:unit "depth"^^xsd:token ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation vord:FederationOperation .
 
-ex:costModelV4 a sel:CostModel .
+ex:costModelV4 a vord:CostModel .
