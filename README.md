@@ -1,6 +1,6 @@
 # VoRD: Vocabulary of Restrictive Datasets
 
-`sparql_endpoint_limits_vocabulary` is a modular RDF vocabulary for describing operational limits of SPARQL endpoints in a reusable, machine-readable way.
+`VORD` is a modular RDF vocabulary for describing operational limits of SPARQL endpoints in a reusable, machine-readable way.
 
 It is designed as an extension of SPARQL Service Description, with validation support in SHACL and ShEx.
 
