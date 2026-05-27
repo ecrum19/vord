@@ -1,4 +1,4 @@
-# VORD: Vocabulary of Restrictive Datasets
+# VoRD: Vocabulary of Restrictive Datasets
 
 `sparql_endpoint_limits_vocabulary` is a modular RDF vocabulary for describing operational limits of SPARQL endpoints in a reusable, machine-readable way.
 
@@ -14,7 +14,7 @@ This vocabulary models endpoint constraints such as:
 - internal cost-model limits
 - server-load limits
 - simultaneous-connection limits
-- timeout, queue, federation, quota, and update-payload limits
+- timeout, federation-support, and quota limits
 
 ## Repository Structure
 
@@ -22,7 +22,7 @@ This vocabulary models endpoint constraints such as:
 - `shapes/vord.shacl.ttl`: SHACL constraints for validating instances
 - `shex/vord.shex`: companion ShEx schema
 - `examples/basic-service.ttl`: one endpoint with direct limits
-- `examples/tiered-profiles.ttl`: endpoint with tiered limit profiles
+- `examples/tiered-profiles.ttl`: endpoint with a broader direct-limit set
 
 ## Design Principles
 
@@ -35,6 +35,7 @@ This vocabulary models endpoint constraints such as:
 
 2. Keep limit metadata generic and extensible.
 - Every limit uses the same core pattern: metric + threshold + scope + enforcement.
+- Federated support is modeled explicitly as a boolean capability flag.
 - Metric vocabulary is controlled via reusable instances (`vord:Metric` individuals).
 - Domain-specific classes (e.g., `vord:RateLimit`, `vord:CostModelLimit`) make intent explicit.
 
@@ -47,30 +48,26 @@ This vocabulary models endpoint constraints such as:
 ### Main classes
 
 - `vord:Limit`: abstract limit feature (subclass of `sd:Feature`)
-- `vord:LimitProfile`: named set of limits (for free/pro/enterprise tiers)
 - concrete subclasses:
   - `vord:RateLimit`
   - `vord:ResultSizeLimit`
   - `vord:QuerySizeLimit`
   - `vord:CostModelLimit`
   - `vord:ServerLoadLimit`
-  - `vord:ConnectionLimit`
+  - `vord:ConnectionNumberLimit`
   - `vord:TimeoutLimit`
-  - `vord:QueueLimit`
   - `vord:QuotaLimit`
-  - `vord:FederatedQueryLimit`
-  - `vord:UpdateLimit`
+  - `vord:FederatedQueryLimit` (capability-style: `vord:federationSupported`)
 
 ### Core properties
 
 - `vord:hasLimit` (`sd:Service -> vord:Limit`)
-- `vord:hasLimitProfile` (`sd:Service -> vord:LimitProfile`)
-- `vord:profileLimit` (`vord:LimitProfile -> vord:Limit`)
 - `vord:metric` (`vord:Limit -> vord:Metric`)
 - `vord:maxValue` (numeric threshold)
 - `vord:unit` (token, e.g., `bytes`, `requests`, `cost-units`)
 - `vord:windowDuration` (`xsd:duration`)
 - `vord:burstValue` (for burst rate policies)
+- `vord:federationSupported` (`xsd:boolean`, for `vord:FederatedQueryLimit`)
 - `vord:hasScope` (`vord:Scope`)
 - `vord:enforcement` (`vord:EnforcementMode`)
 - `vord:hardLimit` (`xsd:boolean`)
@@ -85,17 +82,17 @@ This vocabulary models endpoint constraints such as:
 
 Use `vord:hasLimit` from an `sd:Service` resource.
 
-### 2. Attach tiered profiles
-
-Use `vord:hasLimitProfile` for named plans/tokens/client classes, and put limits in each profile using `vord:profileLimit`.
-
-### 3. Pick a metric and threshold
+### 2. Pick a metric and threshold (for quantitative limits)
 
 Choose a `vord:Metric` individual and provide a `vord:maxValue`.
 
-### 4. Specify semantics explicitly
+### 3. Specify semantics explicitly
 
 Set `vord:hasScope`, `vord:enforcement`, and `vord:hardLimit` so clients can reason about operational behavior.
+
+### 4. Model federation as capability support
+
+Use `vord:FederatedQueryLimit` with `vord:federationSupported` set to `true` or `false`.
 
 ## Required Categories Covered
 
@@ -106,21 +103,19 @@ The vocabulary includes direct support for your required categories:
 - query-size / values-size limit: `vord:QuerySizeLimit` + `vord:queryBytes`, `vord:valuesItems`, `vord:literalBytes`
 - internal cost-model limit: `vord:CostModelLimit` + `vord:estimatedCostUnits` + `vord:costModel`
 - server-load limit: `vord:ServerLoadLimit` + `vord:cpuLoadRatio` or `vord:activeQueryCount`
-- simultaneous connections: `vord:ConnectionLimit` + `vord:concurrentConnections` / `vord:concurrentQueries`
-- additional practical limits:
-  - `vord:TimeoutLimit`
-  - `vord:QueueLimit`
-  - `vord:QuotaLimit`
-  - `vord:FederatedQueryLimit`
-  - `vord:UpdateLimit`
+- simultaneous connections: `vord:ConnectionNumberLimit` + `vord:concurrentConnections` / `vord:concurrentQueries`
+- timeout limit: `vord:TimeoutLimit` + `vord:executionSeconds` / `vord:queueWaitSeconds`
+- quota limit: `vord:QuotaLimit` + `vord:requestsPerDay`
+- federation support: `vord:FederatedQueryLimit` + `vord:federationSupported` (`true`/`false`)
 
 ## SHACL Validation
 
 `shapes/vord.shacl.ttl` includes:
 
 - generic shape for all `vord:Limit` instances
-- service shape (`sd:Service`) requiring either direct limits or profiles
-- class-specific metric constraints using `sh:in`
+- service shape (`sd:Service`) requiring one or more direct limits
+- class-specific metric constraints using `sh:in` for quantitative limits
+- explicit boolean constraint on `vord:federationSupported` for federation support
 - cardinality and datatype checks for core fields
 
 Typical usage with a SHACL engine is:
@@ -135,8 +130,7 @@ Typical usage with a SHACL engine is:
 
 The ShEx model validates:
 
-- service resources with either direct limits or profiles
-- profile resources with one or more limits
+- service resources with one or more direct limits
 - base required fields for each limit
 
 ## Running Tests
@@ -147,7 +141,7 @@ The test suite checks:
 
 - key ontology terms exist in `vocab/vord.ttl`
 - example graphs conform to `shapes/vord.shacl.ttl`
-- invalid data (missing `vord:metric`) fails SHACL validation
+- invalid data (missing required quantitative `vord:metric`) fails SHACL validation
 
 ### 1. Create and activate a virtual environment
 
@@ -188,6 +182,48 @@ This allows `sel` data to remain compatible with existing service-description pr
 
 - Durations are represented with `xsd:duration`; `vord:windowDuration` and `vord:retryAfterHint` are annotated with `rdfs:seeAlso time:hasXSDDuration`.
 - HTTP signaling can be described via `vord:returnsStatusCode` and `vord:signalsHeader` (`http:HeaderName`).
+
+## Complete Term Index
+
+### Classes
+
+- `vord:Limit`
+- `vord:RateLimit`
+- `vord:ResultSizeLimit`
+- `vord:QuerySizeLimit`
+- `vord:CostModelLimit`
+- `vord:ServerLoadLimit`
+- `vord:ConnectionNumberLimit`
+- `vord:TimeoutLimit`
+- `vord:QuotaLimit`
+- `vord:FederatedQueryLimit`
+- `vord:Metric`
+- `vord:Scope`
+- `vord:EnforcementMode`
+- `vord:OperationKind`
+- `vord:CostModel`
+
+### Object properties
+
+- `vord:hasLimit`
+- `vord:metric`
+- `vord:hasScope`
+- `vord:enforcement`
+- `vord:appliesToOperation`
+- `vord:costModel`
+- `vord:signalsHeader`
+
+### Datatype properties
+
+- `vord:maxValue`
+- `vord:minValue`
+- `vord:burstValue`
+- `vord:unit`
+- `vord:windowDuration`
+- `vord:retryAfterHint`
+- `vord:returnsStatusCode`
+- `vord:hardLimit`
+- `vord:federationSupported`
 
 ## Minimal Example
 

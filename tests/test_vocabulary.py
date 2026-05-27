@@ -2,18 +2,19 @@ from pathlib import Path
 
 from pyshacl import validate
 from rdflib import Graph, Namespace
-from rdflib.namespace import OWL, RDF
+from rdflib.namespace import OWL, RDF, RDFS
 
 
 ROOT = Path(__file__).resolve().parents[1]
 VOCAB_PATH = ROOT / "vocab" / "vord.ttl"
 SHAPES_PATH = ROOT / "shapes" / "vord.shacl.ttl"
+README_PATH = ROOT / "README.md"
 EXAMPLE_PATHS = [
     ROOT / "examples" / "basic-service.ttl",
     ROOT / "examples" / "tiered-profiles.ttl",
 ]
 
-VORD = Namespace("https://w3id.org/vord#")
+VORD_NS = Namespace("https://w3id.org/vord#")
 
 
 def _load_graph(path: Path) -> Graph:
@@ -38,49 +39,41 @@ def _run_shacl(data_graph: Graph):
 
 
 def test_core_classes_and_properties_exist():
-    """Sanity-check that key terms exist in the ontology."""
+    """All declared VoRD classes/properties should be documented and described."""
     vocab = _load_graph(VOCAB_PATH)
+    readme = README_PATH.read_text(encoding="utf-8")
 
-    expected_classes = [
-        VORD.Limit,
-        VORD.LimitProfile,
-        VORD.RateLimit,
-        VORD.ResultSizeLimit,
-        VORD.QuerySizeLimit,
-        VORD.CostModelLimit,
-        VORD.ServerLoadLimit,
-        VORD.ConnectionLimit,
-    ]
+    class_uris = sorted(
+        s
+        for s in vocab.subjects(RDF.type, OWL.Class)
+        if str(s).startswith(str(VORD_NS))
+    )
+    object_property_uris = sorted(
+        s
+        for s in vocab.subjects(RDF.type, OWL.ObjectProperty)
+        if str(s).startswith(str(VORD_NS))
+    )
+    datatype_property_uris = sorted(
+        s
+        for s in vocab.subjects(RDF.type, OWL.DatatypeProperty)
+        if str(s).startswith(str(VORD_NS))
+    )
 
-    expected_properties = [
-        VORD.hasLimit,
-        VORD.hasLimitProfile,
-        VORD.profileLimit,
-        VORD.metric,
-        VORD.maxValue,
-        VORD.windowDuration,
-        VORD.hasScope,
-        VORD.enforcement,
-        VORD.hardLimit,
-    ]
+    assert class_uris, "Expected at least one VoRD class"
+    assert object_property_uris, "Expected at least one VoRD object property"
+    assert datatype_property_uris, "Expected at least one VoRD datatype property"
 
-    for class_uri in expected_classes:
+    documented_terms = class_uris + object_property_uris + datatype_property_uris
+    for term_uri in documented_terms:
+        label = vocab.value(term_uri, RDFS.label)
+        comment = vocab.value(term_uri, RDFS.comment)
+        assert label is not None, f"Missing rdfs:label for {term_uri}"
+        assert comment is not None, f"Missing rdfs:comment for {term_uri}"
+
+        local_name = str(term_uri).split("#", 1)[-1]
         assert (
-            class_uri,
-            RDF.type,
-            OWL.Class,
-        ) in vocab, f"Missing class declaration: {class_uri}"
-
-    for property_uri in expected_properties:
-        assert (
-            property_uri,
-            RDF.type,
-            OWL.ObjectProperty,
-        ) in vocab or (
-            property_uri,
-            RDF.type,
-            OWL.DatatypeProperty,
-        ) in vocab, f"Missing property declaration: {property_uri}"
+            f"`vord:{local_name}`" in readme
+        ), f"README is missing reference to vord:{local_name}"
 
 
 def test_example_graphs_conform_to_shacl():
@@ -92,7 +85,7 @@ def test_example_graphs_conform_to_shacl():
 
 
 def test_invalid_limit_missing_metric_fails_validation():
-    """A limit without vord:metric must fail the SHACL constraints."""
+    """A quantitative limit without vord:metric must fail the SHACL constraints."""
     invalid_data = Graph()
     invalid_data.parse(
         data="""

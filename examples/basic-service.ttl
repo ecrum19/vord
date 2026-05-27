@@ -16,9 +16,7 @@ ex:service a sd:Service ;
     ex:serverLoadLimit,
     ex:connectionLimit,
     ex:timeoutLimit,
-    ex:queueLimit,
-    ex:federationLimit,
-    ex:updateLimit .
+    ex:federationLimit .
 
 ex:internalCostModelV3 a vord:CostModel ;
   rdfs:label "Internal Cost Model v3"@en .
@@ -74,7 +72,7 @@ ex:serverLoadLimit a vord:Limit, vord:ServerLoadLimit ;
   vord:hardLimit "false"^^xsd:boolean ;
   vord:appliesToOperation vord:QueryOperation .
 
-ex:connectionLimit a vord:Limit, vord:ConnectionLimit ;
+ex:connectionLimit a vord:Limit, vord:ConnectionNumberLimit ;
   vord:metric vord:concurrentConnections ;
   vord:maxValue "200"^^xsd:decimal ;
   vord:unit "connections"^^xsd:token ;
@@ -94,29 +92,9 @@ ex:timeoutLimit a vord:Limit, vord:TimeoutLimit ;
   vord:returnsStatusCode "503"^^xsd:integer ;
   vord:appliesToOperation vord:QueryOperation .
 
-ex:queueLimit a vord:Limit, vord:QueueLimit ;
-  vord:metric vord:queueDepth ;
-  vord:maxValue "100"^^xsd:decimal ;
-  vord:unit "queries"^^xsd:token ;
-  vord:hasScope vord:GlobalScope ;
-  vord:enforcement vord:QueueRequest ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:appliesToOperation vord:QueryOperation .
-
 ex:federationLimit a vord:Limit, vord:FederatedQueryLimit ;
-  vord:metric vord:federatedServiceCount ;
-  vord:maxValue "5"^^xsd:decimal ;
-  vord:unit "services"^^xsd:token ;
-  vord:hasScope vord:PerRequest ;
+  vord:federationSupported "true"^^xsd:boolean ;
+  vord:hasScope vord:GlobalScope ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:appliesToOperation vord:FederationOperation .
-
-ex:updateLimit a vord:Limit, vord:UpdateLimit ;
-  vord:metric vord:updateBytes ;
-  vord:maxValue "1048576"^^xsd:decimal ;
-  vord:unit "bytes"^^xsd:token ;
-  vord:hasScope vord:PerRequest ;
-  vord:enforcement vord:RejectRequest ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:appliesToOperation vord:UpdateOperation .

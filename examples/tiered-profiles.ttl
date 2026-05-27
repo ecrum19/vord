@@ -6,10 +6,21 @@
 ex:service a sd:Service ;
   sd:endpoint <https://tiered.example.org/sparql> ;
   sd:supportedLanguage sd:SPARQLQuery ;
-  vord:hasLimitProfile ex:freeProfile, ex:proProfile, ex:enterpriseProfile ;
-  vord:hasLimit ex:globalConnectionCap .
+  vord:hasLimit
+    ex:globalConnectionCap,
+    ex:freeRate,
+    ex:freeResultSize,
+    ex:freeDailyQuota,
+    ex:proRate,
+    ex:proResultSize,
+    ex:proDailyQuota,
+    ex:proCostModel,
+    ex:entRate,
+    ex:entResultSize,
+    ex:entCostModel,
+    ex:entFederationSupport .
 
-ex:globalConnectionCap a vord:Limit, vord:ConnectionLimit ;
+ex:globalConnectionCap a vord:Limit, vord:ConnectionNumberLimit ;
   vord:metric vord:concurrentConnections ;
   vord:maxValue "500"^^xsd:decimal ;
   vord:unit "connections"^^xsd:token ;
@@ -18,9 +29,6 @@ ex:globalConnectionCap a vord:Limit, vord:ConnectionLimit ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:returnsStatusCode "503"^^xsd:integer ;
   vord:appliesToOperation vord:ProtocolOperation .
-
-ex:freeProfile a vord:LimitProfile ;
-  vord:profileLimit ex:freeRate, ex:freeResultSize, ex:freeDailyQuota .
 
 ex:freeRate a vord:Limit, vord:RateLimit ;
   vord:metric vord:requestsPerWindow ;
@@ -51,9 +59,6 @@ ex:freeDailyQuota a vord:Limit, vord:QuotaLimit ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:appliesToOperation vord:ProtocolOperation .
-
-ex:proProfile a vord:LimitProfile ;
-  vord:profileLimit ex:proRate, ex:proResultSize, ex:proDailyQuota, ex:proCostModel .
 
 ex:proRate a vord:Limit, vord:RateLimit ;
   vord:metric vord:requestsPerWindow ;
@@ -95,9 +100,6 @@ ex:proCostModel a vord:Limit, vord:CostModelLimit ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:appliesToOperation vord:QueryOperation .
 
-ex:enterpriseProfile a vord:LimitProfile ;
-  vord:profileLimit ex:entRate, ex:entResultSize, ex:entCostModel, ex:entFederationDepth .
-
 ex:entRate a vord:Limit, vord:RateLimit ;
   vord:metric vord:requestsPerWindow ;
   vord:maxValue "500"^^xsd:decimal ;
@@ -128,11 +130,9 @@ ex:entCostModel a vord:Limit, vord:CostModelLimit ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:appliesToOperation vord:QueryOperation .
 
-ex:entFederationDepth a vord:Limit, vord:FederatedQueryLimit ;
-  vord:metric vord:subqueryDepth ;
-  vord:maxValue "8"^^xsd:decimal ;
-  vord:unit "depth"^^xsd:token ;
-  vord:hasScope vord:PerRequest ;
+ex:entFederationSupport a vord:Limit, vord:FederatedQueryLimit ;
+  vord:federationSupported "true"^^xsd:boolean ;
+  vord:hasScope vord:GlobalScope ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:appliesToOperation vord:FederationOperation .

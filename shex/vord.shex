@@ -6,23 +6,15 @@ start = @<ServiceWithLimits>
 
 <ServiceWithLimits> EXTRA a {
   a [sd:Service] ;
-  (
-    vord:hasLimit @<Limit> +
-  |
-    vord:hasLimitProfile @<LimitProfile> +
-  )
-}
-
-<LimitProfile> EXTRA a {
-  a [vord:LimitProfile] ;
-  vord:profileLimit @<Limit> +
+  vord:hasLimit @<Limit> +
 }
 
 <Limit> EXTRA a {
   a [vord:Limit] ;
-  vord:metric IRI ;
-  vord:maxValue xsd:decimal ;
+  vord:metric IRI ? ;
+  vord:maxValue xsd:decimal ? ;
   vord:hardLimit xsd:boolean ;
+  vord:federationSupported xsd:boolean ? ;
   vord:hasScope IRI ;
   vord:enforcement IRI ;
   vord:unit xsd:token ? ;
