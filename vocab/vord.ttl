@@ -8,6 +8,7 @@
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix http: <http://www.w3.org/2011/http#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
 
 <https://w3id.org/vord#> a owl:Ontology ;
   dcterms:title "VoRD: Vocabulary of Restrictive Datasets"@en ;
@@ -64,8 +65,8 @@ vord:QuotaLimit a owl:Class ;
   rdfs:comment "Rolling or fixed quota over a longer period (day, week, month)."@en ;
   rdfs:subClassOf vord:Limit .
 
-vord:FederatedQueryLimit a owl:Class ;
-  rdfs:label "Federated Query Limit"@en ;
+vord:FederationSupported a owl:Class ;
+  rdfs:label "Federation Supported"@en ;
   rdfs:comment "Signifies whether the endpoint supports SERVICE clause federation."@en ;
   rdfs:subClassOf vord:Limit .
 
@@ -155,11 +156,11 @@ vord:burstValue a owl:DatatypeProperty ;
   rdfs:domain vord:RateLimit ;
   rdfs:range xsd:decimal .
 
-vord:unit a owl:DatatypeProperty ;
+vord:unit a owl:ObjectProperty ;
   rdfs:label "unit"@en ;
-  rdfs:comment "Unit token for maxValue, e.g., bytes, rows, requests, cost-units."@en ;
+  rdfs:comment "Unit of measure for maxValue."@en ;
   rdfs:domain vord:Limit ;
-  rdfs:range xsd:token .
+  rdfs:range qudt:Unit .
 
 vord:windowDuration a owl:DatatypeProperty ;
   rdfs:label "window duration"@en ;
@@ -191,7 +192,7 @@ vord:hardLimit a owl:DatatypeProperty ;
 vord:federationSupported a owl:DatatypeProperty ;
   rdfs:label "federation supported"@en ;
   rdfs:comment "True if SERVICE clause federation is supported by the endpoint; false otherwise."@en ;
-  rdfs:domain vord:FederatedQueryLimit ;
+  rdfs:domain vord:FederationSupported ;
   rdfs:range xsd:boolean .
 
 vord:PerClientIP a vord:Scope, skos:Concept ;
@@ -234,26 +235,6 @@ vord:DegradeQuality a vord:EnforcementMode, skos:Concept ;
   skos:prefLabel "Degrade Quality"@en ;
   rdfs:comment "The endpoint continues serving requests with reduced quality of service."@en .
 
-vord:QueryOperation a vord:OperationKind, skos:Concept ;
-  skos:prefLabel "SPARQL Query"@en ;
-  rdfs:comment "The limit applies to SPARQL query operations."@en .
-
-vord:UpdateOperation a vord:OperationKind, skos:Concept ;
-  skos:prefLabel "SPARQL Update"@en ;
-  rdfs:comment "The limit applies to SPARQL Update operations."@en .
-
-vord:ProtocolOperation a vord:OperationKind, skos:Concept ;
-  skos:prefLabel "SPARQL Protocol"@en ;
-  rdfs:comment "The limit applies to protocol-level SPARQL request handling."@en .
-
-vord:GraphStoreOperation a vord:OperationKind, skos:Concept ;
-  skos:prefLabel "Graph Store Protocol"@en ;
-  rdfs:comment "The limit applies to Graph Store Protocol operations."@en .
-
-vord:FederationOperation a vord:OperationKind, skos:Concept ;
-  skos:prefLabel "Federated Query Execution"@en ;
-  rdfs:comment "The limit applies to execution paths that involve federated SERVICE requests."@en .
-
 vord:requestsPerWindow a vord:Metric, skos:Concept ;
   skos:prefLabel "Requests per Window"@en ;
   rdfs:comment "Count of requests observed within a configured sliding or fixed window."@en .
@@ -262,54 +243,10 @@ vord:requestsPerDay a vord:Metric, skos:Concept ;
   skos:prefLabel "Requests per Day"@en ;
   rdfs:comment "Count of requests accumulated over a one-day quota period."@en .
 
-vord:resultRows a vord:Metric, skos:Concept ;
-  skos:prefLabel "Result Rows"@en ;
-  rdfs:comment "Number of solution rows returned in a SPARQL result set."@en .
-
-vord:resultBytes a vord:Metric, skos:Concept ;
-  skos:prefLabel "Result Bytes"@en ;
-  rdfs:comment "Serialized size in bytes of the response payload returned by the endpoint."@en .
-
-vord:queryBytes a vord:Metric, skos:Concept ;
-  skos:prefLabel "Query Bytes"@en ;
-  rdfs:comment "Size in bytes of the submitted SPARQL query text or payload."@en .
-
-vord:valuesItems a vord:Metric, skos:Concept ;
-  skos:prefLabel "VALUES Items"@en ;
-  rdfs:comment "Number of entries provided through VALUES bindings in a query."@en .
-
-vord:literalBytes a vord:Metric, skos:Concept ;
-  skos:prefLabel "Literal Bytes"@en ;
-  rdfs:comment "Combined size in bytes of literal values submitted in a request."@en .
+vord:resultBindings a vord:Metric, skos:Concept ;
+  skos:prefLabel "Result Bindings"@en ;
+  rdfs:comment "Number of solution bindings (solution mappings) returned by a SPARQL query."@en .
 
 vord:estimatedCostUnits a vord:Metric, skos:Concept ;
   skos:prefLabel "Estimated Cost Units"@en ;
   rdfs:comment "Optimizer- or planner-estimated internal cost score for query execution."@en .
-
-vord:cpuLoadRatio a vord:Metric, skos:Concept ;
-  skos:prefLabel "CPU Load Ratio"@en ;
-  rdfs:comment "Host or cluster CPU utilization represented as a ratio between 0 and 1."@en .
-
-vord:activeQueryCount a vord:Metric, skos:Concept ;
-  skos:prefLabel "Active Query Count"@en ;
-  rdfs:comment "Number of currently active query executions on the endpoint."@en .
-
-vord:concurrentConnections a vord:Metric, skos:Concept ;
-  skos:prefLabel "Concurrent Connections"@en ;
-  rdfs:comment "Number of simultaneously open client connections."@en .
-
-vord:concurrentQueries a vord:Metric, skos:Concept ;
-  skos:prefLabel "Concurrent Queries"@en ;
-  rdfs:comment "Number of query executions running concurrently."@en .
-
-vord:executionSeconds a vord:Metric, skos:Concept ;
-  skos:prefLabel "Execution Seconds"@en ;
-  rdfs:comment "Elapsed execution time in seconds for a request or query."@en .
-
-vord:queueDepth a vord:Metric, skos:Concept ;
-  skos:prefLabel "Queue Depth"@en ;
-  rdfs:comment "Number of requests waiting in a processing queue."@en .
-
-vord:queueWaitSeconds a vord:Metric, skos:Concept ;
-  skos:prefLabel "Queue Wait Seconds"@en ;
-  rdfs:comment "Time in seconds spent waiting in queue before execution starts."@en .

@@ -1,0 +1,138 @@
+@prefix ex: <https://example.org/sparql/exhaustive/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix http: <http://www.w3.org/2011/http-headers#> .
+@prefix vord: <https://w3id.org/vord#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+
+ex:service a sd:Service ;
+  sd:endpoint <https://example.org/sparql/exhaustive> ;
+  sd:supportedLanguage sd:SPARQLQuery, sd:SPARQLUpdate ;
+  vord:hasLimit
+    ex:rateMinute,
+    ex:rateDaily,
+    ex:resultBindingsLimit,
+    ex:querySizeLimit,
+    ex:costLimit,
+    ex:serverLoadLimit,
+    ex:connectionLimit,
+    ex:timeoutLimit,
+    ex:quotaLimit,
+    ex:federationSupportLimit .
+
+ex:queryOperation a vord:OperationKind ;
+  rdfs:label "Query Execution"@en .
+
+ex:protocolOperation a vord:OperationKind ;
+  rdfs:label "Protocol Traffic"@en .
+
+ex:queryPayloadBytesMetric a vord:Metric ;
+  rdfs:label "Query Payload Bytes"@en .
+
+ex:serverLoadScoreMetric a vord:Metric ;
+  rdfs:label "Server Load Score"@en .
+
+ex:concurrentConnectionCountMetric a vord:Metric ;
+  rdfs:label "Concurrent Connection Count"@en .
+
+ex:executionTimeSecondsMetric a vord:Metric ;
+  rdfs:label "Execution Time Seconds"@en .
+
+ex:internalCostModelV4 a vord:CostModel ;
+  rdfs:label "Internal Cost Model v4"@en .
+
+ex:rateMinute a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "120"^^xsd:decimal ;
+  vord:minValue "0"^^xsd:decimal ;
+  vord:burstValue "30"^^xsd:decimal ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:retryAfterHint "PT15S"^^xsd:duration ;
+  vord:signalsHeader http:retry-after ;
+  vord:appliesToOperation ex:protocolOperation .
+
+ex:rateDaily a vord:Limit, vord:RateLimit ;
+  vord:metric vord:requestsPerDay ;
+  vord:maxValue "500000"^^xsd:decimal ;
+  vord:windowDuration "P1D"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:QueueRequest ;
+  vord:hardLimit "false"^^xsd:boolean ;
+  vord:appliesToOperation ex:protocolOperation .
+
+ex:resultBindingsLimit a vord:Limit, vord:ResultSizeLimit ;
+  vord:metric vord:resultBindings ;
+  vord:maxValue "100000"^^xsd:decimal ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:TruncateResult ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation ex:queryOperation .
+
+ex:querySizeLimit a vord:Limit, vord:QuerySizeLimit ;
+  vord:metric ex:queryPayloadBytesMetric ;
+  vord:maxValue "262144"^^xsd:decimal ;
+  vord:unit unit:BYTE ;
+  vord:hasScope vord:PerUser ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation ex:queryOperation .
+
+ex:costLimit a vord:Limit, vord:CostModelLimit ;
+  vord:metric vord:estimatedCostUnits ;
+  vord:maxValue "200000"^^xsd:decimal ;
+  vord:unit unit:ONE ;
+  vord:costModel ex:internalCostModelV4 ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation ex:queryOperation .
+
+ex:serverLoadLimit a vord:Limit, vord:ServerLoadLimit ;
+  vord:metric ex:serverLoadScoreMetric ;
+  vord:maxValue "0.90"^^xsd:decimal ;
+  vord:unit unit:ONE ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:DegradeQuality ;
+  vord:hardLimit "false"^^xsd:boolean .
+
+ex:connectionLimit a vord:Limit, vord:ConnectionNumberLimit ;
+  vord:metric ex:concurrentConnectionCountMetric ;
+  vord:maxValue "300"^^xsd:decimal ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:returnsStatusCode "503"^^xsd:integer .
+
+ex:timeoutLimit a vord:Limit, vord:TimeoutLimit ;
+  vord:metric ex:executionTimeSecondsMetric ;
+  vord:maxValue "45"^^xsd:decimal ;
+  vord:unit unit:SEC ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:ThrottleResponse ;
+  vord:hardLimit "false"^^xsd:boolean ;
+  vord:appliesToOperation ex:queryOperation .
+
+ex:quotaLimit a vord:Limit, vord:QuotaLimit ;
+  vord:metric vord:requestsPerDay ;
+  vord:maxValue "1000000"^^xsd:decimal ;
+  vord:windowDuration "P1D"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerAPIKey ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean ;
+  vord:appliesToOperation ex:protocolOperation .
+
+ex:federationSupportLimit a vord:Limit, vord:FederationSupported ;
+  vord:federationSupported "true"^^xsd:boolean ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardLimit "true"^^xsd:boolean .

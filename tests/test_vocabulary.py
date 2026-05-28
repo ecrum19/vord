@@ -11,7 +11,7 @@ SHAPES_PATH = ROOT / "shapes" / "vord.shacl.ttl"
 README_PATH = ROOT / "README.md"
 EXAMPLE_PATHS = [
     ROOT / "examples" / "basic-service.ttl",
-    ROOT / "examples" / "tiered-profiles.ttl",
+    ROOT / "examples" / "exhaustive-service.ttl",
 ]
 
 VORD_NS = Namespace("https://w3id.org/vord#")

@@ -44,7 +44,7 @@ vord:LimitShape a sh:NodeShape ;
   sh:property [
     sh:path vord:unit ;
     sh:maxCount 1 ;
-    sh:datatype xsd:token ;
+    sh:nodeKind sh:IRI ;
   ] ;
   sh:property [
     sh:path vord:windowDuration ;
@@ -94,7 +94,7 @@ vord:ResultSizeLimitShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:resultRows vord:resultBytes ) ;
+    sh:in ( vord:resultBindings ) ;
   ] ;
   sh:property [
     sh:path vord:maxValue ;
@@ -109,7 +109,6 @@ vord:QuerySizeLimitShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:queryBytes vord:valuesItems vord:literalBytes ) ;
   ] ;
   sh:property [
     sh:path vord:maxValue ;
@@ -145,7 +144,6 @@ vord:ServerLoadLimitShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:cpuLoadRatio vord:activeQueryCount ) ;
   ] ;
   sh:property [
     sh:path vord:maxValue ;
@@ -160,7 +158,6 @@ vord:ConnectionNumberLimitShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:concurrentConnections vord:concurrentQueries ) ;
   ] ;
   sh:property [
     sh:path vord:maxValue ;
@@ -175,7 +172,6 @@ vord:TimeoutLimitShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:executionSeconds vord:queueWaitSeconds ) ;
   ] ;
   sh:property [
     sh:path vord:maxValue ;
@@ -199,8 +195,8 @@ vord:QuotaLimitShape a sh:NodeShape ;
     sh:datatype xsd:decimal ;
   ] .
 
-vord:FederatedQueryLimitShape a sh:NodeShape ;
-  sh:targetClass vord:FederatedQueryLimit ;
+vord:FederationSupportedShape a sh:NodeShape ;
+  sh:targetClass vord:FederationSupported ;
   sh:property [
     sh:path vord:federationSupported ;
     sh:minCount 1 ;

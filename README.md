@@ -1,6 +1,6 @@
 # VoRD: Vocabulary of Restrictive Datasets
 
-`VORD` is a modular RDF vocabulary for describing operational limits of SPARQL endpoints in a reusable, machine-readable way.
+`VoRD` is a modular RDF vocabulary for describing operational limits of SPARQL endpoints in a reusable, machine-readable way.
 
 It is designed as an extension of SPARQL Service Description, with validation support in SHACL and ShEx.
 
@@ -22,7 +22,7 @@ This vocabulary models endpoint constraints such as:
 - `shapes/vord.shacl.ttl`: SHACL constraints for validating instances
 - `shex/vord.shex`: companion ShEx schema
 - `examples/basic-service.ttl`: one endpoint with direct limits
-- `examples/tiered-profiles.ttl`: endpoint with a broader direct-limit set
+- `examples/exhaustive-service.ttl`: exhaustive endpoint example that exercises all core terms
 
 ## Design Principles
 
@@ -57,17 +57,17 @@ This vocabulary models endpoint constraints such as:
   - `vord:ConnectionNumberLimit`
   - `vord:TimeoutLimit`
   - `vord:QuotaLimit`
-  - `vord:FederatedQueryLimit` (capability-style: `vord:federationSupported`)
+  - `vord:FederationSupported` (capability-style: `vord:federationSupported`)
 
 ### Core properties
 
 - `vord:hasLimit` (`sd:Service -> vord:Limit`)
 - `vord:metric` (`vord:Limit -> vord:Metric`)
 - `vord:maxValue` (numeric threshold)
-- `vord:unit` (token, e.g., `bytes`, `requests`, `cost-units`)
+- `vord:unit` (unit IRI, e.g., from QUDT)
 - `vord:windowDuration` (`xsd:duration`)
 - `vord:burstValue` (for burst rate policies)
-- `vord:federationSupported` (`xsd:boolean`, for `vord:FederatedQueryLimit`)
+- `vord:federationSupported` (`xsd:boolean`, for `vord:FederationSupported`)
 - `vord:hasScope` (`vord:Scope`)
 - `vord:enforcement` (`vord:EnforcementMode`)
 - `vord:hardLimit` (`xsd:boolean`)
@@ -92,21 +92,21 @@ Set `vord:hasScope`, `vord:enforcement`, and `vord:hardLimit` so clients can rea
 
 ### 4. Model federation as capability support
 
-Use `vord:FederatedQueryLimit` with `vord:federationSupported` set to `true` or `false`.
+Use `vord:FederationSupported` with `vord:federationSupported` set to `true` or `false`.
 
 ## Required Categories Covered
 
 The vocabulary includes direct support for your required categories:
 
 - rate limit: `vord:RateLimit` + `vord:requestsPerWindow` / `vord:requestsPerDay`
-- result-size limit: `vord:ResultSizeLimit` + `vord:resultRows` / `vord:resultBytes`
-- query-size / values-size limit: `vord:QuerySizeLimit` + `vord:queryBytes`, `vord:valuesItems`, `vord:literalBytes`
+- result-size limit: `vord:ResultSizeLimit` + `vord:resultBindings`
+- query-size / values-size limit: `vord:QuerySizeLimit` + an implementation-defined `vord:Metric`
 - internal cost-model limit: `vord:CostModelLimit` + `vord:estimatedCostUnits` + `vord:costModel`
-- server-load limit: `vord:ServerLoadLimit` + `vord:cpuLoadRatio` or `vord:activeQueryCount`
-- simultaneous connections: `vord:ConnectionNumberLimit` + `vord:concurrentConnections` / `vord:concurrentQueries`
-- timeout limit: `vord:TimeoutLimit` + `vord:executionSeconds` / `vord:queueWaitSeconds`
+- server-load limit: `vord:ServerLoadLimit` + an implementation-defined `vord:Metric`
+- simultaneous connections: `vord:ConnectionNumberLimit` + an implementation-defined `vord:Metric`
+- timeout limit: `vord:TimeoutLimit` + an implementation-defined `vord:Metric`
 - quota limit: `vord:QuotaLimit` + `vord:requestsPerDay`
-- federation support: `vord:FederatedQueryLimit` + `vord:federationSupported` (`true`/`false`)
+- federation support: `vord:FederationSupported` + `vord:federationSupported` (`true`/`false`)
 
 ## SHACL Validation
 
@@ -114,7 +114,7 @@ The vocabulary includes direct support for your required categories:
 
 - generic shape for all `vord:Limit` instances
 - service shape (`sd:Service`) requiring one or more direct limits
-- class-specific metric constraints using `sh:in` for quantitative limits
+- class-specific metric constraints using `sh:in` where predefined metrics exist
 - explicit boolean constraint on `vord:federationSupported` for federation support
 - cardinality and datatype checks for core fields
 
@@ -196,7 +196,7 @@ This allows `sel` data to remain compatible with existing service-description pr
 - `vord:ConnectionNumberLimit`
 - `vord:TimeoutLimit`
 - `vord:QuotaLimit`
-- `vord:FederatedQueryLimit`
+- `vord:FederationSupported`
 - `vord:Metric`
 - `vord:Scope`
 - `vord:EnforcementMode`

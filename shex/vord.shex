@@ -17,7 +17,7 @@ start = @<ServiceWithLimits>
   vord:federationSupported xsd:boolean ? ;
   vord:hasScope IRI ;
   vord:enforcement IRI ;
-  vord:unit xsd:token ? ;
+  vord:unit IRI ? ;
   vord:windowDuration xsd:duration ? ;
   vord:retryAfterHint xsd:duration ? ;
   vord:returnsStatusCode xsd:integer ? ;

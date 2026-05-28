@@ -3,98 +3,48 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 @prefix vord: <https://w3id.org/vord#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
 
 ex:service a sd:Service ;
   sd:endpoint <https://example.org/sparql> ;
-  sd:supportedLanguage sd:SPARQLQuery, sd:SPARQLUpdate ;
+  sd:supportedLanguage sd:SPARQLQuery ;
   sd:feature sd:BasicFederatedQuery ;
-  vord:hasLimit
-    ex:rateLimit,
-    ex:resultLimit,
-    ex:querySizeLimit,
-    ex:costLimit,
-    ex:serverLoadLimit,
-    ex:connectionLimit,
-    ex:timeoutLimit,
-    ex:federationLimit .
+  vord:hasLimit ex:rateLimit, ex:resultLimit, ex:timeoutLimit, ex:federationLimit .
 
-ex:internalCostModelV3 a vord:CostModel ;
-  rdfs:label "Internal Cost Model v3"@en .
+ex:executionTimeSecondsMetric a vord:Metric ;
+  rdfs:label "Execution Time Seconds"@en .
 
 ex:rateLimit a vord:Limit, vord:RateLimit ;
   vord:metric vord:requestsPerWindow ;
   vord:maxValue "60"^^xsd:decimal ;
   vord:burstValue "15"^^xsd:decimal ;
-  vord:unit "requests"^^xsd:token ;
+  vord:unit unit:COUNT ;
   vord:windowDuration "PT1M"^^xsd:duration ;
   vord:hasScope vord:PerClientIP ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:returnsStatusCode "429"^^xsd:integer ;
-  vord:signalsHeader <http://www.w3.org/2011/http-headers#retry-after> ;
-  vord:retryAfterHint "PT30S"^^xsd:duration ;
-  vord:appliesToOperation vord:ProtocolOperation .
+  vord:retryAfterHint "PT30S"^^xsd:duration .
 
 ex:resultLimit a vord:Limit, vord:ResultSizeLimit ;
-  vord:metric vord:resultBytes ;
-  vord:maxValue "10000000"^^xsd:decimal ;
-  vord:unit "bytes"^^xsd:token ;
+  vord:metric vord:resultBindings ;
+  vord:maxValue "50000"^^xsd:decimal ;
+  vord:unit unit:COUNT ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:TruncateResult ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:appliesToOperation vord:QueryOperation .
-
-ex:querySizeLimit a vord:Limit, vord:QuerySizeLimit ;
-  vord:metric vord:queryBytes ;
-  vord:maxValue "131072"^^xsd:decimal ;
-  vord:unit "bytes"^^xsd:token ;
-  vord:hasScope vord:PerRequest ;
-  vord:enforcement vord:RejectRequest ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:appliesToOperation vord:QueryOperation .
-
-ex:costLimit a vord:Limit, vord:CostModelLimit ;
-  vord:metric vord:estimatedCostUnits ;
-  vord:maxValue "150000"^^xsd:decimal ;
-  vord:unit "cost-units"^^xsd:token ;
-  vord:costModel ex:internalCostModelV3 ;
-  vord:hasScope vord:PerRequest ;
-  vord:enforcement vord:RejectRequest ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:appliesToOperation vord:QueryOperation .
-
-ex:serverLoadLimit a vord:Limit, vord:ServerLoadLimit ;
-  vord:metric vord:cpuLoadRatio ;
-  vord:maxValue "0.85"^^xsd:decimal ;
-  vord:unit "ratio"^^xsd:token ;
-  vord:hasScope vord:GlobalScope ;
-  vord:enforcement vord:DegradeQuality ;
-  vord:hardLimit "false"^^xsd:boolean ;
-  vord:appliesToOperation vord:QueryOperation .
-
-ex:connectionLimit a vord:Limit, vord:ConnectionNumberLimit ;
-  vord:metric vord:concurrentConnections ;
-  vord:maxValue "200"^^xsd:decimal ;
-  vord:unit "connections"^^xsd:token ;
-  vord:hasScope vord:GlobalScope ;
-  vord:enforcement vord:RejectRequest ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:returnsStatusCode "503"^^xsd:integer ;
-  vord:appliesToOperation vord:ProtocolOperation .
+  vord:hardLimit "true"^^xsd:boolean .
 
 ex:timeoutLimit a vord:Limit, vord:TimeoutLimit ;
-  vord:metric vord:executionSeconds ;
+  vord:metric ex:executionTimeSecondsMetric ;
   vord:maxValue "30"^^xsd:decimal ;
-  vord:unit "seconds"^^xsd:token ;
+  vord:unit unit:SEC ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit "true"^^xsd:boolean ;
-  vord:returnsStatusCode "503"^^xsd:integer ;
-  vord:appliesToOperation vord:QueryOperation .
+  vord:returnsStatusCode "503"^^xsd:integer .
 
-ex:federationLimit a vord:Limit, vord:FederatedQueryLimit ;
+ex:federationLimit a vord:Limit, vord:FederationSupported ;
   vord:federationSupported "true"^^xsd:boolean ;
   vord:hasScope vord:GlobalScope ;
   vord:enforcement vord:RejectRequest ;
-  vord:hardLimit "true"^^xsd:boolean ;
-  vord:appliesToOperation vord:FederationOperation .
+  vord:hardLimit "true"^^xsd:boolean .

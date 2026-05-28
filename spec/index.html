@@ -80,7 +80,7 @@
         <dt>capability limit</dt>
         <dd>
           A boolean support statement, currently represented by
-          <code>vord:FederatedQueryLimit</code> with
+          <code>vord:FederationSupported</code> with
           <code>vord:federationSupported</code>.
         </dd>
       </dl>
@@ -160,8 +160,7 @@ PREFIX xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
             <td><code>vord:TimeoutLimit</code></td>
             <td>Critical for query planning and timeout retries.</td>
             <td>
-              <code>vord:metric</code> (typically
-              <code>vord:executionSeconds</code>),
+              <code>vord:metric</code> (implementation-defined),
               <code>vord:maxValue</code>,
               <code>vord:hasScope</code>,
               <code>vord:enforcement</code>,
@@ -173,8 +172,7 @@ PREFIX xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
             <td><code>vord:ResultSizeLimit</code></td>
             <td>Prevents client-side parsing/memory failures.</td>
             <td>
-              <code>vord:metric</code> (<code>vord:resultRows</code> or
-              <code>vord:resultBytes</code>),
+              <code>vord:metric</code> (<code>vord:resultBindings</code>),
               <code>vord:maxValue</code>,
               <code>vord:hasScope</code>,
               <code>vord:enforcement</code>,
@@ -183,7 +181,7 @@ PREFIX xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
           </tr>
           <tr>
             <td><strong>MUST</strong></td>
-            <td><code>vord:FederatedQueryLimit</code></td>
+            <td><code>vord:FederationSupported</code></td>
             <td>Lets clients know whether <code>SERVICE</code> is supported.</td>
             <td>
               <code>vord:federationSupported</code> (boolean),
@@ -260,21 +258,23 @@ ex:rate a vord:Limit, vord:RateLimit ;
   vord:hardLimit true ;
   vord:returnsStatusCode 429 .
 
+ex:executionTimeSecondsMetric a vord:Metric .
+
 ex:timeout a vord:Limit, vord:TimeoutLimit ;
-  vord:metric vord:executionSeconds ;
+  vord:metric ex:executionTimeSecondsMetric ;
   vord:maxValue "30"^^xsd:decimal ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit true .
 
 ex:resultSize a vord:Limit, vord:ResultSizeLimit ;
-  vord:metric vord:resultBytes ;
-  vord:maxValue "10000000"^^xsd:decimal ;
+  vord:metric vord:resultBindings ;
+  vord:maxValue "50000"^^xsd:decimal ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:TruncateResult ;
   vord:hardLimit true .
 
-ex:federationSupport a vord:Limit, vord:FederatedQueryLimit ;
+ex:federationSupport a vord:Limit, vord:FederationSupported ;
   vord:federationSupported true ;
   vord:hasScope vord:GlobalScope ;
   vord:enforcement vord:RejectRequest ;
