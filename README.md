@@ -1,45 +1,43 @@
 # VoRD: Vocabulary of Restrictive Datasets
 
-`VoRD` is an RDF vocabulary for SPARQL endpoint maintainers to advertise live endpoint limits in a machine-readable way.
+`VoRD` is an RDF vocabulary for SPARQL endpoint maintainers to advertise live endpoint restrictions in a machine-readable way.
 
-It extends SPARQL Service Description with explicit limit resources and validation support through SHACL and ShEx.
+It extends SPARQL Service Description with explicit restriction resources and validation support through SHACL and ShEx.
 
 ## Repository Structure
 
+- `docs/index.html`: GitHub Pages landing page for VoRD
+- `docs/assets/`: published artifact copies used by the landing page viewer
+- `scripts/sync-docs-assets.sh`: refreshes `docs/assets` from canonical source files
 - `vocab/vord.ttl`: authoritative vocabulary (`v0.2`)
 - `shapes/vord.shacl.ttl`: SHACL constraints
 - `shex/vord.shex`: ShEx companion schema
 - `examples/basic-service.ttl`: minimal example
 - `examples/exhaustive-service.ttl`: exhaustive example using all core terms
-- `examples/wikidata-rate-limits.ttl`: Wikidata/WMF rate-limit example based on public docs
+- `examples/wikidata-rate-restrictions.ttl`: Wikidata/WMF rate-restriction example based on public docs
 
 ## Publishing Pattern
 
-Attach one or more limits to an `sd:Service` using `vord:hasLimit`.
+Attach one or more restrictions to an `sd:Service` using `vord:hasRestriction`.
 
-Quantitative limits generally use:
+Quantitative restrictions generally use:
 - `vord:metric`
 - `vord:maxValue`
 - optional `vord:minValue`, `vord:unit`, `vord:windowDuration`, `vord:burstValue`
-- `vord:hasScope`, `vord:enforcement`, `vord:hardLimit`
-
-Federation capability uses:
-- class `vord:FederationSupported`
-- property `vord:federationSupported` (boolean)
+- `vord:hasScope`, `vord:enforcement`, `vord:hardRestriction`
 
 ## Complete Term Index
 
 ### Classes
 
-- `vord:Limit`
-- `vord:RateLimit`
-- `vord:ResultSizeLimit`
-- `vord:CostModelLimit`
-- `vord:ServerLoadLimit`
-- `vord:ConcurrentRequestsLimit`
-- `vord:ResponseTimeLimit`
-- `vord:QuotaLimit`
-- `vord:FederationSupported`
+- `vord:Restriction`
+- `vord:RateRestriction`
+- `vord:ResultSizeRestriction`
+- `vord:CostModelRestriction`
+- `vord:ServerLoadRestriction`
+- `vord:ConcurrentRequestsRestriction`
+- `vord:ResponseTimeRestriction`
+- `vord:QuotaRestriction`
 - `vord:Metric`
 - `vord:Scope`
 - `vord:EnforcementMode`
@@ -47,7 +45,7 @@ Federation capability uses:
 
 ### Object Properties
 
-- `vord:hasLimit`
+- `vord:hasRestriction`
 - `vord:metric`
 - `vord:hasScope`
 - `vord:enforcement`
@@ -63,8 +61,7 @@ Federation capability uses:
 - `vord:windowDuration`
 - `vord:retryAfterHint`
 - `vord:returnsStatusCode`
-- `vord:hardLimit`
-- `vord:federationSupported`
+- `vord:hardRestriction`
 
 ## Validation
 
@@ -75,4 +72,14 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-test.txt
 pytest -q
+```
+
+## GitHub Pages
+
+For a hosted HTML vocabulary portal, set Pages source to the `/docs` folder on `main`.
+
+To refresh the published docs assets after editing vocabulary/spec/examples:
+
+```bash
+./scripts/sync-docs-assets.sh
 ```

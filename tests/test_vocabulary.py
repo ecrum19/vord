@@ -12,6 +12,7 @@ README_PATH = ROOT / "README.md"
 EXAMPLE_PATHS = [
     ROOT / "examples" / "basic-service.ttl",
     ROOT / "examples" / "exhaustive-service.ttl",
+    ROOT / "examples" / "wikidata-rate-restrictions.ttl",
 ]
 
 VORD_NS = Namespace("https://w3id.org/vord#")
@@ -84,8 +85,8 @@ def test_example_graphs_conform_to_shacl():
         assert conforms, f"{example_path.name} should conform.\n{report_text}"
 
 
-def test_invalid_limit_missing_metric_fails_validation():
-    """A quantitative limit without vord:metric must fail the SHACL constraints."""
+def test_invalid_restriction_missing_metric_fails_validation():
+    """A quantitative restriction without vord:metric must fail the SHACL constraints."""
     invalid_data = Graph()
     invalid_data.parse(
         data="""
@@ -96,14 +97,14 @@ def test_invalid_limit_missing_metric_fails_validation():
 
         ex:service a sd:Service ;
           sd:endpoint <https://example.org/sparql> ;
-          vord:hasLimit ex:badLimit .
+          vord:hasRestriction ex:badLimit .
 
-        ex:badLimit a vord:Limit, vord:RateLimit ;
+        ex:badLimit a vord:Restriction, vord:RateRestriction ;
           vord:maxValue "10"^^xsd:integer ;
           vord:windowDuration "PT1M"^^xsd:duration ;
           vord:hasScope vord:PerClientIP ;
           vord:enforcement vord:RejectRequest ;
-          vord:hardLimit "true"^^xsd:boolean .
+          vord:hardRestriction "true"^^xsd:boolean .
         """,
         format="turtle",
     )

@@ -1,0 +1,993 @@
+{
+  "generatedAt": "2026-05-28T12:53:26.139Z",
+  "source": "vocab/vord.ttl",
+  "namespace": "https://w3id.org/vord#",
+  "summary": {
+    "nodes": 34,
+    "edges": 39,
+    "countsByType": {
+      "class": 12,
+      "objectProperty": 7,
+      "datatypeProperty": 7,
+      "annotationProperty": 0,
+      "external": 8
+    },
+    "relationCounts": {
+      "subClassOf": 11,
+      "domain": 14,
+      "range": 14,
+      "annotation": 0
+    }
+  },
+  "termsByType": {
+    "class": [
+      {
+        "qname": "vord:ConcurrentRequestsRestriction",
+        "uri": "https://w3id.org/vord#ConcurrentRequestsRestriction",
+        "label": "Connection Number Restriction",
+        "comment": "Restriction on number of simultaneous open connections or active query executions."
+      },
+      {
+        "qname": "vord:CostModel",
+        "uri": "https://w3id.org/vord#CostModel",
+        "label": "Cost Model",
+        "comment": "Identifier for an implementation-specific cost model used by an endpoint."
+      },
+      {
+        "qname": "vord:CostModelRestriction",
+        "uri": "https://w3id.org/vord#CostModelRestriction",
+        "label": "Cost Model Restriction",
+        "comment": "Restriction based on internal query optimizer or execution cost estimation."
+      },
+      {
+        "qname": "vord:EnforcementMode",
+        "uri": "https://w3id.org/vord#EnforcementMode",
+        "label": "Enforcement Mode",
+        "comment": "Operational behavior when a restriction is reached."
+      },
+      {
+        "qname": "vord:Metric",
+        "uri": "https://w3id.org/vord#Metric",
+        "label": "Metric",
+        "comment": "Measurable dimension that a Restriction constrains."
+      },
+      {
+        "qname": "vord:QuotaRestriction",
+        "uri": "https://w3id.org/vord#QuotaRestriction",
+        "label": "Quota Restriction",
+        "comment": "Rolling or fixed query submission quota over a longer period (day, week, month)."
+      },
+      {
+        "qname": "vord:RateRestriction",
+        "uri": "https://w3id.org/vord#RateRestriction",
+        "label": "Rate Restriction",
+        "comment": "Restriction on request frequency over time."
+      },
+      {
+        "qname": "vord:ResponseTimeRestriction",
+        "uri": "https://w3id.org/vord#ResponseTimeRestriction",
+        "label": "Timeout Restriction",
+        "comment": "Maximum allowed execution or waiting time for a query."
+      },
+      {
+        "qname": "vord:Restriction",
+        "uri": "https://w3id.org/vord#Restriction",
+        "label": "Restriction",
+        "comment": "A machine-readable operational restriction or policy threshold for a SPARQL endpoint."
+      },
+      {
+        "qname": "vord:ResultSizeRestriction",
+        "uri": "https://w3id.org/vord#ResultSizeRestriction",
+        "label": "Result Size Restriction",
+        "comment": "Restriction on result payload size, bindings, or triples."
+      },
+      {
+        "qname": "vord:Scope",
+        "uri": "https://w3id.org/vord#Scope",
+        "label": "Scope",
+        "comment": "Scope at which a restriction is evaluated (e.g., per user, global)."
+      },
+      {
+        "qname": "vord:ServerLoadRestriction",
+        "uri": "https://w3id.org/vord#ServerLoadRestriction",
+        "label": "Server Load Restriction",
+        "comment": "Restriction activated by host or cluster load conditions."
+      }
+    ],
+    "objectProperty": [
+      {
+        "qname": "vord:costModel",
+        "uri": "https://w3id.org/vord#costModel",
+        "label": "cost model",
+        "comment": "Cost model used to interpret an internal cost-model restriction."
+      },
+      {
+        "qname": "vord:enforcement",
+        "uri": "https://w3id.org/vord#enforcement",
+        "label": "enforcement",
+        "comment": "Action taken when the restriction is reached."
+      },
+      {
+        "qname": "vord:hasRestriction",
+        "uri": "https://w3id.org/vord#hasRestriction",
+        "label": "has restriction",
+        "comment": "Relates a SPARQL service to a restriction statement."
+      },
+      {
+        "qname": "vord:hasScope",
+        "uri": "https://w3id.org/vord#hasScope",
+        "label": "has scope",
+        "comment": "Scope in which the restriction is enforced."
+      },
+      {
+        "qname": "vord:httpSignalHeader",
+        "uri": "https://w3id.org/vord#httpSignalHeader",
+        "label": "signals header",
+        "comment": "HTTP header name used by the endpoint to signal this restriction status."
+      },
+      {
+        "qname": "vord:metric",
+        "uri": "https://w3id.org/vord#metric",
+        "label": "metric",
+        "comment": "Metric constrained by this restriction."
+      },
+      {
+        "qname": "vord:unit",
+        "uri": "https://w3id.org/vord#unit",
+        "label": "unit",
+        "comment": "Unit of measure for maxValue."
+      }
+    ],
+    "datatypeProperty": [
+      {
+        "qname": "vord:burstValue",
+        "uri": "https://w3id.org/vord#burstValue",
+        "label": "burst value",
+        "comment": "Additional burst threshold for short spikes."
+      },
+      {
+        "qname": "vord:hardRestriction",
+        "uri": "https://w3id.org/vord#hardRestriction",
+        "label": "hard restriction",
+        "comment": "True if the threshold is strictly enforced; false if advisory or load-dependent."
+      },
+      {
+        "qname": "vord:maxValue",
+        "uri": "https://w3id.org/vord#maxValue",
+        "label": "maximum value",
+        "comment": "Primary threshold value for this restriction."
+      },
+      {
+        "qname": "vord:minValue",
+        "uri": "https://w3id.org/vord#minValue",
+        "label": "minimum value",
+        "comment": "Optional minimum threshold for this restriction."
+      },
+      {
+        "qname": "vord:retryAfterHint",
+        "uri": "https://w3id.org/vord#retryAfterHint",
+        "label": "retry after hint",
+        "comment": "Suggested waiting duration before retry (xsd:duration)."
+      },
+      {
+        "qname": "vord:returnsStatusCode",
+        "uri": "https://w3id.org/vord#returnsStatusCode",
+        "label": "returns status code",
+        "comment": "HTTP status code commonly used when this restriction is exceeded (e.g., 429)."
+      },
+      {
+        "qname": "vord:windowDuration",
+        "uri": "https://w3id.org/vord#windowDuration",
+        "label": "window duration",
+        "comment": "Duration window for evaluating this restriction (xsd:duration)."
+      }
+    ],
+    "annotationProperty": []
+  },
+  "externalTerms": [
+    {
+      "qname": "http:HeaderName",
+      "uri": "http://www.w3.org/2011/http#HeaderName"
+    },
+    {
+      "qname": "qudt:Unit",
+      "uri": "http://qudt.org/schema/qudt/Unit"
+    },
+    {
+      "qname": "sd:Feature",
+      "uri": "http://www.w3.org/ns/sparql-service-description#Feature"
+    },
+    {
+      "qname": "sd:Service",
+      "uri": "http://www.w3.org/ns/sparql-service-description#Service"
+    },
+    {
+      "qname": "skos:Concept",
+      "uri": "http://www.w3.org/2004/02/skos/core#Concept"
+    },
+    {
+      "qname": "xsd:boolean",
+      "uri": "http://www.w3.org/2001/XMLSchema#boolean"
+    },
+    {
+      "qname": "xsd:duration",
+      "uri": "http://www.w3.org/2001/XMLSchema#duration"
+    },
+    {
+      "qname": "xsd:integer",
+      "uri": "http://www.w3.org/2001/XMLSchema#integer"
+    }
+  ],
+  "relationshipsByType": {
+    "subClassOf": [
+      {
+        "source": "vord:ConcurrentRequestsRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:CostModelRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:EnforcementMode",
+        "target": "skos:Concept",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:Metric",
+        "target": "skos:Concept",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:QuotaRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:RateRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:ResponseTimeRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:Restriction",
+        "target": "sd:Feature",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:ResultSizeRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:Scope",
+        "target": "skos:Concept",
+        "predicate": "rdfs:subClassOf"
+      },
+      {
+        "source": "vord:ServerLoadRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:subClassOf"
+      }
+    ],
+    "domain": [
+      {
+        "source": "vord:burstValue",
+        "target": "vord:RateRestriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:costModel",
+        "target": "vord:CostModelRestriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:enforcement",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:hardRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:hasRestriction",
+        "target": "sd:Service",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:hasScope",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:httpSignalHeader",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:maxValue",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:metric",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:minValue",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:retryAfterHint",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:returnsStatusCode",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:unit",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      },
+      {
+        "source": "vord:windowDuration",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:domain"
+      }
+    ],
+    "range": [
+      {
+        "source": "vord:burstValue",
+        "target": "xsd:integer",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:costModel",
+        "target": "vord:CostModel",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:enforcement",
+        "target": "vord:EnforcementMode",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:hardRestriction",
+        "target": "xsd:boolean",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:hasRestriction",
+        "target": "vord:Restriction",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:hasScope",
+        "target": "vord:Scope",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:httpSignalHeader",
+        "target": "http:HeaderName",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:maxValue",
+        "target": "xsd:integer",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:metric",
+        "target": "vord:Metric",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:minValue",
+        "target": "xsd:integer",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:retryAfterHint",
+        "target": "xsd:duration",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:returnsStatusCode",
+        "target": "xsd:integer",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:unit",
+        "target": "qudt:Unit",
+        "predicate": "rdfs:range"
+      },
+      {
+        "source": "vord:windowDuration",
+        "target": "xsd:duration",
+        "predicate": "rdfs:range"
+      }
+    ],
+    "annotation": []
+  },
+  "adjacency": {
+    "vord:ConcurrentRequestsRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:CostModel": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:costModel"
+        }
+      ]
+    },
+    "vord:CostModelRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:costModel"
+        }
+      ]
+    },
+    "vord:EnforcementMode": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "skos:Concept"
+        }
+      ],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:enforcement"
+        }
+      ]
+    },
+    "vord:Metric": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "skos:Concept"
+        }
+      ],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:metric"
+        }
+      ]
+    },
+    "vord:QuotaRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:RateRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:burstValue"
+        }
+      ]
+    },
+    "vord:ResponseTimeRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:Restriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "sd:Feature"
+        }
+      ],
+      "incoming": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:ConcurrentRequestsRestriction"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:CostModelRestriction"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:QuotaRestriction"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:RateRestriction"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:ResponseTimeRestriction"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:ResultSizeRestriction"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:ServerLoadRestriction"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:enforcement"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:hardRestriction"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:hasScope"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:httpSignalHeader"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:maxValue"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:metric"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:minValue"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:retryAfterHint"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:returnsStatusCode"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:unit"
+        },
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:windowDuration"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:hasRestriction"
+        }
+      ]
+    },
+    "vord:ResultSizeRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:Scope": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "skos:Concept"
+        }
+      ],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:hasScope"
+        }
+      ]
+    },
+    "vord:ServerLoadRestriction": {
+      "outgoing": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:costModel": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:CostModelRestriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "vord:CostModel"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:enforcement": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "vord:EnforcementMode"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:hasRestriction": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "sd:Service"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:hasScope": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "vord:Scope"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:httpSignalHeader": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "http:HeaderName"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:metric": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "vord:Metric"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:unit": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "qudt:Unit"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:burstValue": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:RateRestriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:integer"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:hardRestriction": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:boolean"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:maxValue": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:integer"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:minValue": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:integer"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:retryAfterHint": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:duration"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:returnsStatusCode": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:integer"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:windowDuration": {
+      "outgoing": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "target": "vord:Restriction"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "target": "xsd:duration"
+        }
+      ],
+      "incoming": []
+    },
+    "http:HeaderName": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:httpSignalHeader"
+        }
+      ]
+    },
+    "qudt:Unit": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:unit"
+        }
+      ]
+    },
+    "sd:Feature": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:Restriction"
+        }
+      ]
+    },
+    "sd:Service": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "domain",
+          "predicate": "rdfs:domain",
+          "source": "vord:hasRestriction"
+        }
+      ]
+    },
+    "skos:Concept": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:EnforcementMode"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:Metric"
+        },
+        {
+          "relation": "subClassOf",
+          "predicate": "rdfs:subClassOf",
+          "source": "vord:Scope"
+        }
+      ]
+    },
+    "xsd:boolean": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:hardRestriction"
+        }
+      ]
+    },
+    "xsd:duration": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:retryAfterHint"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:windowDuration"
+        }
+      ]
+    },
+    "xsd:integer": {
+      "outgoing": [],
+      "incoming": [
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:burstValue"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:maxValue"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:minValue"
+        },
+        {
+          "relation": "range",
+          "predicate": "rdfs:range",
+          "source": "vord:returnsStatusCode"
+        }
+      ]
+    }
+  }
+}

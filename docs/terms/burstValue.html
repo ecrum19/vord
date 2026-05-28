@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>vord:burstValue · VoRD Term</title>
+  <style>
+    :root {
+      --bg: #f3efe8;
+      --panel: #ffffff;
+      --ink: #1b2229;
+      --muted: #5c6a78;
+      --accent: #0f6772;
+      --border: #d5e1eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    .container {
+      width: min(980px, 94vw);
+      margin: 0 auto;
+      padding: 28px 0 52px;
+      display: grid;
+      gap: 16px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+    }
+    .panel > * + * {
+      margin-top: 12px;
+    }
+    h1 { margin: 0; font-size: 1.9rem; }
+    h2 { margin: 0; font-size: 1.2rem; }
+    p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .crumbs {
+      font-size: 0.92rem;
+      color: var(--muted);
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #dce5ed;
+    }
+    .crumbs a { color: var(--accent); text-decoration: none; }
+    .badge {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    .meta {
+      display: grid;
+      gap: 8px;
+      font-size: 0.94rem;
+    }
+    code {
+      font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+      background: #eff6f8;
+      border-radius: 6px;
+      padding: 2px 6px;
+      color: #174950;
+      font-size: 0.88rem;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--accent);
+      background: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      min-width: 620px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    th { background: #edf5f8; }
+    pre {
+      margin: 0;
+      background: #0f1b25;
+      color: #dfedff;
+      padding: 12px;
+      border-radius: 10px;
+      overflow: auto;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    @media (max-width: 700px) {
+      table { min-width: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <div class="crumbs"><a href="../index.html">Home</a> / <a href="../ontology-reference.html">Vocabulary Reference</a> / <a href="index.html">VoRD Term Pages</a></div>
+      <h1>vord:burstValue</h1>
+      <div><span class="badge">Datatype Property</span><span class="badge">Declared in ontology</span></div>
+      <div class="meta">
+        <div><strong>IRI:</strong> <code>https://w3id.org/vord#burstValue</code></div>
+        <div><strong>Label:</strong> burst value</div>
+        <div><strong>Description:</strong> Additional burst threshold for short spikes.</div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="../ontology-reference.html">Return to Vocabulary Reference</a>
+        <a class="btn" href="../ontology-reference.html#term-burstValue">Return to table row</a>
+        <a class="btn" href="../assets/vord.ttl" target="_blank" rel="noreferrer">Open Ontology TTL</a>
+        <a class="btn" href="../assets/vord.shacl.ttl" target="_blank" rel="noreferrer">Open SHACL TTL</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Ontology Relationships</h2>
+      <p>Relationships are derived from domain/range/subclass and annotation links in the ontology graph data.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th colspan="3">Outgoing</th></tr><tr><th>Relation</th><th>Predicate</th><th>Target</th></tr></thead>
+          <tbody><tr>
+      <td><code>domain</code></td>
+      <td><code>rdfs:domain</code></td>
+      <td><a href="RateRestriction.html"><code>vord:RateRestriction</code></a></td>
+    </tr>
+<tr>
+      <td><code>range</code></td>
+      <td><code>rdfs:range</code></td>
+      <td><a href="http://www.w3.org/2001/XMLSchema#integer" target="_blank" rel="noreferrer"><code>xsd:integer</code></a></td>
+    </tr></tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th colspan="3">Incoming</th></tr><tr><th>Relation</th><th>Predicate</th><th>Source</th></tr></thead>
+          <tbody><tr><td colspan="3">None</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Repository Usage</h2>
+      <p>References to <code>vord:burstValue</code> across tracked repo files.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Source File</th><th>Hits</th><th>Pages View</th></tr></thead>
+          <tbody><tr>
+      <td><code>docs/assets/ontology-relationships-overview.json</code></td>
+      <td>6</td>
+      <td><a href="../assets/ontology-relationships-overview.json" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>docs/assets/ontology-graph-data.json</code></td>
+      <td>3</td>
+      <td><a href="../assets/ontology-graph-data.json" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>README.md</code></td>
+      <td>2</td>
+      <td>-</td>
+    </tr>
+<tr>
+      <td><code>docs/assets/basic-service.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/basic-service.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>docs/assets/exhaustive-service.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/exhaustive-service.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>docs/assets/vord.shacl.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/vord.shacl.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>docs/assets/vord.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/vord.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>docs/ontology-reference.html</code></td>
+      <td>1</td>
+      <td><a href="../ontology-reference.html" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>examples/basic-service.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/basic-service.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>examples/exhaustive-service.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/exhaustive-service.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>shapes/vord.shacl.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/vord.shacl.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr>
+<tr>
+      <td><code>vocab/vord.ttl</code></td>
+      <td>1</td>
+      <td><a href="../assets/vord.ttl" target="_blank" rel="noreferrer">Open</a></td>
+    </tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>SHACL Snippet</h2>
+      <p>No dedicated SHACL NodeShape block for this term.</p>
+    </div>
+  </div>
+</body>
+</html>
