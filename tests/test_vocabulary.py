@@ -99,7 +99,7 @@ def test_invalid_limit_missing_metric_fails_validation():
           vord:hasLimit ex:badLimit .
 
         ex:badLimit a vord:Limit, vord:RateLimit ;
-          vord:maxValue "10"^^xsd:decimal ;
+          vord:maxValue "10"^^xsd:integer ;
           vord:windowDuration "PT1M"^^xsd:duration ;
           vord:hasScope vord:PerClientIP ;
           vord:enforcement vord:RejectRequest ;

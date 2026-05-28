@@ -21,7 +21,12 @@ vord:LimitShape a sh:NodeShape ;
   sh:property [
     sh:path vord:maxValue ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
+  ] ;
+  sh:property [
+    sh:path vord:minValue ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
   ] ;
   sh:property [
     sh:path vord:hardLimit ;
@@ -60,6 +65,11 @@ vord:LimitShape a sh:NodeShape ;
     sh:path vord:returnsStatusCode ;
     sh:maxCount 1 ;
     sh:datatype xsd:integer ;
+  ] ;
+  sh:property [
+    sh:path vord:httpSignalHeader ;
+    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
   ] .
 
 vord:RateLimitShape a sh:NodeShape ;
@@ -74,7 +84,7 @@ vord:RateLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] ;
   sh:property [
     sh:path vord:windowDuration ;
@@ -85,7 +95,7 @@ vord:RateLimitShape a sh:NodeShape ;
   sh:property [
     sh:path vord:burstValue ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] .
 
 vord:ResultSizeLimitShape a sh:NodeShape ;
@@ -100,21 +110,7 @@ vord:ResultSizeLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
-  ] .
-
-vord:QuerySizeLimitShape a sh:NodeShape ;
-  sh:targetClass vord:QuerySizeLimit ;
-  sh:property [
-    sh:path vord:metric ;
-    sh:minCount 1 ;
-    sh:maxCount 1 ;
-  ] ;
-  sh:property [
-    sh:path vord:maxValue ;
-    sh:minCount 1 ;
-    sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] .
 
 vord:CostModelLimitShape a sh:NodeShape ;
@@ -129,7 +125,7 @@ vord:CostModelLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] ;
   sh:property [
     sh:path vord:costModel ;
@@ -149,11 +145,11 @@ vord:ServerLoadLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] .
 
-vord:ConnectionNumberLimitShape a sh:NodeShape ;
-  sh:targetClass vord:ConnectionNumberLimit ;
+vord:ConcurrentRequestsLimitShape a sh:NodeShape ;
+  sh:targetClass vord:ConcurrentRequestsLimit ;
   sh:property [
     sh:path vord:metric ;
     sh:minCount 1 ;
@@ -163,11 +159,11 @@ vord:ConnectionNumberLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] .
 
-vord:TimeoutLimitShape a sh:NodeShape ;
-  sh:targetClass vord:TimeoutLimit ;
+vord:ResponseTimeLimitShape a sh:NodeShape ;
+  sh:targetClass vord:ResponseTimeLimit ;
   sh:property [
     sh:path vord:metric ;
     sh:minCount 1 ;
@@ -177,7 +173,7 @@ vord:TimeoutLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] .
 
 vord:QuotaLimitShape a sh:NodeShape ;
@@ -192,7 +188,7 @@ vord:QuotaLimitShape a sh:NodeShape ;
     sh:path vord:maxValue ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:integer ;
   ] .
 
 vord:FederationSupportedShape a sh:NodeShape ;

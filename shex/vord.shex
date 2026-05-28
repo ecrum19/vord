@@ -12,7 +12,8 @@ start = @<ServiceWithLimits>
 <Limit> EXTRA a {
   a [vord:Limit] ;
   vord:metric IRI ? ;
-  vord:maxValue xsd:decimal ? ;
+  vord:maxValue xsd:integer ? ;
+  vord:minValue xsd:integer ? ;
   vord:hardLimit xsd:boolean ;
   vord:federationSupported xsd:boolean ? ;
   vord:hasScope IRI ;
@@ -21,8 +22,7 @@ start = @<ServiceWithLimits>
   vord:windowDuration xsd:duration ? ;
   vord:retryAfterHint xsd:duration ? ;
   vord:returnsStatusCode xsd:integer ? ;
-  vord:signalsHeader IRI * ;
-  vord:appliesToOperation IRI * ;
+  vord:httpSignalHeader IRI * ;
   vord:costModel IRI ? ;
-  vord:burstValue xsd:decimal ?
+  vord:burstValue xsd:integer ?
 }

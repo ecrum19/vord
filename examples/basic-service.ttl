@@ -4,39 +4,41 @@
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 @prefix vord: <https://w3id.org/vord#> .
 @prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix http: <http://www.w3.org/2011/http-headers#> .
 
 ex:service a sd:Service ;
   sd:endpoint <https://example.org/sparql> ;
   sd:supportedLanguage sd:SPARQLQuery ;
   sd:feature sd:BasicFederatedQuery ;
-  vord:hasLimit ex:rateLimit, ex:resultLimit, ex:timeoutLimit, ex:federationLimit .
+  vord:hasLimit ex:rateLimit, ex:resultLimit, ex:responseTimeLimit, ex:federationLimit .
 
-ex:executionTimeSecondsMetric a vord:Metric ;
-  rdfs:label "Execution Time Seconds"@en .
+ex:responseTimeSecondsMetric a vord:Metric ;
+  rdfs:label "Response Time Seconds"@en .
 
 ex:rateLimit a vord:Limit, vord:RateLimit ;
   vord:metric vord:requestsPerWindow ;
-  vord:maxValue "60"^^xsd:decimal ;
-  vord:burstValue "15"^^xsd:decimal ;
+  vord:maxValue "60"^^xsd:integer ;
+  vord:burstValue "15"^^xsd:integer ;
   vord:unit unit:COUNT ;
   vord:windowDuration "PT1M"^^xsd:duration ;
   vord:hasScope vord:PerClientIP ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit "true"^^xsd:boolean ;
   vord:returnsStatusCode "429"^^xsd:integer ;
-  vord:retryAfterHint "PT30S"^^xsd:duration .
+  vord:retryAfterHint "PT30S"^^xsd:duration ;
+  vord:httpSignalHeader http:retry-after .
 
 ex:resultLimit a vord:Limit, vord:ResultSizeLimit ;
   vord:metric vord:resultBindings ;
-  vord:maxValue "50000"^^xsd:decimal ;
+  vord:maxValue "50000"^^xsd:integer ;
   vord:unit unit:COUNT ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:TruncateResult ;
   vord:hardLimit "true"^^xsd:boolean .
 
-ex:timeoutLimit a vord:Limit, vord:TimeoutLimit ;
-  vord:metric ex:executionTimeSecondsMetric ;
-  vord:maxValue "30"^^xsd:decimal ;
+ex:responseTimeLimit a vord:Limit, vord:ResponseTimeLimit ;
+  vord:metric ex:responseTimeSecondsMetric ;
+  vord:maxValue "600"^^xsd:integer ;
   vord:unit unit:SEC ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:RejectRequest ;

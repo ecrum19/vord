@@ -25,26 +25,14 @@
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
           "Liberation Mono", monospace;
       }
-      table {
-        width: 100%;
-      }
-      th,
-      td {
-        vertical-align: top;
-      }
     </style>
   </head>
   <body>
     <section id="abstract">
       <p>
         This draft defines a practical usage profile for
-        <code>https://w3id.org/vord#</code> (VoRD) so SPARQL endpoint
-        maintainers can publish machine-readable operational limits in
-        <a href="https://www.w3.org/TR/sparql12-service-description/"
-          >SPARQL Service Description</a
-        >
-        documents. It prioritizes the most important limits to expose first and
-        specifies how those limits are represented.
+        <code>https://example.com/vord#</code> (VoRD) so SPARQL endpoint
+        maintainers can advertise machine-readable live endpoint limits to users.
       </p>
     </section>
 
@@ -64,36 +52,11 @@
         <a data-cite="RFC2119">RFC 2119</a> and
         <a data-cite="RFC8174">RFC 8174</a>.
       </p>
-      <dl>
-        <dt>service description</dt>
-        <dd>
-          An RDF description of a SPARQL endpoint using
-          <a href="https://www.w3.org/TR/sparql12-service-description/"
-            >SPARQL Service Description</a
-          >.
-        </dd>
-        <dt>quantitative limit</dt>
-        <dd>
-          A limit expressed with a numeric threshold, typically using
-          <code>vord:metric</code> and <code>vord:maxValue</code>.
-        </dd>
-        <dt>capability limit</dt>
-        <dd>
-          A boolean support statement, currently represented by
-          <code>vord:FederationSupported</code> with
-          <code>vord:federationSupported</code>.
-        </dd>
-      </dl>
     </section>
 
     <section id="conformance">
       <h2>Conformance</h2>
-      <p>
-        A conforming VoRD publisher is an implementation that publishes
-        endpoint limits in a service description and satisfies the normative
-        requirements in this document.
-      </p>
-      <p>The following prefixes are used throughout this document:</p>
+      <p>A conforming VoRD publisher satisfies all normative requirements in this document.</p>
       <pre class="nohighlight">
 PREFIX sd:   &lt;http://www.w3.org/ns/sparql-service-description#&gt;
 PREFIX vord: &lt;https://w3id.org/vord#&gt;
@@ -105,141 +68,34 @@ PREFIX xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
       <h2>Publishing Model</h2>
       <p>
         A service description resource of type <code>sd:Service</code>
-        <em>MUST</em> relate to one or more limit resources using
-        <code>vord:hasLimit</code>. Because <code>vord:hasLimit</code> is a
-        subproperty of <code>sd:feature</code>, consumers can discover VoRD
-        limits through either property.
+        <em>MUST</em> link to one or more limits using <code>vord:hasLimit</code>.
       </p>
       <p>
-        Every quantitative limit resource <em>MUST</em> include:
+        Every quantitative limit <em>MUST</em> include:
       </p>
       <ul>
-        <li><code>a vord:Limit</code> and a concrete VoRD limit class.</li>
+        <li><code>a vord:Limit</code> and a concrete limit subclass.</li>
         <li><code>vord:metric</code> and <code>vord:maxValue</code>.</li>
         <li><code>vord:hasScope</code>, <code>vord:enforcement</code>, and <code>vord:hardLimit</code>.</li>
       </ul>
       <p>
-        A federation capability limit <em>MUST</em> include
-        <code>vord:federationSupported</code> (boolean) and <em>MUST NOT</em>
-        use numeric federation metrics.
+        Federation capability <em>MUST</em> use class <code>vord:FederationSupported</code>
+        and boolean property <code>vord:federationSupported</code>.
       </p>
     </section>
 
     <section id="priority-profile">
       <h2>Priority Profile for Maintainers</h2>
-      <p>
-        This section defines which limits are most important to publish first.
-      </p>
-
-      <table class="simple">
-        <thead>
-          <tr>
-            <th>Priority</th>
-            <th>Limit class</th>
-            <th>Why it matters</th>
-            <th>Minimum required fields</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>MUST</strong></td>
-            <td><code>vord:RateLimit</code></td>
-            <td>Prevents unexpected 429 behavior for clients.</td>
-            <td>
-              <code>vord:metric</code> (<code>vord:requestsPerWindow</code> or
-              <code>vord:requestsPerDay</code>),
-              <code>vord:maxValue</code>,
-              <code>vord:windowDuration</code>,
-              <code>vord:hasScope</code>,
-              <code>vord:enforcement</code>,
-              <code>vord:hardLimit</code>.
-            </td>
-          </tr>
-          <tr>
-            <td><strong>MUST</strong></td>
-            <td><code>vord:TimeoutLimit</code></td>
-            <td>Critical for query planning and timeout retries.</td>
-            <td>
-              <code>vord:metric</code> (implementation-defined),
-              <code>vord:maxValue</code>,
-              <code>vord:hasScope</code>,
-              <code>vord:enforcement</code>,
-              <code>vord:hardLimit</code>.
-            </td>
-          </tr>
-          <tr>
-            <td><strong>MUST</strong></td>
-            <td><code>vord:ResultSizeLimit</code></td>
-            <td>Prevents client-side parsing/memory failures.</td>
-            <td>
-              <code>vord:metric</code> (<code>vord:resultBindings</code>),
-              <code>vord:maxValue</code>,
-              <code>vord:hasScope</code>,
-              <code>vord:enforcement</code>,
-              <code>vord:hardLimit</code>.
-            </td>
-          </tr>
-          <tr>
-            <td><strong>MUST</strong></td>
-            <td><code>vord:FederationSupported</code></td>
-            <td>Lets clients know whether <code>SERVICE</code> is supported.</td>
-            <td>
-              <code>vord:federationSupported</code> (boolean),
-              <code>vord:hasScope</code>,
-              <code>vord:enforcement</code>,
-              <code>vord:hardLimit</code>.
-            </td>
-          </tr>
-          <tr>
-            <td><strong>SHOULD</strong></td>
-            <td><code>vord:ConnectionNumberLimit</code></td>
-            <td>Helps clients avoid overload during concurrency bursts.</td>
-            <td>
-              <code>vord:metric</code>,
-              <code>vord:maxValue</code>,
-              <code>vord:hasScope</code>,
-              <code>vord:enforcement</code>,
-              <code>vord:hardLimit</code>.
-            </td>
-          </tr>
-          <tr>
-            <td><strong>SHOULD</strong></td>
-            <td><code>vord:QuotaLimit</code></td>
-            <td>Improves predictability of daily/periodic API usage.</td>
-            <td>
-              <code>vord:metric</code> (typically
-              <code>vord:requestsPerDay</code>),
-              <code>vord:maxValue</code>,
-              <code>vord:windowDuration</code>,
-              <code>vord:hasScope</code>,
-              <code>vord:enforcement</code>,
-              <code>vord:hardLimit</code>.
-            </td>
-          </tr>
-          <tr>
-            <td><strong>MAY</strong></td>
-            <td>
-              <code>vord:QuerySizeLimit</code>,
-              <code>vord:ServerLoadLimit</code>,
-              <code>vord:CostModelLimit</code>
-            </td>
-            <td>Useful advanced constraints for power users and optimizers.</td>
-            <td>Use standard quantitative pattern; include <code>vord:costModel</code> for cost-based limits.</td>
-          </tr>
-        </tbody>
-      </table>
+      <ul>
+        <li><strong>MUST</strong>: <code>vord:RateLimit</code>, <code>vord:ResultSizeLimit</code>, <code>vord:ResponseTimeLimit</code>, <code>vord:FederationSupported</code>.</li>
+        <li><strong>SHOULD</strong>: <code>vord:ConcurrentRequestsLimit</code>, <code>vord:QuotaLimit</code>.</li>
+        <li><strong>MAY</strong>: <code>vord:ServerLoadLimit</code>, <code>vord:CostModelLimit</code>.</li>
+      </ul>
     </section>
 
-    <section id="minimum-pattern">
-      <h2>How to Include Limits in Service Descriptions</h2>
-      <p>
-        Endpoint maintainers <em>SHOULD</em> publish a dedicated service
-        description IRI and include all active limits in that description.
-      </p>
-
-      <section id="example-minimal">
-        <h3>Minimal mandatory set example</h3>
-        <pre class="example" title="Service with high-priority VoRD limits">
+    <section id="example-minimal">
+      <h2>Minimal Example</h2>
+      <pre class="example" title="Service with core VoRD limits">
 @prefix ex:   &lt;https://example.org/sparql/&gt; .
 @prefix sd:   &lt;http://www.w3.org/ns/sparql-service-description#&gt; .
 @prefix vord: &lt;https://w3id.org/vord#&gt; .
@@ -247,31 +103,30 @@ PREFIX xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
 
 ex:service a sd:Service ;
   sd:endpoint &lt;https://example.org/sparql&gt; ;
-  vord:hasLimit ex:rate, ex:timeout, ex:resultSize, ex:federationSupport .
+  vord:hasLimit ex:rate, ex:resultSize, ex:responseTime, ex:federationSupport .
 
 ex:rate a vord:Limit, vord:RateLimit ;
   vord:metric vord:requestsPerWindow ;
-  vord:maxValue "60"^^xsd:decimal ;
+  vord:maxValue "60"^^xsd:integer ;
   vord:windowDuration "PT1M"^^xsd:duration ;
   vord:hasScope vord:PerClientIP ;
-  vord:enforcement vord:RejectRequest ;
-  vord:hardLimit true ;
-  vord:returnsStatusCode 429 .
-
-ex:executionTimeSecondsMetric a vord:Metric .
-
-ex:timeout a vord:Limit, vord:TimeoutLimit ;
-  vord:metric ex:executionTimeSecondsMetric ;
-  vord:maxValue "30"^^xsd:decimal ;
-  vord:hasScope vord:PerRequest ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit true .
 
 ex:resultSize a vord:Limit, vord:ResultSizeLimit ;
   vord:metric vord:resultBindings ;
-  vord:maxValue "50000"^^xsd:decimal ;
+  vord:maxValue "50000"^^xsd:integer ;
   vord:hasScope vord:PerRequest ;
   vord:enforcement vord:TruncateResult ;
+  vord:hardLimit true .
+
+ex:responseTimeMetric a vord:Metric .
+
+ex:responseTime a vord:Limit, vord:ResponseTimeLimit ;
+  vord:metric ex:responseTimeMetric ;
+  vord:maxValue "30"^^xsd:integer ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
   vord:hardLimit true .
 
 ex:federationSupport a vord:Limit, vord:FederationSupported ;
@@ -279,40 +134,7 @@ ex:federationSupport a vord:Limit, vord:FederationSupported ;
   vord:hasScope vord:GlobalScope ;
   vord:enforcement vord:RejectRequest ;
   vord:hardLimit true .
-        </pre>
-      </section>
-
-      <section id="publisher-guidance">
-        <h3>Publisher guidance</h3>
-        <ul>
-          <li>
-            Publishers <em>MUST</em> keep VoRD statements synchronized with
-            runtime behavior. If implementation policies change, service
-            descriptions <em>MUST</em> be updated.
-          </li>
-          <li>
-            Publishers <em>SHOULD</em> include <code>vord:returnsStatusCode</code>
-            where applicable (for example 429 or 503).
-          </li>
-          <li>
-            Publishers <em>SHOULD</em> include <code>vord:retryAfterHint</code>
-            for throttling behavior to improve client backoff behavior.
-          </li>
-          <li>
-            Publishers <em>MAY</em> include <code>vord:signalsHeader</code> when
-            limit state is surfaced through HTTP headers.
-          </li>
-        </ul>
-      </section>
-    </section>
-
-    <section id="security-privacy" class="informative">
-      <h2>Security and Privacy Considerations</h2>
-      <p>
-        Publishing precise operational limits can help clients and can also aid
-        abusive traffic shaping. Deployments may choose coarser values while
-        remaining truthful about effective enforcement.
-      </p>
+      </pre>
     </section>
   </body>
 </html>
