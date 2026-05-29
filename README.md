@@ -76,7 +76,9 @@ pytest -q
 
 ## GitHub Pages
 
-For a hosted HTML vocabulary portal, set Pages source to the `/docs` folder on `main`.
+This repo includes a workflow at `.github/workflows/publish-pages.yml` that regenerates docs and deploys GitHub Pages on every push to `main`.
+
+In repository settings, ensure Pages is configured to **GitHub Actions** as the source.
 
 To refresh the published docs assets after editing vocabulary/spec/examples:
 
