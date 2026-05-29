@@ -7,7 +7,11 @@ const TERM_TYPES = {
   "http://www.w3.org/2002/07/owl#Class": "class",
   "http://www.w3.org/2002/07/owl#ObjectProperty": "objectProperty",
   "http://www.w3.org/2002/07/owl#DatatypeProperty": "datatypeProperty",
-  "http://www.w3.org/2002/07/owl#AnnotationProperty": "annotationProperty"
+  "http://www.w3.org/2002/07/owl#AnnotationProperty": "annotationProperty",
+  "http://www.w3.org/2004/02/skos/core#Concept": "concept",
+  "https://w3id.org/vord#Scope": "scopeConcept",
+  "https://w3id.org/vord#EnforcementMode": "enforcementConcept",
+  "https://w3id.org/vord#Metric": "metricConcept"
 };
 
 const RELATION_PREDICATES = {
@@ -16,7 +20,29 @@ const RELATION_PREDICATES = {
   "http://www.w3.org/2000/01/rdf-schema#range": "range"
 };
 
-const TYPE_ORDER = ["class", "objectProperty", "datatypeProperty", "annotationProperty", "external"];
+const TYPE_ORDER = [
+  "class",
+  "scopeConcept",
+  "enforcementConcept",
+  "metricConcept",
+  "objectProperty",
+  "datatypeProperty",
+  "annotationProperty",
+  "concept",
+  "external"
+];
+
+const TYPE_PRIORITY = {
+  class: 100,
+  objectProperty: 95,
+  datatypeProperty: 90,
+  annotationProperty: 85,
+  scopeConcept: 70,
+  enforcementConcept: 70,
+  metricConcept: 70,
+  concept: 60,
+  external: 0
+};
 
 function hashString(input) {
   let hash = 2166136261;
@@ -301,9 +327,13 @@ function computeLayout(nodes, edges) {
   const jitter = seededRandom(987654321);
   const anchorByType = {
     class: -120,
+    scopeConcept: -75,
+    enforcementConcept: -40,
+    metricConcept: -5,
     objectProperty: -25,
     datatypeProperty: 70,
     annotationProperty: 150,
+    concept: 180,
     external: 230
   };
 
@@ -438,8 +468,8 @@ function main() {
   const repoRoot = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
   const ontologyPath = path.join(repoRoot, "vocab", "vord.ttl");
   const assetsDir = path.join(repoRoot, "docs", "assets");
-  const graphDataPath = path.join(assetsDir, "ontology-graph-data.json");
-  const overviewPath = path.join(assetsDir, "ontology-relationships-overview.json");
+  const graphDataPath = path.join(assetsDir, "vocab_graph_data.json");
+  const overviewPath = path.join(assetsDir, "vocab_relationships_overview.json");
 
   if (!fs.existsSync(ontologyPath)) {
     throw new Error("Missing ontology source: " + ontologyPath);
@@ -521,7 +551,12 @@ function main() {
             comment: ""
           });
         } else {
-          terms.get(triple.subjectUri).termType = mappedType;
+          const existing = terms.get(triple.subjectUri).termType;
+          const existingPriority = TYPE_PRIORITY[existing] || -1;
+          const nextPriority = TYPE_PRIORITY[mappedType] || -1;
+          if (!existing || nextPriority >= existingPriority) {
+            terms.get(triple.subjectUri).termType = mappedType;
+          }
         }
         if (mappedType === "annotationProperty") {
           annotationPredicates.add(triple.subjectUri);
@@ -539,6 +574,20 @@ function main() {
           comment: ""
         });
       } else {
+        terms.get(triple.subjectUri).label = triple.objectLiteral;
+      }
+    }
+
+    if (triple.predicateUri === "http://www.w3.org/2004/02/skos/core#prefLabel" && triple.objectLiteral !== null) {
+      if (!terms.has(triple.subjectUri)) {
+        terms.set(triple.subjectUri, {
+          uri: triple.subjectUri,
+          qname: uriToQname(triple.subjectUri, prefixes),
+          termType: null,
+          label: triple.objectLiteral,
+          comment: ""
+        });
+      } else if (!terms.get(triple.subjectUri).label) {
         terms.get(triple.subjectUri).label = triple.objectLiteral;
       }
     }
@@ -585,6 +634,26 @@ function main() {
       relation,
       predicateUri: triple.predicateUri,
       predicateQname: uriToQname(triple.predicateUri, prefixes)
+    });
+  }
+
+  const conceptParentUris = {
+    scopeConcept: (prefixes.vord || "") + "Scope",
+    enforcementConcept: (prefixes.vord || "") + "EnforcementMode",
+    metricConcept: (prefixes.vord || "") + "Metric"
+  };
+
+  for (const term of declaredTerms) {
+    const parentUri = conceptParentUris[term.termType];
+    if (!parentUri || !declaredTermUris.has(parentUri)) {
+      continue;
+    }
+    edgeCandidates.push({
+      source: term.uri,
+      target: parentUri,
+      relation: "conceptOf",
+      predicateUri: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      predicateQname: "rdf:type"
     });
   }
 
@@ -644,7 +713,7 @@ function main() {
     degree.set(edge.target, (degree.get(edge.target) || 0) + 1);
   }
 
-  const relationOrder = ["subClassOf", "domain", "range", "annotation"];
+  const relationOrder = ["subClassOf", "domain", "range", "conceptOf", "annotation"];
 
   const graphNodes = nodeRows
     .map((node) => {
@@ -698,9 +767,13 @@ function main() {
 
   const countsByType = {
     class: graphNodes.filter((node) => node.termType === "class").length,
+    scopeConcept: graphNodes.filter((node) => node.termType === "scopeConcept").length,
+    enforcementConcept: graphNodes.filter((node) => node.termType === "enforcementConcept").length,
+    metricConcept: graphNodes.filter((node) => node.termType === "metricConcept").length,
     objectProperty: graphNodes.filter((node) => node.termType === "objectProperty").length,
     datatypeProperty: graphNodes.filter((node) => node.termType === "datatypeProperty").length,
     annotationProperty: graphNodes.filter((node) => node.termType === "annotationProperty").length,
+    concept: graphNodes.filter((node) => node.termType === "concept").length,
     external: graphNodes.filter((node) => node.termType === "external").length
   };
 
@@ -708,6 +781,7 @@ function main() {
     subClassOf: graphEdges.filter((edge) => edge.relation === "subClassOf").length,
     domain: graphEdges.filter((edge) => edge.relation === "domain").length,
     range: graphEdges.filter((edge) => edge.relation === "range").length,
+    conceptOf: graphEdges.filter((edge) => edge.relation === "conceptOf").length,
     annotation: graphEdges.filter((edge) => edge.relation === "annotation").length
   };
 
@@ -727,9 +801,13 @@ function main() {
 
   const termsByType = {
     class: [],
+    scopeConcept: [],
+    enforcementConcept: [],
+    metricConcept: [],
     objectProperty: [],
     datatypeProperty: [],
-    annotationProperty: []
+    annotationProperty: [],
+    concept: []
   };
 
   for (const node of graphNodes.filter((item) => !item.isExternal)) {
@@ -749,6 +827,7 @@ function main() {
     subClassOf: [],
     domain: [],
     range: [],
+    conceptOf: [],
     annotation: []
   };
 

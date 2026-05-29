@@ -364,6 +364,15 @@
       justify-content: center;
     }
 
+    .artifact-preview {
+      width: 100%;
+      display: block;
+      border: 1px solid #c9d7e2;
+      border-radius: 10px;
+      background: #f8fbfd;
+      object-fit: cover;
+    }
+
     .viewer {
       background: var(--card);
       border: 1px solid var(--border);
@@ -480,7 +489,6 @@
   <div class="container">
     <header class="hero">
       <div>
-        <div class="pill">SPARQL Endpoint Restrictions</div>
         <h1>Vocabulary of Restrictive Datasets (VoRD)</h1>
         <p>VoRD provides machine-readable terms for SPARQL endpoint maintainers to advertise live query restrictions in an endpoint's service description.</p>
         <div class="hero__actions">
@@ -567,52 +575,6 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="controlled-concepts">
-      <h2 id="controlled-concepts">Controlled Concepts (SKOS Instances)</h2>
-      <p class="section-note">VoRD uses typed concept instances for scope, enforcement behavior, and measurable dimensions. These are modeled as <code>skos:Concept</code> plus their VoRD class type.</p>
-      <div class="card-grid">
-        <article class="card">
-          <h3>Scope Concepts</h3>
-          <ul>
-            <li><code>vord:PerClientIP</code></li>
-            <li><code>vord:PerAPIKey</code></li>
-            <li><code>vord:PerUser</code></li>
-            <li><code>vord:PerRequest</code></li>
-            <li><code>vord:GlobalScope</code></li>
-          </ul>
-          <div class="card__actions">
-            <a class="btn btn--primary" href="ontology-reference.html#scope-concepts">Open Scope Concepts</a>
-          </div>
-        </article>
-        <article class="card">
-          <h3>Enforcement Concepts</h3>
-          <ul>
-            <li><code>vord:RejectRequest</code></li>
-            <li><code>vord:TruncateResult</code></li>
-            <li><code>vord:QueueRequest</code></li>
-            <li><code>vord:ThrottleResponse</code></li>
-            <li><code>vord:DegradeQuality</code></li>
-          </ul>
-          <div class="card__actions">
-            <a class="btn btn--primary" href="ontology-reference.html#enforcement-concepts">Open Enforcement Concepts</a>
-          </div>
-        </article>
-        <article class="card">
-          <h3>Metric Concepts</h3>
-          <ul>
-            <li><code>vord:requestsPerWindow</code></li>
-            <li><code>vord:requestsPerDay</code></li>
-            <li><code>vord:resultBindings</code></li>
-            <li><code>vord:evaluationTime</code></li>
-            <li><code>vord:estimatedCostUnits</code></li>
-          </ul>
-          <div class="card__actions">
-            <a class="btn btn--primary" href="ontology-reference.html#metric-concepts">Open Metric Concepts</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
     <section class="section" aria-labelledby="artifacts">
       <h2 id="artifacts">Artifacts</h2>
       <div class="card-grid artifacts-grid">
@@ -646,18 +608,32 @@
         </article>
         <article class="card">
           <h3>Ontology Reference</h3>
-          <p>Browse classes and properties with links to per-term pages.</p>
+          <p>Browse classes, properties, and controlled SKOS concept instances with links to per-term pages.</p>
+          <ul>
+            <li><strong>Scope concepts:</strong> <code>PerClientIP</code>, <code>PerAPIKey</code>, <code>PerUser</code>, <code>PerRequest</code>, <code>GlobalScope</code></li>
+            <li><strong>Enforcement concepts:</strong> <code>RejectRequest</code>, <code>TruncateResult</code>, <code>QueueRequest</code>, <code>ThrottleResponse</code>, <code>DegradeQuality</code></li>
+            <li><strong>Metric concepts:</strong> <code>requestsPerWindow</code>, <code>requestsPerDay</code>, <code>resultBindings</code>, <code>evaluationTime</code>, <code>estimatedCostUnits</code></li>
+          </ul>
           <div class="card__actions">
             <a class="btn btn--primary" href="ontology-reference.html">Open Ontology Reference</a>
+            <a class="btn btn--ghost" href="ontology-reference.html#scope-concepts">Scope Concepts</a>
+            <a class="btn btn--ghost" href="ontology-reference.html#enforcement-concepts">Enforcement Concepts</a>
+            <a class="btn btn--ghost" href="ontology-reference.html#metric-concepts">Metric Concepts</a>
             <a class="btn btn--ghost" href="terms/index.html">Open Term Pages</a>
           </div>
         </article>
         <article class="card">
           <h3>Relationship Graph</h3>
           <p>Interactive Sigma.js graph of term relationships.</p>
+          <img
+            class="artifact-preview"
+            src="assets/vocab_graph_preview.png"
+            alt="Static preview of the VoRD relationship graph."
+            loading="lazy"
+          />
           <div class="card__actions">
             <a class="btn btn--primary" href="ontology-graph.html">Open Interactive Graph</a>
-            <a class="btn btn--ghost" href="assets/ontology-graph-data.json" target="_blank" rel="noreferrer">Open Graph JSON</a>
+            <a class="btn btn--ghost" href="assets/vocab_graph_data.json" target="_blank" rel="noreferrer">Open Graph JSON</a>
           </div>
         </article>
       </div>

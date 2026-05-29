@@ -1,21 +1,26 @@
 {
-  "generatedAt": "2026-05-28T12:53:26.139Z",
+  "generatedAt": "2026-05-29T07:08:57.726Z",
   "source": "vocab/vord.ttl",
   "namespace": "https://w3id.org/vord#",
   "summary": {
-    "nodes": 34,
-    "edges": 39,
+    "nodes": 49,
+    "edges": 54,
     "countsByType": {
       "class": 12,
+      "scopeConcept": 5,
+      "enforcementConcept": 5,
+      "metricConcept": 5,
       "objectProperty": 7,
       "datatypeProperty": 7,
       "annotationProperty": 0,
+      "concept": 0,
       "external": 8
     },
     "relationCounts": {
       "subClassOf": 11,
       "domain": 14,
       "range": 14,
+      "conceptOf": 15,
       "annotation": 0
     }
   },
@@ -29,8 +34,8 @@
       "comment": "Restriction on number of simultaneous open connections or active query executions.",
       "isExternal": false,
       "degree": 1,
-      "x": -10.82014,
-      "y": 11.22617
+      "x": 20.15348,
+      "y": -6.455
     },
     {
       "id": "https://w3id.org/vord#CostModel",
@@ -41,8 +46,8 @@
       "comment": "Identifier for an implementation-specific cost model used by an endpoint.",
       "isExternal": false,
       "degree": 1,
-      "x": -100,
-      "y": 63.15924
+      "x": -38.38958,
+      "y": 38.22089
     },
     {
       "id": "https://w3id.org/vord#CostModelRestriction",
@@ -53,8 +58,8 @@
       "comment": "Restriction based on internal query optimizer or execution cost estimation.",
       "isExternal": false,
       "degree": 2,
-      "x": -34.22247,
-      "y": 23.44394
+      "x": 12.19464,
+      "y": 17.0312
     },
     {
       "id": "https://w3id.org/vord#EnforcementMode",
@@ -64,9 +69,9 @@
       "termType": "class",
       "comment": "Operational behavior when a restriction is reached.",
       "isExternal": false,
-      "degree": 2,
-      "x": -48.35108,
-      "y": -63.62833
+      "degree": 7,
+      "x": -47.85634,
+      "y": -43.10085
     },
     {
       "id": "https://w3id.org/vord#Metric",
@@ -76,9 +81,9 @@
       "termType": "class",
       "comment": "Measurable dimension that a Restriction constrains.",
       "isExternal": false,
-      "degree": 2,
-      "x": -63.01908,
-      "y": -51.02533
+      "degree": 7,
+      "x": -39.99132,
+      "y": 43.99005
     },
     {
       "id": "https://w3id.org/vord#QuotaRestriction",
@@ -89,8 +94,8 @@
       "comment": "Rolling or fixed query submission quota over a longer period (day, week, month).",
       "isExternal": false,
       "degree": 1,
-      "x": 22.39733,
-      "y": 21.23249
+      "x": 32.14465,
+      "y": 12.48417
     },
     {
       "id": "https://w3id.org/vord#RateRestriction",
@@ -101,8 +106,8 @@
       "comment": "Restriction on request frequency over time.",
       "isExternal": false,
       "degree": 2,
-      "x": 28.67473,
-      "y": -52.32378
+      "x": 44.74114,
+      "y": -44.21267
     },
     {
       "id": "https://w3id.org/vord#ResponseTimeRestriction",
@@ -113,8 +118,8 @@
       "comment": "Maximum allowed execution or waiting time for a query.",
       "isExternal": false,
       "degree": 1,
-      "x": 3.6382,
-      "y": 20.11896
+      "x": 44.45797,
+      "y": 11.61395
     },
     {
       "id": "https://w3id.org/vord#Restriction",
@@ -125,8 +130,8 @@
       "comment": "A machine-readable operational restriction or policy threshold for a SPARQL endpoint.",
       "isExternal": false,
       "degree": 20,
-      "x": 15.29641,
-      "y": -5.25043
+      "x": 35.97247,
+      "y": -7.43828
     },
     {
       "id": "https://w3id.org/vord#ResultSizeRestriction",
@@ -137,8 +142,8 @@
       "comment": "Restriction on result payload size, bindings, or triples.",
       "isExternal": false,
       "degree": 1,
-      "x": -14.78497,
-      "y": -4.40136
+      "x": 21.35883,
+      "y": -24.22803
     },
     {
       "id": "https://w3id.org/vord#Scope",
@@ -148,9 +153,9 @@
       "termType": "class",
       "comment": "Scope at which a restriction is evaluated (e.g., per user, global).",
       "isExternal": false,
-      "degree": 2,
-      "x": -36.67716,
-      "y": -79.68239
+      "degree": 7,
+      "x": -71.55424,
+      "y": -2.71016
     },
     {
       "id": "https://w3id.org/vord#ServerLoadRestriction",
@@ -161,8 +166,188 @@
       "comment": "Restriction activated by host or cluster load conditions.",
       "isExternal": false,
       "degree": 1,
-      "x": -1.26892,
-      "y": -20.5539
+      "x": 32.57568,
+      "y": -23.71453
+    },
+    {
+      "id": "https://w3id.org/vord#GlobalScope",
+      "uri": "https://w3id.org/vord#GlobalScope",
+      "qname": "vord:GlobalScope",
+      "label": "Global",
+      "termType": "scopeConcept",
+      "comment": "The restriction is shared across all traffic handled by the endpoint instance or cluster.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -98.72641,
+      "y": -9.64325
+    },
+    {
+      "id": "https://w3id.org/vord#PerAPIKey",
+      "uri": "https://w3id.org/vord#PerAPIKey",
+      "qname": "vord:PerAPIKey",
+      "label": "Per API Key",
+      "termType": "scopeConcept",
+      "comment": "The restriction is enforced independently for each API key credential.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -100,
+      "y": 3.8502
+    },
+    {
+      "id": "https://w3id.org/vord#PerClientIP",
+      "uri": "https://w3id.org/vord#PerClientIP",
+      "qname": "vord:PerClientIP",
+      "label": "Per Client IP",
+      "termType": "scopeConcept",
+      "comment": "The restriction is enforced independently for each client IP address.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -90.88028,
+      "y": -0.01458
+    },
+    {
+      "id": "https://w3id.org/vord#PerRequest",
+      "uri": "https://w3id.org/vord#PerRequest",
+      "qname": "vord:PerRequest",
+      "label": "Per Request",
+      "termType": "scopeConcept",
+      "comment": "The restriction is evaluated within a single incoming request or query execution.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -90.58831,
+      "y": -17.35937
+    },
+    {
+      "id": "https://w3id.org/vord#PerUser",
+      "uri": "https://w3id.org/vord#PerUser",
+      "qname": "vord:PerUser",
+      "label": "Per User",
+      "termType": "scopeConcept",
+      "comment": "The restriction is enforced independently for each authenticated user identity.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -90.60063,
+      "y": 13.44351
+    },
+    {
+      "id": "https://w3id.org/vord#DegradeQuality",
+      "uri": "https://w3id.org/vord#DegradeQuality",
+      "qname": "vord:DegradeQuality",
+      "label": "Degrade Quality",
+      "termType": "enforcementConcept",
+      "comment": "The endpoint continues serving requests with reduced quality of service.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -54.58414,
+      "y": -70.25092
+    },
+    {
+      "id": "https://w3id.org/vord#QueueRequest",
+      "uri": "https://w3id.org/vord#QueueRequest",
+      "qname": "vord:QueueRequest",
+      "label": "Queue Request",
+      "termType": "enforcementConcept",
+      "comment": "The endpoint queues requests instead of executing immediately when capacity is constrained.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -69.69876,
+      "y": -49.49642
+    },
+    {
+      "id": "https://w3id.org/vord#RejectRequest",
+      "uri": "https://w3id.org/vord#RejectRequest",
+      "qname": "vord:RejectRequest",
+      "label": "Reject Request",
+      "termType": "enforcementConcept",
+      "comment": "The endpoint rejects requests that violate the restriction.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -44.45806,
+      "y": -65.61283
+    },
+    {
+      "id": "https://w3id.org/vord#ThrottleResponse",
+      "uri": "https://w3id.org/vord#ThrottleResponse",
+      "qname": "vord:ThrottleResponse",
+      "label": "Throttle Response",
+      "termType": "enforcementConcept",
+      "comment": "The endpoint slows processing or response delivery under limiting conditions.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -60.13696,
+      "y": -61.93888
+    },
+    {
+      "id": "https://w3id.org/vord#TruncateResult",
+      "uri": "https://w3id.org/vord#TruncateResult",
+      "qname": "vord:TruncateResult",
+      "label": "Truncate Result",
+      "termType": "enforcementConcept",
+      "comment": "The endpoint returns a partial result when the restriction is reached.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -69.9614,
+      "y": -60.96906
+    },
+    {
+      "id": "https://w3id.org/vord#estimatedCostUnits",
+      "uri": "https://w3id.org/vord#estimatedCostUnits",
+      "qname": "vord:estimatedCostUnits",
+      "label": "Estimated Cost Units",
+      "termType": "metricConcept",
+      "comment": "Optimizer- or planner-estimated internal cost score for query execution.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -62.6553,
+      "y": 54.33692
+    },
+    {
+      "id": "https://w3id.org/vord#evaluationTime",
+      "uri": "https://w3id.org/vord#evaluationTime",
+      "qname": "vord:evaluationTime",
+      "label": "Evaluation Time",
+      "termType": "metricConcept",
+      "comment": "Integer amount of time a request is evaluated in seconds.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -39.10631,
+      "y": 70.25092
+    },
+    {
+      "id": "https://w3id.org/vord#requestsPerDay",
+      "uri": "https://w3id.org/vord#requestsPerDay",
+      "qname": "vord:requestsPerDay",
+      "label": "Requests per Day",
+      "termType": "metricConcept",
+      "comment": "Count of requests accumulated over a one-day quota period.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -58.16137,
+      "y": 64.12737
+    },
+    {
+      "id": "https://w3id.org/vord#requestsPerWindow",
+      "uri": "https://w3id.org/vord#requestsPerWindow",
+      "qname": "vord:requestsPerWindow",
+      "label": "Requests per Window",
+      "termType": "metricConcept",
+      "comment": "Count of requests observed within a configured sliding or fixed window.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -23.62115,
+      "y": 58.24907
+    },
+    {
+      "id": "https://w3id.org/vord#resultBindings",
+      "uri": "https://w3id.org/vord#resultBindings",
+      "qname": "vord:resultBindings",
+      "label": "Result Bindings",
+      "termType": "metricConcept",
+      "comment": "Number of solution bindings (solution mappings) returned by a SPARQL query.",
+      "isExternal": false,
+      "degree": 1,
+      "x": -49.58002,
+      "y": 69.51138
     },
     {
       "id": "https://w3id.org/vord#costModel",
@@ -173,8 +358,8 @@
       "comment": "Cost model used to interpret an internal cost-model restriction.",
       "isExternal": false,
       "degree": 2,
-      "x": -72.68147,
-      "y": 46.50644
+      "x": -12.7294,
+      "y": 33.71655
     },
     {
       "id": "https://w3id.org/vord#enforcement",
@@ -185,8 +370,8 @@
       "comment": "Action taken when the restriction is reached.",
       "isExternal": false,
       "degree": 2,
-      "x": -20.73151,
-      "y": -37.84983
+      "x": -6.62634,
+      "y": -28.4031
     },
     {
       "id": "https://w3id.org/vord#hasRestriction",
@@ -197,8 +382,8 @@
       "comment": "Relates a SPARQL service to a restriction statement.",
       "isExternal": false,
       "degree": 2,
-      "x": -3.55081,
-      "y": 41.11484
+      "x": 49.26334,
+      "y": 27.77752
     },
     {
       "id": "https://w3id.org/vord#hasScope",
@@ -209,8 +394,8 @@
       "comment": "Scope in which the restriction is enforced.",
       "isExternal": false,
       "degree": 2,
-      "x": -10.33474,
-      "y": -49.87826
+      "x": -18.96186,
+      "y": -5.73231
     },
     {
       "id": "https://w3id.org/vord#httpSignalHeader",
@@ -221,8 +406,8 @@
       "comment": "HTTP header name used by the endpoint to signal this restriction status.",
       "isExternal": false,
       "degree": 2,
-      "x": 47.9495,
-      "y": 33.90761
+      "x": 72.94218,
+      "y": 6.59591
     },
     {
       "id": "https://w3id.org/vord#metric",
@@ -233,8 +418,8 @@
       "comment": "Metric constrained by this restriction.",
       "isExternal": false,
       "degree": 2,
-      "x": -31.76844,
-      "y": -26.36024
+      "x": -2.44629,
+      "y": 20.22574
     },
     {
       "id": "https://w3id.org/vord#unit",
@@ -245,8 +430,8 @@
       "comment": "Unit of measure for maxValue.",
       "isExternal": false,
       "degree": 2,
-      "x": 64.95786,
-      "y": -19.82567
+      "x": 71.44583,
+      "y": -26.63112
     },
     {
       "id": "https://w3id.org/vord#burstValue",
@@ -257,8 +442,8 @@
       "comment": "Additional burst threshold for short spikes.",
       "isExternal": false,
       "degree": 2,
-      "x": 46.06822,
-      "y": -79.61934
+      "x": 56.36511,
+      "y": -66.08376
     },
     {
       "id": "https://w3id.org/vord#hardRestriction",
@@ -269,8 +454,8 @@
       "comment": "True if the threshold is strictly enforced; false if advisory or load-dependent.",
       "isExternal": false,
       "degree": 2,
-      "x": 24.15687,
-      "y": 44.46095
+      "x": 63.64072,
+      "y": 19.17978
     },
     {
       "id": "https://w3id.org/vord#maxValue",
@@ -281,8 +466,8 @@
       "comment": "Primary threshold value for this restriction.",
       "isExternal": false,
       "degree": 2,
-      "x": 24.95313,
-      "y": -39.32388
+      "x": 41.11043,
+      "y": -35.69499
     },
     {
       "id": "https://w3id.org/vord#minValue",
@@ -293,8 +478,8 @@
       "comment": "Optional minimum threshold for this restriction.",
       "isExternal": false,
       "degree": 2,
-      "x": 45.08044,
-      "y": -31.62836
+      "x": 48.66787,
+      "y": -31.97176
     },
     {
       "id": "https://w3id.org/vord#retryAfterHint",
@@ -305,8 +490,8 @@
       "comment": "Suggested waiting duration before retry (xsd:duration).",
       "isExternal": false,
       "degree": 2,
-      "x": 54.59609,
-      "y": 12.42278
+      "x": 67.69358,
+      "y": -5.645
     },
     {
       "id": "https://w3id.org/vord#returnsStatusCode",
@@ -317,8 +502,8 @@
       "comment": "HTTP status code commonly used when this restriction is exceeded (e.g., 429).",
       "isExternal": false,
       "degree": 2,
-      "x": 35.21092,
-      "y": -34.4472
+      "x": 55.72038,
+      "y": -30.43898
     },
     {
       "id": "https://w3id.org/vord#windowDuration",
@@ -329,8 +514,8 @@
       "comment": "Duration window for evaluating this restriction (xsd:duration).",
       "isExternal": false,
       "degree": 2,
-      "x": 57.59274,
-      "y": 1.39563
+      "x": 67.16304,
+      "y": -13.13761
     },
     {
       "id": "http://www.w3.org/2011/http#HeaderName",
@@ -341,8 +526,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 1,
-      "x": 72.58737,
-      "y": 60.6535
+      "x": 100,
+      "y": 15.04037
     },
     {
       "id": "http://qudt.org/schema/qudt/Unit",
@@ -353,8 +538,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 1,
-      "x": 100,
-      "y": -30.18128
+      "x": 96.70554,
+      "y": -39.63875
     },
     {
       "id": "http://www.w3.org/ns/sparql-service-description#Feature",
@@ -365,8 +550,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 1,
-      "x": 35.16017,
-      "y": 3.87462
+      "x": 52.20048,
+      "y": 0.02161
     },
     {
       "id": "http://www.w3.org/ns/sparql-service-description#Service",
@@ -377,8 +562,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 1,
-      "x": -15.65884,
-      "y": 74.23172
+      "x": 60.3454,
+      "y": 52.34441
     },
     {
       "id": "http://www.w3.org/2004/02/skos/core#Concept",
@@ -389,8 +574,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 3,
-      "x": -63.0651,
-      "y": -78.23003
+      "x": -51.17966,
+      "y": 0.45426
     },
     {
       "id": "http://www.w3.org/2001/XMLSchema#boolean",
@@ -401,8 +586,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 1,
-      "x": 31.34963,
-      "y": 79.68239
+      "x": 84.40154,
+      "y": 37.61339
     },
     {
       "id": "http://www.w3.org/2001/XMLSchema#duration",
@@ -413,8 +598,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 2,
-      "x": 81.98597,
-      "y": 14.48134
+      "x": 88.10998,
+      "y": -10.79642
     },
     {
       "id": "http://www.w3.org/2001/XMLSchema#integer",
@@ -425,8 +610,8 @@
       "comment": "Referenced external term",
       "isExternal": true,
       "degree": 4,
-      "x": 46.46122,
-      "y": -56.98725
+      "x": 56.08325,
+      "y": -49.81792
     }
   ],
   "edges": [
@@ -858,6 +1043,171 @@
       "predicateUri": "http://www.w3.org/2000/01/rdf-schema#range",
       "predicateQname": "rdfs:range",
       "label": "range"
+    },
+    {
+      "id": "rel-049",
+      "source": "https://w3id.org/vord#DegradeQuality",
+      "target": "https://w3id.org/vord#EnforcementMode",
+      "sourceQname": "vord:DegradeQuality",
+      "targetQname": "vord:EnforcementMode",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-054",
+      "source": "https://w3id.org/vord#estimatedCostUnits",
+      "target": "https://w3id.org/vord#Metric",
+      "sourceQname": "vord:estimatedCostUnits",
+      "targetQname": "vord:Metric",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-053",
+      "source": "https://w3id.org/vord#evaluationTime",
+      "target": "https://w3id.org/vord#Metric",
+      "sourceQname": "vord:evaluationTime",
+      "targetQname": "vord:Metric",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-044",
+      "source": "https://w3id.org/vord#GlobalScope",
+      "target": "https://w3id.org/vord#Scope",
+      "sourceQname": "vord:GlobalScope",
+      "targetQname": "vord:Scope",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-041",
+      "source": "https://w3id.org/vord#PerAPIKey",
+      "target": "https://w3id.org/vord#Scope",
+      "sourceQname": "vord:PerAPIKey",
+      "targetQname": "vord:Scope",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-040",
+      "source": "https://w3id.org/vord#PerClientIP",
+      "target": "https://w3id.org/vord#Scope",
+      "sourceQname": "vord:PerClientIP",
+      "targetQname": "vord:Scope",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-043",
+      "source": "https://w3id.org/vord#PerRequest",
+      "target": "https://w3id.org/vord#Scope",
+      "sourceQname": "vord:PerRequest",
+      "targetQname": "vord:Scope",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-042",
+      "source": "https://w3id.org/vord#PerUser",
+      "target": "https://w3id.org/vord#Scope",
+      "sourceQname": "vord:PerUser",
+      "targetQname": "vord:Scope",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-047",
+      "source": "https://w3id.org/vord#QueueRequest",
+      "target": "https://w3id.org/vord#EnforcementMode",
+      "sourceQname": "vord:QueueRequest",
+      "targetQname": "vord:EnforcementMode",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-045",
+      "source": "https://w3id.org/vord#RejectRequest",
+      "target": "https://w3id.org/vord#EnforcementMode",
+      "sourceQname": "vord:RejectRequest",
+      "targetQname": "vord:EnforcementMode",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-051",
+      "source": "https://w3id.org/vord#requestsPerDay",
+      "target": "https://w3id.org/vord#Metric",
+      "sourceQname": "vord:requestsPerDay",
+      "targetQname": "vord:Metric",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-050",
+      "source": "https://w3id.org/vord#requestsPerWindow",
+      "target": "https://w3id.org/vord#Metric",
+      "sourceQname": "vord:requestsPerWindow",
+      "targetQname": "vord:Metric",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-052",
+      "source": "https://w3id.org/vord#resultBindings",
+      "target": "https://w3id.org/vord#Metric",
+      "sourceQname": "vord:resultBindings",
+      "targetQname": "vord:Metric",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-048",
+      "source": "https://w3id.org/vord#ThrottleResponse",
+      "target": "https://w3id.org/vord#EnforcementMode",
+      "sourceQname": "vord:ThrottleResponse",
+      "targetQname": "vord:EnforcementMode",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
+    },
+    {
+      "id": "rel-046",
+      "source": "https://w3id.org/vord#TruncateResult",
+      "target": "https://w3id.org/vord#EnforcementMode",
+      "sourceQname": "vord:TruncateResult",
+      "targetQname": "vord:EnforcementMode",
+      "relation": "conceptOf",
+      "predicateUri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "predicateQname": "rdf:type",
+      "label": "conceptOf"
     }
   ]
 }

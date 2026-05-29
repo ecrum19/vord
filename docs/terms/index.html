@@ -82,7 +82,7 @@
     </tr>
 <tr>
       <td class="cell-term"><a href="DegradeQuality.html"><code>vord:DegradeQuality</code></a></td>
-      <td class="cell-type">Enforcement Mode Concept</td>
+      <td class="cell-type">enforcementConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The endpoint continues serving requests with reduced quality of service.</td>
     </tr>
@@ -100,19 +100,19 @@
     </tr>
 <tr>
       <td class="cell-term"><a href="estimatedCostUnits.html"><code>vord:estimatedCostUnits</code></a></td>
-      <td class="cell-type">Metric Concept</td>
+      <td class="cell-type">metricConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">Optimizer- or planner-estimated internal cost score for query execution.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="evaluationTime.html"><code>vord:evaluationTime</code></a></td>
-      <td class="cell-type">Metric Concept</td>
+      <td class="cell-type">metricConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">Integer amount of time a request is evaluated in seconds.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="GlobalScope.html"><code>vord:GlobalScope</code></a></td>
-      <td class="cell-type">Scope Concept</td>
+      <td class="cell-type">scopeConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The restriction is shared across all traffic handled by the endpoint instance or cluster.</td>
     </tr>
@@ -166,31 +166,31 @@
     </tr>
 <tr>
       <td class="cell-term"><a href="PerAPIKey.html"><code>vord:PerAPIKey</code></a></td>
-      <td class="cell-type">Scope Concept</td>
+      <td class="cell-type">scopeConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The restriction is enforced independently for each API key credential.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="PerClientIP.html"><code>vord:PerClientIP</code></a></td>
-      <td class="cell-type">Scope Concept</td>
+      <td class="cell-type">scopeConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The restriction is enforced independently for each client IP address.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="PerRequest.html"><code>vord:PerRequest</code></a></td>
-      <td class="cell-type">Scope Concept</td>
+      <td class="cell-type">scopeConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The restriction is evaluated within a single incoming request or query execution.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="PerUser.html"><code>vord:PerUser</code></a></td>
-      <td class="cell-type">Scope Concept</td>
+      <td class="cell-type">scopeConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The restriction is enforced independently for each authenticated user identity.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="QueueRequest.html"><code>vord:QueueRequest</code></a></td>
-      <td class="cell-type">Enforcement Mode Concept</td>
+      <td class="cell-type">enforcementConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The endpoint queues requests instead of executing immediately when capacity is constrained.</td>
     </tr>
@@ -208,19 +208,19 @@
     </tr>
 <tr>
       <td class="cell-term"><a href="RejectRequest.html"><code>vord:RejectRequest</code></a></td>
-      <td class="cell-type">Enforcement Mode Concept</td>
+      <td class="cell-type">enforcementConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The endpoint rejects requests that violate the restriction.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="requestsPerDay.html"><code>vord:requestsPerDay</code></a></td>
-      <td class="cell-type">Metric Concept</td>
+      <td class="cell-type">metricConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">Count of requests accumulated over a one-day quota period.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="requestsPerWindow.html"><code>vord:requestsPerWindow</code></a></td>
-      <td class="cell-type">Metric Concept</td>
+      <td class="cell-type">metricConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">Count of requests observed within a configured sliding or fixed window.</td>
     </tr>
@@ -238,7 +238,7 @@
     </tr>
 <tr>
       <td class="cell-term"><a href="resultBindings.html"><code>vord:resultBindings</code></a></td>
-      <td class="cell-type">Metric Concept</td>
+      <td class="cell-type">metricConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">Number of solution bindings (solution mappings) returned by a SPARQL query.</td>
     </tr>
@@ -274,13 +274,13 @@
     </tr>
 <tr>
       <td class="cell-term"><a href="ThrottleResponse.html"><code>vord:ThrottleResponse</code></a></td>
-      <td class="cell-type">Enforcement Mode Concept</td>
+      <td class="cell-type">enforcementConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The endpoint slows processing or response delivery under limiting conditions.</td>
     </tr>
 <tr>
       <td class="cell-term"><a href="TruncateResult.html"><code>vord:TruncateResult</code></a></td>
-      <td class="cell-type">Enforcement Mode Concept</td>
+      <td class="cell-type">enforcementConcept</td>
       <td class="cell-source">ontology, repo</td>
       <td class="cell-summary">The endpoint returns a partial result when the restriction is reached.</td>
     </tr>

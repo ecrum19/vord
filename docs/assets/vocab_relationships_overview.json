@@ -1,21 +1,26 @@
 {
-  "generatedAt": "2026-05-28T12:53:26.139Z",
+  "generatedAt": "2026-05-29T07:08:57.726Z",
   "source": "vocab/vord.ttl",
   "namespace": "https://w3id.org/vord#",
   "summary": {
-    "nodes": 34,
-    "edges": 39,
+    "nodes": 49,
+    "edges": 54,
     "countsByType": {
       "class": 12,
+      "scopeConcept": 5,
+      "enforcementConcept": 5,
+      "metricConcept": 5,
       "objectProperty": 7,
       "datatypeProperty": 7,
       "annotationProperty": 0,
+      "concept": 0,
       "external": 8
     },
     "relationCounts": {
       "subClassOf": 11,
       "domain": 14,
       "range": 14,
+      "conceptOf": 15,
       "annotation": 0
     }
   },
@@ -92,6 +97,102 @@
         "uri": "https://w3id.org/vord#ServerLoadRestriction",
         "label": "Server Load Restriction",
         "comment": "Restriction activated by host or cluster load conditions."
+      }
+    ],
+    "scopeConcept": [
+      {
+        "qname": "vord:GlobalScope",
+        "uri": "https://w3id.org/vord#GlobalScope",
+        "label": "Global",
+        "comment": "The restriction is shared across all traffic handled by the endpoint instance or cluster."
+      },
+      {
+        "qname": "vord:PerAPIKey",
+        "uri": "https://w3id.org/vord#PerAPIKey",
+        "label": "Per API Key",
+        "comment": "The restriction is enforced independently for each API key credential."
+      },
+      {
+        "qname": "vord:PerClientIP",
+        "uri": "https://w3id.org/vord#PerClientIP",
+        "label": "Per Client IP",
+        "comment": "The restriction is enforced independently for each client IP address."
+      },
+      {
+        "qname": "vord:PerRequest",
+        "uri": "https://w3id.org/vord#PerRequest",
+        "label": "Per Request",
+        "comment": "The restriction is evaluated within a single incoming request or query execution."
+      },
+      {
+        "qname": "vord:PerUser",
+        "uri": "https://w3id.org/vord#PerUser",
+        "label": "Per User",
+        "comment": "The restriction is enforced independently for each authenticated user identity."
+      }
+    ],
+    "enforcementConcept": [
+      {
+        "qname": "vord:DegradeQuality",
+        "uri": "https://w3id.org/vord#DegradeQuality",
+        "label": "Degrade Quality",
+        "comment": "The endpoint continues serving requests with reduced quality of service."
+      },
+      {
+        "qname": "vord:QueueRequest",
+        "uri": "https://w3id.org/vord#QueueRequest",
+        "label": "Queue Request",
+        "comment": "The endpoint queues requests instead of executing immediately when capacity is constrained."
+      },
+      {
+        "qname": "vord:RejectRequest",
+        "uri": "https://w3id.org/vord#RejectRequest",
+        "label": "Reject Request",
+        "comment": "The endpoint rejects requests that violate the restriction."
+      },
+      {
+        "qname": "vord:ThrottleResponse",
+        "uri": "https://w3id.org/vord#ThrottleResponse",
+        "label": "Throttle Response",
+        "comment": "The endpoint slows processing or response delivery under limiting conditions."
+      },
+      {
+        "qname": "vord:TruncateResult",
+        "uri": "https://w3id.org/vord#TruncateResult",
+        "label": "Truncate Result",
+        "comment": "The endpoint returns a partial result when the restriction is reached."
+      }
+    ],
+    "metricConcept": [
+      {
+        "qname": "vord:estimatedCostUnits",
+        "uri": "https://w3id.org/vord#estimatedCostUnits",
+        "label": "Estimated Cost Units",
+        "comment": "Optimizer- or planner-estimated internal cost score for query execution."
+      },
+      {
+        "qname": "vord:evaluationTime",
+        "uri": "https://w3id.org/vord#evaluationTime",
+        "label": "Evaluation Time",
+        "comment": "Integer amount of time a request is evaluated in seconds."
+      },
+      {
+        "qname": "vord:requestsPerDay",
+        "uri": "https://w3id.org/vord#requestsPerDay",
+        "label": "Requests per Day",
+        "comment": "Count of requests accumulated over a one-day quota period."
+      },
+      {
+        "qname": "vord:requestsPerWindow",
+        "uri": "https://w3id.org/vord#requestsPerWindow",
+        "label": "Requests per Window",
+        "comment": "Count of requests observed within a configured sliding or fixed window."
+      },
+      {
+        "qname": "vord:resultBindings",
+        "uri": "https://w3id.org/vord#resultBindings",
+        "label": "Result Bindings",
+        "comment": "Number of solution bindings (solution mappings) returned by a SPARQL query."
       }
     ],
     "objectProperty": [
@@ -182,7 +283,8 @@
         "comment": "Duration window for evaluating this restriction (xsd:duration)."
       }
     ],
-    "annotationProperty": []
+    "annotationProperty": [],
+    "concept": []
   },
   "externalTerms": [
     {
@@ -420,6 +522,83 @@
         "predicate": "rdfs:range"
       }
     ],
+    "conceptOf": [
+      {
+        "source": "vord:DegradeQuality",
+        "target": "vord:EnforcementMode",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:estimatedCostUnits",
+        "target": "vord:Metric",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:evaluationTime",
+        "target": "vord:Metric",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:GlobalScope",
+        "target": "vord:Scope",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:PerAPIKey",
+        "target": "vord:Scope",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:PerClientIP",
+        "target": "vord:Scope",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:PerRequest",
+        "target": "vord:Scope",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:PerUser",
+        "target": "vord:Scope",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:QueueRequest",
+        "target": "vord:EnforcementMode",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:RejectRequest",
+        "target": "vord:EnforcementMode",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:requestsPerDay",
+        "target": "vord:Metric",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:requestsPerWindow",
+        "target": "vord:Metric",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:resultBindings",
+        "target": "vord:Metric",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:ThrottleResponse",
+        "target": "vord:EnforcementMode",
+        "predicate": "rdf:type"
+      },
+      {
+        "source": "vord:TruncateResult",
+        "target": "vord:EnforcementMode",
+        "predicate": "rdf:type"
+      }
+    ],
     "annotation": []
   },
   "adjacency": {
@@ -472,6 +651,31 @@
           "relation": "range",
           "predicate": "rdfs:range",
           "source": "vord:enforcement"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:DegradeQuality"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:QueueRequest"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:RejectRequest"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:ThrottleResponse"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:TruncateResult"
         }
       ]
     },
@@ -488,6 +692,31 @@
           "relation": "range",
           "predicate": "rdfs:range",
           "source": "vord:metric"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:estimatedCostUnits"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:evaluationTime"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:requestsPerDay"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:requestsPerWindow"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:resultBindings"
         }
       ]
     },
@@ -656,6 +885,31 @@
           "relation": "range",
           "predicate": "rdfs:range",
           "source": "vord:hasScope"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:GlobalScope"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:PerAPIKey"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:PerClientIP"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:PerRequest"
+        },
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "source": "vord:PerUser"
         }
       ]
     },
@@ -665,6 +919,156 @@
           "relation": "subClassOf",
           "predicate": "rdfs:subClassOf",
           "target": "vord:Restriction"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:GlobalScope": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Scope"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:PerAPIKey": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Scope"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:PerClientIP": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Scope"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:PerRequest": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Scope"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:PerUser": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Scope"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:DegradeQuality": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:EnforcementMode"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:QueueRequest": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:EnforcementMode"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:RejectRequest": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:EnforcementMode"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:ThrottleResponse": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:EnforcementMode"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:TruncateResult": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:EnforcementMode"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:estimatedCostUnits": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Metric"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:evaluationTime": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Metric"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:requestsPerDay": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Metric"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:requestsPerWindow": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Metric"
+        }
+      ],
+      "incoming": []
+    },
+    "vord:resultBindings": {
+      "outgoing": [
+        {
+          "relation": "conceptOf",
+          "predicate": "rdf:type",
+          "target": "vord:Metric"
         }
       ],
       "incoming": []

@@ -713,7 +713,7 @@ function main() {
   const repoRoot = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
   const docsDir = path.join(repoRoot, "docs");
   const assetsDir = path.join(docsDir, "assets");
-  const graphPath = path.join(assetsDir, "ontology-graph-data.json");
+  const graphPath = path.join(assetsDir, "vocab_graph_data.json");
   const vocabPath = path.join(repoRoot, "vocab", "vord.ttl");
   const outputPath = path.join(docsDir, "ontology-reference.html");
 

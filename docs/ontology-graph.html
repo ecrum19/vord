@@ -20,6 +20,9 @@
       --radius-lg: 16px;
       --radius-md: 12px;
       --class: #b7dcf6;
+      --scope-concept: #d3c5f6;
+      --enforcement-concept: #f6c5e6;
+      --metric-concept: #c5f6ee;
       --obj: #bee7c3;
       --data: #f7d7ab;
       --ann: #f2bebf;
@@ -27,6 +30,7 @@
       --subclass: #1f6f92;
       --domain: #2f8040;
       --range: #ab6b22;
+      --conceptof: #7b5ca7;
       --annotation: #a64343;
     }
 
@@ -503,8 +507,8 @@
       <div class="hero-actions">
         <a class="btn btn--primary" href="index.html">Back to Home</a>
         <a class="btn" href="ontology-reference.html">Term Reference</a>
-        <a class="btn" href="assets/ontology-graph-data.json" target="_blank" rel="noreferrer">Graph JSON</a>
-        <a class="btn" href="assets/ontology-relationships-overview.json" target="_blank" rel="noreferrer">Overview JSON</a>
+        <a class="btn" href="assets/vocab_graph_data.json" target="_blank" rel="noreferrer">Graph JSON</a>
+        <a class="btn" href="assets/vocab_relationships_overview.json" target="_blank" rel="noreferrer">Overview JSON</a>
       </div>
     </header>
 
@@ -522,9 +526,13 @@
               <label><input id="rel-subclass" type="checkbox" checked /> Show <code>subClassOf</code></label>
               <label><input id="rel-domain" type="checkbox" checked /> Show <code>domain</code></label>
               <label><input id="rel-range" type="checkbox" checked /> Show <code>range</code></label>
+              <label><input id="rel-conceptof" type="checkbox" checked /> Show <code>conceptOf</code></label>
               <label><input id="rel-annotation" type="checkbox" checked /> Show annotation links</label>
               <p class="filter-title">Node Types</p>
               <label><input id="node-class" type="checkbox" checked /> Show classes</label>
+              <label><input id="node-scope-concept" type="checkbox" checked /> Show scope concepts</label>
+              <label><input id="node-enforcement-concept" type="checkbox" checked /> Show enforcement concepts</label>
+              <label><input id="node-metric-concept" type="checkbox" checked /> Show metric concepts</label>
               <label><input id="node-object" type="checkbox" checked /> Show object properties</label>
               <label><input id="node-datatype" type="checkbox" checked /> Show datatype properties</label>
               <label><input id="node-annotation" type="checkbox" checked /> Show annotation properties</label>
@@ -611,6 +619,9 @@
           <div class="legend-bar" aria-label="Graph legend">
             <span class="legend-title">Legend</span>
             <span class="legend-chip"><span class="swatch" style="background: var(--class);"></span>Class</span>
+            <span class="legend-chip"><span class="swatch" style="background: var(--scope-concept);"></span>Scope concept</span>
+            <span class="legend-chip"><span class="swatch" style="background: var(--enforcement-concept);"></span>Enforcement concept</span>
+            <span class="legend-chip"><span class="swatch" style="background: var(--metric-concept);"></span>Metric concept</span>
             <span class="legend-chip"><span class="swatch" style="background: var(--obj);"></span>Object property</span>
             <span class="legend-chip"><span class="swatch" style="background: var(--data);"></span>Datatype property</span>
             <span class="legend-chip"><span class="swatch" style="background: var(--ann);"></span>Annotation property</span>
@@ -643,6 +654,15 @@
               range
             </span>
             <span class="legend-chip">
+              <span class="line" style="--line-color: var(--conceptof);">
+                <svg viewBox="0 0 28 10" aria-hidden="true" focusable="false">
+                  <line x1="1" y1="5" x2="27" y2="5" stroke="currentColor" stroke-width="2.2"></line>
+                  <polygon points="20,1 27,5 20,9" fill="currentColor"></polygon>
+                </svg>
+              </span>
+              conceptOf
+            </span>
+            <span class="legend-chip">
               <span class="line" style="--line-color: var(--annotation);">
                 <svg viewBox="0 0 28 10" aria-hidden="true" focusable="false">
                   <path d="M1 5H20" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"></path>
@@ -667,6 +687,9 @@
   <script>
     const TYPE_COLOR = {
       class: "#b7dcf6",
+      scopeConcept: "#d3c5f6",
+      enforcementConcept: "#f6c5e6",
+      metricConcept: "#c5f6ee",
       objectProperty: "#bee7c3",
       datatypeProperty: "#f7d7ab",
       annotationProperty: "#f2bebf",
@@ -677,14 +700,18 @@
       subClassOf: "#1f6f92",
       domain: "#2f8040",
       range: "#ab6b22",
+      conceptOf: "#7b5ca7",
       annotation: "#a64343"
     };
 
-    const RELATION_ORDER = ["subClassOf", "domain", "range", "annotation"];
+    const RELATION_ORDER = ["subClassOf", "domain", "range", "conceptOf", "annotation"];
     const EDGE_BASE_SIZE = 1.9;
     const EDGE_DIM_SIZE = 0.95;
     const TYPE_ANCHOR_X = {
       class: -72,
+      scopeConcept: -52,
+      enforcementConcept: -36,
+      metricConcept: -8,
       objectProperty: -22,
       datatypeProperty: 32,
       annotationProperty: 84,
@@ -793,6 +820,12 @@
           ? "datatype property"
           : node.termType === "annotationProperty"
             ? "annotation property"
+            : node.termType === "scopeConcept"
+              ? "scope concept"
+              : node.termType === "enforcementConcept"
+                ? "enforcement concept"
+                : node.termType === "metricConcept"
+                  ? "metric concept"
             : node.termType;
       const labelPart = node.label && node.label.toLowerCase() !== node.qname.toLowerCase()
         ? "<div>" + node.label + "</div>"
@@ -896,8 +929,12 @@
         subClassOf: document.getElementById("rel-subclass").checked,
         domain: document.getElementById("rel-domain").checked,
         range: document.getElementById("rel-range").checked,
+        conceptOf: document.getElementById("rel-conceptof").checked,
         annotation: document.getElementById("rel-annotation").checked,
         showClassNodes: document.getElementById("node-class").checked,
+        showScopeConceptNodes: document.getElementById("node-scope-concept").checked,
+        showEnforcementConceptNodes: document.getElementById("node-enforcement-concept").checked,
+        showMetricConceptNodes: document.getElementById("node-metric-concept").checked,
         showObjectNodes: document.getElementById("node-object").checked,
         showDatatypeNodes: document.getElementById("node-datatype").checked,
         showAnnotationNodes: document.getElementById("node-annotation").checked,
@@ -914,6 +951,15 @@
       }
       if (node.termType === "class") {
         return filters.showClassNodes;
+      }
+      if (node.termType === "scopeConcept") {
+        return filters.showScopeConceptNodes;
+      }
+      if (node.termType === "enforcementConcept") {
+        return filters.showEnforcementConceptNodes;
+      }
+      if (node.termType === "metricConcept") {
+        return filters.showMetricConceptNodes;
       }
       if (node.termType === "objectProperty") {
         return filters.showObjectNodes;
@@ -1010,6 +1056,9 @@
         "<div><strong>Visible nodes:</strong> " + visibleNodeItems.length + "</div>" +
         "<div><strong>Visible edges:</strong> " + visibleEdgeItems.length + "</div>" +
         "<div>Classes: " + (groupCount.class || 0) + "</div>" +
+        "<div>Scope concepts: " + (groupCount.scopeConcept || 0) + "</div>" +
+        "<div>Enforcement concepts: " + (groupCount.enforcementConcept || 0) + "</div>" +
+        "<div>Metric concepts: " + (groupCount.metricConcept || 0) + "</div>" +
         "<div>Object properties: " + (groupCount.objectProperty || 0) + "</div>" +
         "<div>Datatype properties: " + (groupCount.datatypeProperty || 0) + "</div>" +
         "<div>Annotation properties: " + (groupCount.annotationProperty || 0) + "</div>" +
@@ -1017,6 +1066,7 @@
         "<div>subClassOf edges: " + (relationCount.subClassOf || 0) + "</div>" +
         "<div>domain edges: " + (relationCount.domain || 0) + "</div>" +
         "<div>range edges: " + (relationCount.range || 0) + "</div>" +
+        "<div>conceptOf edges: " + (relationCount.conceptOf || 0) + "</div>" +
         "<div>annotation edges: " + (relationCount.annotation || 0) + "</div>";
     }
 
@@ -1036,9 +1086,10 @@
         "<div>subClassOf: " + (relationCounts.subClassOf || 0) + "</div>" +
         "<div>domain: " + (relationCounts.domain || 0) + "</div>" +
         "<div>range: " + (relationCounts.range || 0) + "</div>" +
+        "<div>conceptOf: " + (relationCounts.conceptOf || 0) + "</div>" +
         "<div>annotation: " + (relationCounts.annotation || 0) + "</div>" +
-        "<div><a href='assets/ontology-relationships-overview.json' target='_blank' rel='noreferrer'>Serialized overview JSON</a></div>" +
-        "<div><a href='assets/ontology-graph-data.json' target='_blank' rel='noreferrer'>Serialized graph data JSON</a></div>";
+        "<div><a href='assets/vocab_relationships_overview.json' target='_blank' rel='noreferrer'>Serialized overview JSON</a></div>" +
+        "<div><a href='assets/vocab_graph_data.json' target='_blank' rel='noreferrer'>Serialized graph data JSON</a></div>";
     }
 
     function updateDetail(nodeId) {
@@ -1543,8 +1594,12 @@
         "rel-subclass",
         "rel-domain",
         "rel-range",
+        "rel-conceptof",
         "rel-annotation",
         "node-class",
+        "node-scope-concept",
+        "node-enforcement-concept",
+        "node-metric-concept",
         "node-object",
         "node-datatype",
         "node-annotation",
@@ -1711,8 +1766,8 @@
 
     async function loadData() {
       const [graphResponse, overviewResponse] = await Promise.all([
-        fetch("assets/ontology-graph-data.json", { cache: "no-store" }),
-        fetch("assets/ontology-relationships-overview.json", { cache: "no-store" })
+        fetch("assets/vocab_graph_data.json", { cache: "no-store" }),
+        fetch("assets/vocab_relationships_overview.json", { cache: "no-store" })
       ]);
 
       if (!graphResponse.ok) {

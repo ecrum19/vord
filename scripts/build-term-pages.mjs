@@ -622,7 +622,7 @@ function main() {
   const repoRoot = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
   const docsDir = path.join(repoRoot, "docs");
   const termsDir = path.join(docsDir, "terms");
-  const graphPath = path.join(docsDir, "assets", "ontology-graph-data.json");
+  const graphPath = path.join(docsDir, "assets", "vocab_graph_data.json");
   const shaclPath = path.join(repoRoot, "shapes", "vord.shacl.ttl");
   const vocabPath = path.join(repoRoot, "vocab", "vord.ttl");
   const ontologyReferencePath = path.join(docsDir, "ontology-reference.html");

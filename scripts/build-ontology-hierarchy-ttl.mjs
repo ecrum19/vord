@@ -346,7 +346,7 @@ function buildClassGroups(classUris, subClassMap, orderedPrefixes) {
 function main() {
   const repoRoot = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
   const ontologyPath = path.join(repoRoot, "vocab", "vord.ttl");
-  const outputPath = path.join(repoRoot, "docs", "assets", "ontology-hierarchy.ttl");
+  const outputPath = path.join(repoRoot, "docs", "assets", "vocab_hierarchy.ttl");
 
   if (!fs.existsSync(ontologyPath)) {
     throw new Error(`Missing ontology source: ${ontologyPath}`);

@@ -19,11 +19,15 @@ cp "$ROOT_DIR/shapes/vord.shacl.ttl" "$ASSETS_DIR/vord.shacl.ttl"
 cp "$ROOT_DIR/shex/vord.shex" "$ASSETS_DIR/vord.shex"
 cp "$ROOT_DIR/spec/index.html" "$ASSETS_DIR/vocabulary-usage-specification.html"
 rm -f "$ASSETS_DIR/usage-profile.html"
+rm -f "$ASSETS_DIR/ontology-graph-data.json" \
+      "$ASSETS_DIR/ontology-relationships-overview.json" \
+      "$ASSETS_DIR/ontology-hierarchy.ttl"
 cp "$ROOT_DIR/examples/basic-service.ttl" "$ASSETS_DIR/basic-service.ttl"
 cp "$ROOT_DIR/examples/exhaustive-service.ttl" "$ASSETS_DIR/exhaustive-service.ttl"
 cp "$ROOT_DIR/examples/wikidata-rate-restrictions.ttl" "$ASSETS_DIR/wikidata-rate-restrictions.ttl"
 
 node "$ROOT_DIR/scripts/build-ontology-graph-data.mjs" "$ROOT_DIR"
+node "$ROOT_DIR/scripts/build-vocab-graph-preview-png.mjs" "$ROOT_DIR"
 node "$ROOT_DIR/scripts/build-ontology-hierarchy-ttl.mjs" "$ROOT_DIR"
 node "$ROOT_DIR/scripts/build-ontology-reference.mjs" "$ROOT_DIR"
 node "$ROOT_DIR/scripts/build-term-pages.mjs" "$ROOT_DIR"
