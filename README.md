@@ -79,6 +79,9 @@ pytest -q
 This repo includes a workflow at `.github/workflows/publish-pages.yml` that regenerates docs and deploys GitHub Pages on every push to `main`.
 
 In repository settings, ensure Pages is configured to **GitHub Actions** as the source.
+Your published site URL will be: `https://<username>.github.io/vord/`.
+
+If GitHub shows the repository README instead of the site, verify you are opening the GitHub Pages URL above (not the repository URL on `github.com`) and that the Pages source is set to **GitHub Actions**.
 
 To refresh the published docs assets after editing vocabulary/spec/examples:
 

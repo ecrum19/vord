@@ -25,10 +25,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Regenerate docs assets
         run: bash scripts/sync-docs-assets.sh
+
+      - name: Verify publish directory
+        run: |
+          test -f docs/index.html
+          test -f docs/ontology-reference.html
+          test -f docs/ontology-graph.html
+          ls -la docs
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
