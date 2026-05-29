@@ -485,7 +485,7 @@ function buildTermPage({
 
     <div class="panel">
       <h2>Ontology Relationships</h2>
-      ${node ? "<p>Relationships are derived from domain/range/subclass and annotation links in the ontology graph data.</p>" : declaredInOntology ? "<p>This term is declared in the ontology as a concept instance and does not have class/property relationship edges in the graph export.</p>" : "<p>This term is not declared as an ontology term in the current graph export.</p>"}
+      ${node ? "<p>Relationships are derived from domain/range/subclass and conceptOf links in the ontology graph data.</p>" : declaredInOntology ? "<p>This term is declared in the ontology as a concept instance and does not have class/property relationship edges in the graph export.</p>" : "<p>This term is not declared as an ontology term in the current graph export.</p>"}
       <div class="table-wrap">
         <table>
           <thead><tr><th colspan="3">Outgoing</th></tr><tr><th>Relation</th><th>Predicate</th><th>Target</th></tr></thead>

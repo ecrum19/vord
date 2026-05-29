@@ -4,9 +4,9 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 
-const WIDTH = 1400;
-const HEIGHT = 900;
-const PADDING = 72;
+const WIDTH = 1800;
+const HEIGHT = 1200;
+const PADDING = 110;
 
 const BG = [245, 248, 252, 255];
 const EDGE_COLORS = {
@@ -168,6 +168,103 @@ function drawArrowhead(buffer, width, height, x1, y1, x2, y2, size, rgba) {
   drawLine(buffer, width, height, x2, y2, rx, ry, 1.4, rgba);
 }
 
+function relaxLayout(initialCoords, nodes, edges, width, height, padding) {
+  const nodeIndex = new Map(nodes.map((node, idx) => [node.id, idx]));
+  const coords = nodes.map((node) => {
+    const base = initialCoords.get(node.id);
+    return { x: base.x, y: base.y };
+  });
+  const anchors = coords.map((point) => ({ x: point.x, y: point.y }));
+  const displacements = coords.map(() => ({ x: 0, y: 0 }));
+  const minDistance = 36;
+  const repulsion = 12500;
+  const springStrength = 0.012;
+  const anchorStrength = 0.024;
+  const step = 0.19;
+  const maxMove = 16;
+  const targetLength = 168;
+
+  for (let iter = 0; iter < 280; iter += 1) {
+    for (const disp of displacements) {
+      disp.x = 0;
+      disp.y = 0;
+    }
+
+    for (let i = 0; i < coords.length; i += 1) {
+      const a = coords[i];
+      for (let j = i + 1; j < coords.length; j += 1) {
+        const b = coords[j];
+        let dx = a.x - b.x;
+        let dy = a.y - b.y;
+        let d2 = dx * dx + dy * dy;
+        if (d2 < 1e-6) {
+          dx = (i % 3) - 1;
+          dy = (j % 3) - 1;
+          d2 = dx * dx + dy * dy + 1e-6;
+        }
+        const dist = Math.sqrt(d2);
+        let force = repulsion / d2;
+        if (dist < minDistance) {
+          force += ((minDistance - dist) / minDistance) * 1.7;
+        }
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        displacements[i].x += fx;
+        displacements[i].y += fy;
+        displacements[j].x -= fx;
+        displacements[j].y -= fy;
+      }
+    }
+
+    for (const edge of edges) {
+      const i = nodeIndex.get(edge.source);
+      const j = nodeIndex.get(edge.target);
+      if (i == null || j == null) {
+        continue;
+      }
+      const a = coords[i];
+      const b = coords[j];
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      let dist = Math.hypot(dx, dy);
+      if (dist < 1e-6) {
+        dist = 1e-6;
+        dx = 1;
+        dy = 0;
+      }
+      const delta = dist - targetLength;
+      const force = springStrength * delta;
+      const fx = (dx / dist) * force;
+      const fy = (dy / dist) * force;
+      displacements[i].x += fx;
+      displacements[i].y += fy;
+      displacements[j].x -= fx;
+      displacements[j].y -= fy;
+    }
+
+    for (let i = 0; i < coords.length; i += 1) {
+      const anchor = anchors[i];
+      displacements[i].x += (anchor.x - coords[i].x) * anchorStrength;
+      displacements[i].y += (anchor.y - coords[i].y) * anchorStrength;
+    }
+
+    for (let i = 0; i < coords.length; i += 1) {
+      const disp = displacements[i];
+      let moveX = disp.x * step;
+      let moveY = disp.y * step;
+      const moveMag = Math.hypot(moveX, moveY);
+      if (moveMag > maxMove) {
+        moveX = (moveX / moveMag) * maxMove;
+        moveY = (moveY / moveMag) * maxMove;
+      }
+      coords[i].x = clamp(coords[i].x + moveX, padding, width - padding);
+      coords[i].y = clamp(coords[i].y + moveY, padding, height - padding);
+    }
+  }
+
+  return new Map(nodes.map((node, idx) => [node.id, coords[idx]]));
+}
+
 function main() {
   const repoRoot = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
   const assetsDir = path.join(repoRoot, "docs", "assets");
@@ -200,7 +297,8 @@ function main() {
     y: (node.y - minY) * scale + PADDING
   });
 
-  const coordinates = new Map(nodes.map((node) => [node.id, project(node)]));
+  const projected = new Map(nodes.map((node) => [node.id, project(node)]));
+  const coordinates = relaxLayout(projected, nodes, edges, WIDTH, HEIGHT, PADDING);
   const image = Buffer.alloc(WIDTH * HEIGHT * 4);
   for (let i = 0; i < image.length; i += 4) {
     image[i] = BG[0];
@@ -216,8 +314,8 @@ function main() {
       continue;
     }
     const color = EDGE_COLORS[edge.relation] || [111, 131, 148, 140];
-    drawLine(image, WIDTH, HEIGHT, source.x, source.y, target.x, target.y, 1.8, color);
-    drawArrowhead(image, WIDTH, HEIGHT, source.x, source.y, target.x, target.y, 6, color);
+    drawLine(image, WIDTH, HEIGHT, source.x, source.y, target.x, target.y, 1.6, color);
+    drawArrowhead(image, WIDTH, HEIGHT, source.x, source.y, target.x, target.y, 5.5, color);
   }
 
   for (const node of nodes) {

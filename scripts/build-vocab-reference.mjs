@@ -135,7 +135,6 @@ function buildHtml({ graphData, concepts }) {
   const classes = declaredNodes.filter((n) => n.termType === "class");
   const objectProps = declaredNodes.filter((n) => n.termType === "objectProperty");
   const datatypeProps = declaredNodes.filter((n) => n.termType === "datatypeProperty");
-  const annotationProps = declaredNodes.filter((n) => n.termType === "annotationProperty");
   const scopeConceptRows = makeConceptRows(concepts, "vord:Scope");
   const enforcementConceptRows = makeConceptRows(concepts, "vord:EnforcementMode");
   const metricConceptRows = makeConceptRows(concepts, "vord:Metric");
@@ -170,7 +169,6 @@ function buildHtml({ graphData, concepts }) {
   const classRows = makeRows(classes, detailsById, "class");
   const objectRows = makeRows(objectProps, detailsById, "object");
   const dataRows = makeRows(datatypeProps, detailsById, "datatype");
-  const annotationRows = makeRows(annotationProps, detailsById, "annotation");
 
   return `<!doctype html>
 <html lang="en">
@@ -432,7 +430,6 @@ function buildHtml({ graphData, concepts }) {
         <li><a href="#metric-concepts">Metric Concepts</a></li>
         <li><a href="#object-properties">Object Properties</a></li>
         <li><a href="#datatype-properties">Datatype Properties</a></li>
-        <li><a href="#annotation-properties">Annotation Properties</a></li>
       </ul>
     </aside>
 
@@ -445,8 +442,6 @@ function buildHtml({ graphData, concepts }) {
           <div class="stat">Concepts<strong id="stat-concepts">0</strong></div>
           <div class="stat">Object Properties<strong id="stat-object-properties">0</strong></div>
           <div class="stat">Datatype Properties<strong id="stat-datatype-properties">0</strong></div>
-          <div class="stat">Annotation Properties<strong id="stat-annotation-properties">0</strong></div>
-          <div class="stat stat--namespace">Namespace<code id="stat-namespace">${escapeHtml(graphData.namespace || "https://w3id.org/vord#")}</code></div>
         </div>
         <div class="actions">
           <a class="btn btn--primary" href="index.html">Back to Home</a>
@@ -668,17 +663,6 @@ function buildHtml({ graphData, concepts }) {
         </div>
       </section>
 
-      <section class="section" id="annotation-properties">
-        <h2>Annotation Properties</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Term</th><th>Label</th><th>Domain / Range</th><th>Description</th></tr></thead>
-            <tbody>
-              ${annotationRows || '<tr><td colspan="4">No annotation properties declared in this vocabulary.</td></tr>'}
-            </tbody>
-          </table>
-        </div>
-      </section>
     </main>
   </div>
   <script>
@@ -702,7 +686,6 @@ function buildHtml({ graphData, concepts }) {
       );
       setCount("stat-object-properties", countRows("object-properties"));
       setCount("stat-datatype-properties", countRows("datatype-properties"));
-      setCount("stat-annotation-properties", countRows("annotation-properties"));
     })();
   </script>
 </body>

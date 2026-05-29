@@ -26,10 +26,10 @@ cp "$ROOT_DIR/examples/basic-service.ttl" "$ASSETS_DIR/basic-service.ttl"
 cp "$ROOT_DIR/examples/exhaustive-service.ttl" "$ASSETS_DIR/exhaustive-service.ttl"
 cp "$ROOT_DIR/examples/wikidata-rate-restrictions.ttl" "$ASSETS_DIR/wikidata-rate-restrictions.ttl"
 
-node "$ROOT_DIR/scripts/build-ontology-graph-data.mjs" "$ROOT_DIR"
+node "$ROOT_DIR/scripts/build-vocab-graph-data.mjs" "$ROOT_DIR"
 node "$ROOT_DIR/scripts/build-vocab-graph-preview-png.mjs" "$ROOT_DIR"
-node "$ROOT_DIR/scripts/build-ontology-hierarchy-ttl.mjs" "$ROOT_DIR"
-node "$ROOT_DIR/scripts/build-ontology-reference.mjs" "$ROOT_DIR"
+node "$ROOT_DIR/scripts/build-vocab-hierarchy-ttl.mjs" "$ROOT_DIR"
+node "$ROOT_DIR/scripts/build-vocab-reference.mjs" "$ROOT_DIR"
 node "$ROOT_DIR/scripts/build-term-pages.mjs" "$ROOT_DIR"
 
 if [[ -n "$MAIN_PAGE_BACKUP" ]]; then
