@@ -223,8 +223,11 @@
             "text": { "type": "string" },
             "mutedText": { "type": "string" },
             "accent": { "type": "string" },
+            "accentStart": { "type": "string" },
+            "accentBorder": { "type": "string" },
             "accentStrong": { "type": "string" },
-            "border": { "type": "string" }
+            "border": { "type": "string" },
+            "warmAccent": { "type": "string" }
           },
           "additionalProperties": true
         }
@@ -235,6 +238,14 @@
       "type": "object",
       "properties": {
         "basePath": { "type": "string" },
+        "branding": {
+          "type": "object",
+          "properties": {
+            "headerImage": { "type": "string" },
+            "favicon": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
         "hero": {
           "type": "object",
           "properties": {
@@ -249,6 +260,16 @@
           "properties": {
             "title": { "type": "string" },
             "body": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "toc": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "title": { "type": "string" },
+            "collapseLabel": { "type": "string" },
+            "expandLabel": { "type": "string" }
           },
           "additionalProperties": false
         },
