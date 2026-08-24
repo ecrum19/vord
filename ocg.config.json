@@ -57,8 +57,8 @@
     "usageGuidePage": true
   },
   "hierarchy": {
-    "title": "Ontology Structure",
-    "description": "A curated overview of the main class and concept relationships in this ontology.",
+    "title": "VoRD Vocabulary Structure",
+    "description": "A curated view of restriction classes and their relationships, with the controlled metric, scope, and enforcement concepts documented alongside them.",
     "termTypes": [
       "class",
       "concept"
@@ -109,9 +109,9 @@
       }
     },
     "webvowl": {
-      "enabled": false,
+      "enabled": true,
       "serviceUrl": "https://service.tib.eu/webvowl/",
-      "ontologyUrl": "",
+      "ontologyUrl": "https://raw.githubusercontent.com/ecrum19/vord/main/vocab/vord.ttl",
       "height": 760
     },
     "colors": {
@@ -149,59 +149,131 @@
   "site": {
     "basePath": "/vord/",
     "hero": {
-      "kicker": "Vocabulary Companion",
-      "headline": "Advertise SPARQL endpoint restrictions clearly.",
-      "body": "VoRD gives endpoint maintainers a compact, machine-readable way to publish live request, result, time, quota, and capacity restrictions for users and query engines."
+      "kicker": "Machine-readable endpoint policy",
+      "headline": "Publish the restrictions your SPARQL endpoint actually enforces.",
+      "body": "VoRD lets endpoint maintainers describe live restrictions as vord:Restriction resources linked from sd:Service. Query engines and users can discover request rates, result sizes, evaluation time, quotas, scopes, enforcement behavior, and HTTP signals before sending work."
     },
     "resourcePanel": {
-      "title": "Canonical Resources",
-      "body": "Explore the generated reference and graph, then inspect the ontology, validation shapes, examples, and Vocabulary Usage Specification."
+      "title": "Start With the VoRD Resources",
+      "body": "Read the Vocabulary Usage Specification for publishing guidance, use the reference and graph to discover terms, and inspect the examples to see complete service descriptions."
+    },
+    "home": {
+      "actions": {
+        "reference": "Vocabulary Reference",
+        "graph": "VoRD Relationship Graph",
+        "terms": "VoRD Term Pages",
+        "specification": "Vocabulary Usage Specification",
+        "ontology": "VoRD Ontology (Turtle)",
+        "shapes": "VoRD SHACL Shapes",
+        "shex": "VoRD ShEx Schema"
+      },
+      "metadata": {
+        "canonicalUri": "Canonical Vocabulary URI",
+        "version": "Vocabulary Version",
+        "maintainer": "Maintained By",
+        "unspecified": "Not specified",
+        "copyNamespace": "Copy VoRD Namespace",
+        "namespaceCopied": "VoRD Namespace Copied",
+        "namespaceCopyUnavailable": "VoRD Namespace Could Not Be Copied"
+      },
+      "snapshot": {
+        "title": "VoRD Vocabulary at a Glance",
+        "body": "Counts are generated from the current VoRD ontology and distinguish OWL classes, properties, SKOS concepts, and other declared terms."
+      },
+      "overview": {
+        "title": "Where to start?",
+        "body": "Choose the path that matches your role: endpoint maintainers publish live restrictions, query engine developers consume them to plan work, and endpoint users use them to understand endpoint behavior before sending queries."
+      },
+      "featuredTerms": {
+        "title": "Core VoRD Terms",
+        "body": "These classes and properties form the core pattern for advertising live SPARQL endpoint restrictions.",
+        "emptyBody": "No core VoRD terms are currently selected."
+      },
+      "examples": {
+        "title": "VoRD Service Description Examples",
+        "body": "Concrete Turtle examples showing how maintainers can publish rate, result-size, time, quota, and other endpoint restrictions.",
+        "defaultDescription": "VoRD service description example.",
+        "linkText": "Open Example"
+      },
+      "viewer": {
+        "title": "VoRD Source Viewer",
+        "body": "Inspect the canonical ontology, validation schemas, specification source, examples, and repository guidance.",
+        "viewFileText": "Open Source File",
+        "loadingText": "Loading VoRD source..."
+      },
+      "artifacts": {
+        "ontologyLabel": "VoRD Ontology (Turtle)",
+        "ontologyDescription": "Canonical VoRD vocabulary source.",
+        "shapesLabel": "VoRD SHACL Shapes",
+        "shapesDescription": "SHACL validation shapes for VoRD service descriptions.",
+        "shexLabel": "VoRD ShEx Schema",
+        "shexDescription": "ShEx validation schema for VoRD service descriptions.",
+        "specificationLabel": "Vocabulary Usage Specification",
+        "specificationDescription": "ReSpec source defining how maintainers publish VoRD restrictions.",
+        "additionalArtifactDescription": "Additional VoRD repository artifact."
+      }
     },
     "overviewCards": [
       {
-        "title": "Endpoint Maintainers",
-        "body": "Publish each important live restriction as a separate resource linked from sd:Service, with its metric, maximum value, unit, scope, enforcement, and hard/advisory status explicit.",
-        "linkText": "Read the Usage Specification",
+        "title": "For Endpoint Maintainers",
+        "body": "Describe each important public restriction as a separate resource linked from sd:Service. Make its metric, maximum value, QUDT unit, scope, enforcement mode, and hard or advisory status explicit.",
+        "linkText": "Open Publisher Guidance",
         "linkHref": "spec/index.html#publisher-guidance"
       },
       {
-        "title": "Query Engine Developers",
-        "body": "Use the generated vocabulary reference and graph to discover the terms and relationships needed to plan requests, adapt workloads, and interpret endpoint responses.",
-        "linkText": "Browse the Reference",
+        "title": "For Query Engine Developers",
+        "body": "Discover the terms needed to plan requests, adapt workloads, and interpret endpoint responses, from vord:metric and vord:maxValue to vord:hasScope and vord:enforcement.",
+        "linkText": "Open the Vocabulary Reference",
         "linkHref": "ontology-reference.html"
       },
       {
-        "title": "Users and Operators",
-        "body": "Inspect concrete examples and published artifacts to understand when an endpoint may reject, truncate, queue, throttle, or otherwise constrain work.",
-        "linkText": "View the Examples",
-        "linkHref": "usage-guide.html#artifacts"
+        "title": "For Endpoint Users",
+        "body": "Use published restrictions and examples to understand when an endpoint may reject, truncate, queue, throttle, or otherwise constrain a request or query.",
+        "linkText": "Open the Basic Example",
+        "linkHref": "assets/basic-service.ttl"
       }
     ],
     "customSections": [
       {
-        "title": "What the Generator Publishes",
-        "body": "The companion site is generated from the canonical VoRD ontology and configured repository resources. Generated pages are disposable build output; edit the vocabulary, examples, specification, or this configuration instead.",
+        "title": "How a VoRD Description Works",
+        "body": "A service description starts with an sd:Service and links each advertised policy through vord:hasRestriction. Each restriction then states what is measured, the threshold, who or what it applies to, and how the endpoint behaves when the threshold is reached.",
         "items": [
-          "Vocabulary Reference with classes, properties, and controlled SKOS concepts",
-          "Interactive Sigma.js relationship graph generated by OCG",
-          "Per-term pages and a curated ontology structure overview",
-          "Raw artifact viewer for the ontology, shapes, ShEx, specification, examples, and README"
+          "Use vord:metric, vord:maxValue, and the QUDT vord:unit to state the primary threshold.",
+          "Use vord:hasScope, vord:enforcement, and vord:hardRestriction to describe applicability and behavior.",
+          "Add vord:windowDuration and vord:burstValue for rate or quota windows where relevant.",
+          "Publish vord:retryAfterHint, vord:returnsStatusCode, and vord:httpSignalHeader when they reflect actual HTTP behavior."
         ]
       }
     ],
     "footer": {
-      "primary": "VoRD v0.2",
-      "secondary": "Maintained by Elias Crum. Generated with Ontology Companion Generator."
+      "primary": "VoRD v0.2 | Vocabulary of Restrictive Datasets",
+      "secondary": "For SPARQL endpoint maintainers, query engine developers, and endpoint users."
     },
     "generator": {
       "repositoryUrl": "https://github.com/ecrum19/vord",
-      "documentationUrl": "https://github.com/ecrum19/ocg#readme"
+      "documentationUrl": "https://www.npmjs.com/package/ontology-companion-generator"
     }
   },
   "curation": {
-    "featuredTerms": [],
-    "autoFeaturedTerms": true,
+    "featuredTerms": [
+      "vord:Restriction",
+      "vord:hasRestriction",
+      "vord:metric",
+      "vord:maxValue",
+      "vord:hasScope",
+      "vord:enforcement"
+    ],
+    "autoFeaturedTerms": false,
     "featuredTermLimit": 6,
-    "viewerTabs": []
+    "viewerTabs": [
+      "ontology",
+      "spec",
+      "shapes",
+      "shex",
+      "example:basic",
+      "example:exhaustive",
+      "example:wikidata",
+      "artifact:readme"
+    ]
   }
 }

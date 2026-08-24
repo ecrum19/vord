@@ -3,7 +3,7 @@
     "node": ">=24"
   },
   "devDependencies": {
-    "ontology-companion-generator": "1.2.2"
+    "ontology-companion-generator": "1.2.3"
   },
   "scripts": {
     "ocg:build": "ocg build",
