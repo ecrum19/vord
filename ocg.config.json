@@ -4,7 +4,7 @@
     "title": "VoRD: Vocabulary of Restrictive Datasets",
     "shortName": "VoRD",
     "slug": "vord",
-    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to advertise live operational restrictions.",
+    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to publish live operational restrictions, including request rates, result sizes, evaluation time, quotas, scope, enforcement behavior, and HTTP response signals.",
     "namespace": "https://w3id.org/vord#",
     "canonicalUri": "https://w3id.org/vord",
     "version": "0.2",
@@ -58,7 +58,7 @@
   },
   "hierarchy": {
     "title": "VoRD Vocabulary Structure",
-    "description": "A curated view of restriction classes and their relationships, with the controlled metric, scope, and enforcement concepts documented alongside them.",
+    "description": "A curated view of the OWL restriction classes and their relationships, with the controlled SKOS concepts for metrics, scopes, and enforcement modes documented alongside them.",
     "termTypes": [
       "class",
       "concept"
@@ -135,19 +135,28 @@
       "mono": "IBM Plex Mono"
     },
     "colors": {
-      "pageBackground": "#f6f1ea",
-      "pageBackgroundAlt": "#edf3f7",
-      "panelBackground": "#ffffff",
+      "pageBackground": "#eef5fb",
+      "pageBackgroundAlt": "#dcebf7",
+      "panelBackground": "#fbfdff",
       "cardBackground": "#ffffff",
-      "text": "#1d1f22",
-      "mutedText": "#5f6b7a",
-      "accent": "#1f6f78",
-      "accentStrong": "#13535a",
-      "border": "#d6dee6"
+      "text": "#112b46",
+      "mutedText": "#5b7188",
+      "accent": "#1d5fa7",
+      "accentStart": "#4285c5",
+      "accentBorder": "#2b6fb6",
+      "accentStrong": "#123e70",
+      "border": "#c6d8e8",
+      "warmAccent": "#7aa9d6"
     }
   },
   "site": {
     "basePath": "/vord/",
+    "toc": {
+      "enabled": true,
+      "title": "VoRD contents",
+      "collapseLabel": "Collapse VoRD contents",
+      "expandLabel": "Expand VoRD contents"
+    },
     "hero": {
       "kicker": "Machine-readable endpoint policy",
       "headline": "Publish the restrictions your SPARQL endpoint actually enforces.",
@@ -155,7 +164,7 @@
     },
     "resourcePanel": {
       "title": "Start With the VoRD Resources",
-      "body": "Read the Vocabulary Usage Specification for publishing guidance, use the reference and graph to discover terms, and inspect the examples to see complete service descriptions."
+      "body": "Start with the Vocabulary Usage Specification for publishing guidance, use the reference and graph to understand the terms, and inspect the examples to see complete service descriptions in Turtle."
     },
     "home": {
       "actions": {
