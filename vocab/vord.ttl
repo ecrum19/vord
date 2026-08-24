@@ -62,18 +62,27 @@ vord:QuotaRestriction a owl:Class ;
 
 vord:Metric a owl:Class ;
   rdfs:label "Metric"@en ;
-  rdfs:comment "Measurable dimension that a Restriction constrains."@en ;
-  rdfs:subClassOf skos:Concept .
+  rdfs:comment "Class of measurable dimensions that a Restriction constrains. Standard metric terms in this vocabulary are additionally modeled as SKOS concepts, but the class itself is kept separate from skos:Concept."@en .
 
 vord:Scope a owl:Class ;
   rdfs:label "Scope"@en ;
-  rdfs:comment "Scope at which a restriction is evaluated (e.g., per user, global)."@en ;
-  rdfs:subClassOf skos:Concept .
+  rdfs:comment "Class of enforcement scopes at which a restriction is evaluated (e.g., per user, global). Standard scope terms in this vocabulary are additionally modeled as SKOS concepts, but the class itself is kept separate from skos:Concept."@en .
 
 vord:EnforcementMode a owl:Class ;
   rdfs:label "Enforcement Mode"@en ;
-  rdfs:comment "Operational behavior when a restriction is reached."@en ;
-  rdfs:subClassOf skos:Concept .
+  rdfs:comment "Class of operational behaviors that apply when a restriction is reached. Standard enforcement mode terms in this vocabulary are additionally modeled as SKOS concepts, but the class itself is kept separate from skos:Concept."@en .
+
+vord:MetricScheme a skos:ConceptScheme ;
+  skos:prefLabel "VoRD metric scheme"@en ;
+  rdfs:comment "Concept scheme for the controlled metric terms defined by VoRD."@en .
+
+vord:ScopeScheme a skos:ConceptScheme ;
+  skos:prefLabel "VoRD scope scheme"@en ;
+  rdfs:comment "Concept scheme for the controlled scope terms defined by VoRD."@en .
+
+vord:EnforcementModeScheme a skos:ConceptScheme ;
+  skos:prefLabel "VoRD enforcement mode scheme"@en ;
+  rdfs:comment "Concept scheme for the controlled enforcement mode terms defined by VoRD."@en .
 
 vord:CostModel a owl:Class ;
   rdfs:label "Cost Model"@en ;
@@ -170,60 +179,75 @@ vord:hardRestriction a owl:DatatypeProperty ;
 
 vord:PerClientIP a vord:Scope, skos:Concept ;
   skos:prefLabel "Per Client IP"@en ;
+  skos:inScheme vord:ScopeScheme ;
   rdfs:comment "The restriction is enforced independently for each client IP address."@en .
 
 vord:PerAPIKey a vord:Scope, skos:Concept ;
   skos:prefLabel "Per API Key"@en ;
+  skos:inScheme vord:ScopeScheme ;
   rdfs:comment "The restriction is enforced independently for each API key credential."@en .
 
 vord:PerUser a vord:Scope, skos:Concept ;
   skos:prefLabel "Per User"@en ;
+  skos:inScheme vord:ScopeScheme ;
   rdfs:comment "The restriction is enforced independently for each authenticated user identity."@en .
 
 vord:PerRequest a vord:Scope, skos:Concept ;
   skos:prefLabel "Per Request"@en ;
+  skos:inScheme vord:ScopeScheme ;
   rdfs:comment "The restriction is evaluated within a single incoming request or query execution."@en .
 
 vord:GlobalScope a vord:Scope, skos:Concept ;
   skos:prefLabel "Global"@en ;
+  skos:inScheme vord:ScopeScheme ;
   rdfs:comment "The restriction is shared across all traffic handled by the endpoint instance or cluster."@en .
 
 vord:RejectRequest a vord:EnforcementMode, skos:Concept ;
   skos:prefLabel "Reject Request"@en ;
+  skos:inScheme vord:EnforcementModeScheme ;
   rdfs:comment "The endpoint rejects requests that violate the restriction."@en .
 
 vord:TruncateResult a vord:EnforcementMode, skos:Concept ;
   skos:prefLabel "Truncate Result"@en ;
+  skos:inScheme vord:EnforcementModeScheme ;
   rdfs:comment "The endpoint returns a partial result when the restriction is reached."@en .
 
 vord:QueueRequest a vord:EnforcementMode, skos:Concept ;
   skos:prefLabel "Queue Request"@en ;
+  skos:inScheme vord:EnforcementModeScheme ;
   rdfs:comment "The endpoint queues requests instead of executing immediately when capacity is constrained."@en .
 
 vord:ThrottleResponse a vord:EnforcementMode, skos:Concept ;
   skos:prefLabel "Throttle Response"@en ;
+  skos:inScheme vord:EnforcementModeScheme ;
   rdfs:comment "The endpoint slows processing or response delivery under limiting conditions."@en .
 
 vord:DegradeQuality a vord:EnforcementMode, skos:Concept ;
   skos:prefLabel "Degrade Quality"@en ;
+  skos:inScheme vord:EnforcementModeScheme ;
   rdfs:comment "The endpoint continues serving requests with reduced quality of service."@en .
 
 vord:requestsPerWindow a vord:Metric, skos:Concept ;
   skos:prefLabel "Requests per Window"@en ;
+  skos:inScheme vord:MetricScheme ;
   rdfs:comment "Count of requests observed within a configured sliding or fixed window."@en .
 
 vord:requestsPerDay a vord:Metric, skos:Concept ;
   skos:prefLabel "Requests per Day"@en ;
+  skos:inScheme vord:MetricScheme ;
   rdfs:comment "Count of requests accumulated over a one-day quota period."@en .
 
 vord:resultBindings a vord:Metric, skos:Concept ;
   skos:prefLabel "Result Bindings"@en ;
+  skos:inScheme vord:MetricScheme ;
   rdfs:comment "Number of solution bindings (solution mappings) returned by a SPARQL query."@en .
 
 vord:evaluationTime a vord:Metric, skos:Concept ;
   skos:prefLabel "Evaluation Time"@en ;
+  skos:inScheme vord:MetricScheme ;
   rdfs:comment "Integer amount of time a request is evaluated in seconds."@en .
 
 vord:estimatedCostUnits a vord:Metric, skos:Concept ;
   skos:prefLabel "Estimated Cost Units"@en ;
+  skos:inScheme vord:MetricScheme ;
   rdfs:comment "Optimizer- or planner-estimated internal cost score for query execution."@en .

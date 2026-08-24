@@ -1,4 +1,4 @@
-name: Publish VoRD Site
+name: Publish VoRD Companion Site
 
 on:
   push:
@@ -20,30 +20,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: npm
 
-      - name: Regenerate docs assets
-        run: bash scripts/sync-docs-assets.sh
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Verify publish directory
-        run: |
-          test -f docs/index.html
-          test -f docs/ontology-reference.html
-          test -f docs/ontology-graph.html
-          ls -la docs
+      - name: Validate configuration and ontology
+        run: npm run ocg:check
+
+      - name: Build companion site
+        run: npm run ocg:build
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
-          path: docs
+          path: site
 
   deploy:
     needs: build
@@ -54,4 +54,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

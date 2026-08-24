@@ -1,0 +1,5 @@
+node_modules/
+site/
+.DS_Store
+.pytest_cache/
+.venv/
