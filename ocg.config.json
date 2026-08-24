@@ -1,0 +1,207 @@
+{
+  "$schema": "./ocg.config.schema.json",
+  "project": {
+    "title": "VoRD: Vocabulary of Restrictive Datasets",
+    "shortName": "VoRD",
+    "slug": "vord",
+    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to advertise live operational restrictions.",
+    "namespace": "https://w3id.org/vord#",
+    "canonicalUri": "https://w3id.org/vord",
+    "version": "0.2",
+    "maintainer": "Elias Crum"
+  },
+  "sources": {
+    "ontology": "vocab/vord.ttl",
+    "ontologyFormat": "auto",
+    "shapes": "shapes/vord.shacl.ttl",
+    "shex": "shex/vord.shex",
+    "spec": "spec/index.html",
+    "examples": [
+      {
+        "key": "basic",
+        "label": "Basic Service Description",
+        "path": "examples/basic-service.ttl",
+        "description": "A minimal service description showing the core VoRD restriction pattern."
+      },
+      {
+        "key": "exhaustive",
+        "label": "Exhaustive Service Description",
+        "path": "examples/exhaustive-service.ttl",
+        "description": "An example using the complete set of current VoRD restriction classes and properties."
+      },
+      {
+        "key": "wikidata",
+        "label": "Wikidata Rate Restrictions",
+        "path": "examples/wikidata-rate-restrictions.ttl",
+        "description": "A worked example based on publicly documented Wikidata service guidance."
+      }
+    ],
+    "artifacts": [
+      {
+        "key": "readme",
+        "label": "Repository README",
+        "path": "README.md",
+        "description": "Repository-level implementation and validation guidance."
+      }
+    ]
+  },
+  "features": {
+    "referencePage": true,
+    "graphPage": true,
+    "termPages": true,
+    "rawViewer": true,
+    "overviewCards": true,
+    "hierarchyAsset": true,
+    "hierarchyOverview": true,
+    "specPage": true,
+    "usageGuidePage": true
+  },
+  "hierarchy": {
+    "title": "Ontology Structure",
+    "description": "A curated overview of the main class and concept relationships in this ontology.",
+    "termTypes": [
+      "class",
+      "concept"
+    ],
+    "relations": [
+      "subClassOf",
+      "broader"
+    ],
+    "rootTerms": [],
+    "maxRoots": 6,
+    "maxDepth": 3,
+    "maxChildrenPerNode": 6,
+    "maxNodes": 36,
+    "includeLeafTerms": true,
+    "includeExternal": false,
+    "includePropertyRelations": true,
+    "propertyRelations": [
+      "domain",
+      "range"
+    ],
+    "maxPropertyRelations": 12,
+    "labelMode": "label-and-qname"
+  },
+  "graph": {
+    "defaultView": "custom",
+    "custom": {
+      "enabled": true,
+      "label": "VoRD Relationship Graph",
+      "defaultMode": "predicate-nodes",
+      "modes": {
+        "predicateNodes": true,
+        "predicateEdges": true
+      },
+      "layout": {
+        "iterations": 320,
+        "seed": 42,
+        "scalingRatio": 1.4,
+        "gravity": 1,
+        "linLogMode": false,
+        "preventOverlap": true,
+        "labelSpacing": 1.15
+      },
+      "labels": {
+        "density": 1.5,
+        "gridCellSize": 90,
+        "renderedSizeThreshold": 2,
+        "forceAllUnder": 80
+      }
+    },
+    "webvowl": {
+      "enabled": false,
+      "serviceUrl": "https://service.tib.eu/webvowl/",
+      "ontologyUrl": "",
+      "height": 760
+    },
+    "colors": {
+      "class": "#b7dcf6",
+      "objectProperty": "#bee7c3",
+      "datatypeProperty": "#f7d7ab",
+      "annotationProperty": "#f2c8cf",
+      "concept": "#d3c5f6",
+      "declaredTerm": "#e1e8ef",
+      "external": "#dfe6ee",
+      "subClassOf": "#1f6f92",
+      "domain": "#2f8040",
+      "range": "#ab6b22",
+      "broader": "#7b5ca7"
+    }
+  },
+  "theme": {
+    "fonts": {
+      "heading": "Space Grotesk",
+      "body": "IBM Plex Sans",
+      "mono": "IBM Plex Mono"
+    },
+    "colors": {
+      "pageBackground": "#f6f1ea",
+      "pageBackgroundAlt": "#edf3f7",
+      "panelBackground": "#ffffff",
+      "cardBackground": "#ffffff",
+      "text": "#1d1f22",
+      "mutedText": "#5f6b7a",
+      "accent": "#1f6f78",
+      "accentStrong": "#13535a",
+      "border": "#d6dee6"
+    }
+  },
+  "site": {
+    "basePath": "/vord/",
+    "hero": {
+      "kicker": "Vocabulary Companion",
+      "headline": "Advertise SPARQL endpoint restrictions clearly.",
+      "body": "VoRD gives endpoint maintainers a compact, machine-readable way to publish live request, result, time, quota, and capacity restrictions for users and query engines."
+    },
+    "resourcePanel": {
+      "title": "Canonical Resources",
+      "body": "Explore the generated reference and graph, then inspect the ontology, validation shapes, examples, and Vocabulary Usage Specification."
+    },
+    "overviewCards": [
+      {
+        "title": "Endpoint Maintainers",
+        "body": "Publish each important live restriction as a separate resource linked from sd:Service, with its metric, maximum value, unit, scope, enforcement, and hard/advisory status explicit.",
+        "linkText": "Read the Usage Specification",
+        "linkHref": "spec/index.html#publisher-guidance"
+      },
+      {
+        "title": "Query Engine Developers",
+        "body": "Use the generated vocabulary reference and graph to discover the terms and relationships needed to plan requests, adapt workloads, and interpret endpoint responses.",
+        "linkText": "Browse the Reference",
+        "linkHref": "ontology-reference.html"
+      },
+      {
+        "title": "Users and Operators",
+        "body": "Inspect concrete examples and published artifacts to understand when an endpoint may reject, truncate, queue, throttle, or otherwise constrain work.",
+        "linkText": "View the Examples",
+        "linkHref": "usage-guide.html#artifacts"
+      }
+    ],
+    "customSections": [
+      {
+        "title": "What the Generator Publishes",
+        "body": "The companion site is generated from the canonical VoRD ontology and configured repository resources. Generated pages are disposable build output; edit the vocabulary, examples, specification, or this configuration instead.",
+        "items": [
+          "Vocabulary Reference with classes, properties, and controlled SKOS concepts",
+          "Interactive Sigma.js relationship graph generated by OCG",
+          "Per-term pages and a curated ontology structure overview",
+          "Raw artifact viewer for the ontology, shapes, ShEx, specification, examples, and README"
+        ]
+      }
+    ],
+    "footer": {
+      "primary": "VoRD v0.2",
+      "secondary": "Maintained by Elias Crum. Generated with Ontology Companion Generator."
+    },
+    "generator": {
+      "repositoryUrl": "https://github.com/ecrum19/vord",
+      "documentationUrl": "https://github.com/ecrum19/ocg#readme"
+    }
+  },
+  "curation": {
+    "featuredTerms": [],
+    "autoFeaturedTerms": true,
+    "featuredTermLimit": 6,
+    "viewerTabs": []
+  }
+}
