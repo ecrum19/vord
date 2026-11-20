@@ -9,12 +9,13 @@ It extends SPARQL Service Description with explicit restriction resources and va
 - `ocg.config.json`: Ontology Companion Generator configuration
 - `site/`: generated GitHub Pages output; do not edit by hand
 - `.github/workflows/publish-pages.yml`: validates, builds, and deploys `site/`
-- `vocab/vord.ttl`: authoritative vocabulary (`v0.2`)
+- `vocab/vord.ttl`: authoritative vocabulary (`v0.3`)
 - `shapes/vord.shacl.ttl`: SHACL constraints
 - `shex/vord.shex`: ShEx companion schema
 - `examples/basic-service.ttl`: minimal example
 - `examples/exhaustive-service.ttl`: exhaustive example using all core terms
 - `examples/wikidata-rate-restrictions.ttl`: Wikidata/WMF rate-restriction example based on public docs
+- `examples/strict-endpoints.ttl`: strict restrictions: usage budgets, client identification, bans, tarpits, degraded answers, shared limits and queues
 
 ## Publishing Pattern
 
@@ -25,6 +26,11 @@ Quantitative restrictions generally use:
 - `vord:maxValue`
 - optional `vord:minValue`, `vord:unit`, `vord:windowDuration`, `vord:burstValue`
 - `vord:hasScope`, `vord:enforcement`, `vord:hardRestriction`
+- optional `vord:penaltyThreshold` and `vord:penaltyDuration` when the endpoint blocks clients that keep violating the restriction
+
+A usage budget is a `vord:CostModelRestriction` with the metric `vord:costUnitsPerWindow`: `vord:maxValue` cost units per `vord:windowDuration`, of which at most `vord:burstValue` can be spent at once, priced by the `vord:costModel`.
+
+A `vord:IdentificationRestriction` requires every request to identify the client: it names the request header (`vord:identificationHeader`, e.g. `From` or `User-Agent`) and the format of the identification (`vord:identificationFormat`: `vord:EmailAddress` or `vord:ProductWithContact`). It has no metric or maximum value.
 
 ## Complete Term Index
 
@@ -38,10 +44,12 @@ Quantitative restrictions generally use:
 - `vord:ConcurrentRequestsRestriction`
 - `vord:ResponseTimeRestriction`
 - `vord:QuotaRestriction`
+- `vord:IdentificationRestriction`
 - `vord:Metric`
 - `vord:Scope`
 - `vord:EnforcementMode`
 - `vord:CostModel`
+- `vord:IdentificationFormat`
 
 ### Object Properties
 
@@ -51,6 +59,8 @@ Quantitative restrictions generally use:
 - `vord:enforcement`
 - `vord:costModel`
 - `vord:httpSignalHeader`
+- `vord:identificationHeader`
+- `vord:identificationFormat`
 - `vord:unit`
 
 ### Datatype Properties
@@ -62,6 +72,15 @@ Quantitative restrictions generally use:
 - `vord:retryAfterHint`
 - `vord:returnsStatusCode`
 - `vord:hardRestriction`
+- `vord:penaltyThreshold`
+- `vord:penaltyDuration`
+
+### Controlled Values
+
+- Metrics: `vord:requestsPerWindow`, `vord:requestsPerDay`, `vord:resultBindings`, `vord:evaluationTime`, `vord:estimatedCostUnits`, `vord:costUnitsPerWindow`, `vord:concurrentRequests`
+- Scopes: `vord:PerClientIP`, `vord:PerAPIKey`, `vord:PerUser`, `vord:PerRequest`, `vord:GlobalScope`
+- Enforcement modes: `vord:RejectRequest`, `vord:TruncateResult`, `vord:QueueRequest`, `vord:ThrottleResponse`, `vord:DegradeQuality`
+- Identification formats: `vord:EmailAddress`, `vord:ProductWithContact`
 
 ## Development
 

@@ -71,6 +71,30 @@ vords:RestrictionShape a sh:NodeShape ;
     sh:path vord:httpSignalHeader ;
     sh:maxCount 1 ;
     sh:nodeKind sh:IRI ;
+  ] ;
+  sh:property [
+    sh:path vord:burstValue ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+  ] ;
+  sh:property [
+    sh:path vord:penaltyThreshold ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+  ] ;
+  sh:property [
+    sh:path vord:penaltyDuration ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:duration ;
+  ] .
+
+vords:PenaltyShape a sh:NodeShape ;
+  sh:targetSubjectsOf vord:penaltyThreshold ;
+  sh:property [
+    sh:path vord:penaltyDuration ;
+    sh:minCount 1 ;
+    sh:message "A restriction with vord:penaltyThreshold must state vord:penaltyDuration." ;
   ] .
 
 vords:RateRestrictionShape a sh:NodeShape ;
@@ -120,8 +144,14 @@ vords:CostModelRestrictionShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:estimatedCostUnits ) ;
+    sh:in ( vord:estimatedCostUnits vord:costUnitsPerWindow ) ;
   ] ;
+  # A usage budget (vord:costUnitsPerWindow) needs the window in which its units are counted.
+  sh:or (
+    [ sh:property [ sh:path vord:metric ; sh:hasValue vord:estimatedCostUnits ] ]
+    [ sh:property [ sh:path vord:windowDuration ; sh:minCount 1 ] ]
+  ) ;
+  sh:message "A cost-model restriction with metric vord:costUnitsPerWindow must state vord:windowDuration." ;
   sh:property [
     sh:path vord:maxValue ;
     sh:minCount 1 ;
@@ -191,4 +221,19 @@ vords:QuotaRestrictionShape a sh:NodeShape ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
     sh:datatype xsd:integer ;
+  ] .
+
+vords:IdentificationRestrictionShape a sh:NodeShape ;
+  sh:targetClass vord:IdentificationRestriction ;
+  sh:property [
+    sh:path vord:identificationHeader ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
+  ] ;
+  sh:property [
+    sh:path vord:identificationFormat ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class vord:IdentificationFormat ;
   ] .

@@ -13,7 +13,21 @@ EXAMPLE_PATHS = [
     ROOT / "examples" / "basic-service.ttl",
     ROOT / "examples" / "exhaustive-service.ttl",
     ROOT / "examples" / "wikidata-rate-restrictions.ttl",
+    ROOT / "examples" / "strict-endpoints.ttl",
 ]
+SHEX_PATH = ROOT / "shex" / "vord.shex"
+
+PREFIXES = """
+@prefix ex: <https://example.org/test/> .
+@prefix http: <http://www.w3.org/2011/http-headers#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix vord: <https://w3id.org/vord#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:service a sd:Service ;
+  sd:endpoint <https://example.org/sparql> ;
+  vord:hasRestriction ex:restriction .
+"""
 
 VORD_NS = Namespace("https://w3id.org/vord#")
 
@@ -37,6 +51,13 @@ def _run_shacl(data_graph: Graph):
         allow_warnings=True,
     )
     return conforms, report_graph, report_text
+
+
+def _validate_restriction(turtle: str):
+    """Validate a service with the single restriction ex:restriction, given in Turtle."""
+    data = Graph()
+    data.parse(data=PREFIXES + turtle, format="turtle")
+    return _run_shacl(data)
 
 
 def test_core_classes_and_properties_exist():
@@ -112,3 +133,146 @@ def test_invalid_restriction_missing_metric_fails_validation():
     conforms, _, report_text = _run_shacl(invalid_data)
     assert not conforms, "Invalid graph should fail SHACL validation"
     assert "metric" in report_text.lower()
+
+
+def test_identification_restriction_conforms():
+    """An identification restriction needs a header and a format, but no metric or maximum value."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:IdentificationRestriction ;
+          vord:identificationHeader http:from ;
+          vord:identificationFormat vord:EmailAddress ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean ;
+          vord:returnsStatusCode "403"^^xsd:integer .
+    """)
+    assert conforms, report_text
+
+
+def test_identification_restriction_requires_header():
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:IdentificationRestriction ;
+          vord:identificationFormat vord:EmailAddress ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "identificationheader" in report_text.lower()
+
+
+def test_identification_restriction_requires_a_format_term():
+    """The format must be a vord:IdentificationFormat term, not a literal."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:IdentificationRestriction ;
+          vord:identificationHeader http:from ;
+          vord:identificationFormat "email" ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "identificationformat" in report_text.lower()
+
+
+USAGE_BUDGET = """
+    ex:units a vord:CostModel .
+    ex:restriction a vord:Restriction, vord:CostModelRestriction ;
+      vord:metric vord:costUnitsPerWindow ;
+      vord:maxValue "600"^^xsd:integer ;
+      vord:burstValue "200"^^xsd:integer ;
+      vord:costModel ex:units ;
+      vord:hasScope vord:PerClientIP ;
+      vord:enforcement vord:RejectRequest ;
+      vord:hardRestriction "true"^^xsd:boolean"""
+
+
+def test_usage_budget_with_burst_conforms():
+    """A usage budget may use vord:burstValue without being inferred to be a rate restriction."""
+    conforms, _, report_text = _validate_restriction(
+        USAGE_BUDGET + ' ;\n      vord:windowDuration "PT1M"^^xsd:duration .'
+    )
+    assert conforms, report_text
+
+
+def test_usage_budget_requires_window():
+    conforms, _, report_text = _validate_restriction(USAGE_BUDGET + " .")
+    assert not conforms
+    assert "windowduration" in report_text.lower()
+
+
+def test_cost_ceiling_per_request_needs_no_window():
+    conforms, _, report_text = _validate_restriction("""
+        ex:units a vord:CostModel .
+        ex:restriction a vord:Restriction, vord:CostModelRestriction ;
+          vord:metric vord:estimatedCostUnits ;
+          vord:maxValue "200000"^^xsd:integer ;
+          vord:costModel ex:units ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert conforms, report_text
+
+
+RATE_WITH_PENALTY = """
+    ex:restriction a vord:Restriction, vord:RateRestriction ;
+      vord:metric vord:requestsPerWindow ;
+      vord:maxValue "10"^^xsd:integer ;
+      vord:windowDuration "PT1S"^^xsd:duration ;
+      vord:hasScope vord:PerClientIP ;
+      vord:enforcement vord:RejectRequest ;
+      vord:hardRestriction "true"^^xsd:boolean ;
+      vord:returnsStatusCode "403"^^xsd:integer"""
+
+
+def test_penalty_conforms():
+    conforms, _, report_text = _validate_restriction(RATE_WITH_PENALTY + """ ;
+      vord:penaltyThreshold "1"^^xsd:integer ;
+      vord:penaltyDuration "PT10M"^^xsd:duration .
+    """)
+    assert conforms, report_text
+
+
+def test_penalty_threshold_requires_duration():
+    conforms, _, report_text = _validate_restriction(RATE_WITH_PENALTY + """ ;
+      vord:penaltyThreshold "1"^^xsd:integer .
+    """)
+    assert not conforms
+    assert "penaltyduration" in report_text.lower()
+
+
+def test_penalty_threshold_must_be_positive():
+    conforms, _, report_text = _validate_restriction(RATE_WITH_PENALTY + """ ;
+      vord:penaltyThreshold "0"^^xsd:integer ;
+      vord:penaltyDuration "PT10M"^^xsd:duration .
+    """)
+    assert not conforms
+    assert "penaltythreshold" in report_text.lower()
+
+
+def test_controlled_values_are_in_their_schemes():
+    """New controlled values are typed, labelled, and in their concept schemes."""
+    vocab = _load_graph(VOCAB_PATH)
+    skos = Namespace("http://www.w3.org/2004/02/skos/core#")
+    expected = {
+        "costUnitsPerWindow": ("Metric", "MetricScheme"),
+        "concurrentRequests": ("Metric", "MetricScheme"),
+        "EmailAddress": ("IdentificationFormat", "IdentificationFormatScheme"),
+        "ProductWithContact": ("IdentificationFormat", "IdentificationFormatScheme"),
+    }
+    for name, (class_name, scheme) in expected.items():
+        term = VORD_NS[name]
+        assert (term, RDF.type, VORD_NS[class_name]) in vocab, f"vord:{name} should be a vord:{class_name}"
+        assert (term, skos.inScheme, VORD_NS[scheme]) in vocab, f"vord:{name} should be in vord:{scheme}"
+        assert vocab.value(term, skos.prefLabel) is not None, f"vord:{name} needs a skos:prefLabel"
+        assert vocab.value(term, RDFS.comment) is not None, f"vord:{name} needs an rdfs:comment"
+
+
+def test_shex_covers_restriction_properties():
+    """The ShEx schema mentions every property that a restriction can have."""
+    vocab = _load_graph(VOCAB_PATH)
+    shex = SHEX_PATH.read_text(encoding="utf-8")
+    for prop in list(vocab.subjects(RDF.type, OWL.ObjectProperty)) + list(vocab.subjects(RDF.type, OWL.DatatypeProperty)):
+        local_name = str(prop).split("#", 1)[-1]
+        assert f"vord:{local_name}" in shex, f"ShEx schema is missing vord:{local_name}"

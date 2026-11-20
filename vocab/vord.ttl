@@ -14,6 +14,8 @@
   dcterms:title "VoRD: Vocabulary of Restrictive Datasets"@en ;
   dcterms:description "Vocabulary for describing operational restrictions of SPARQL services, aligned with SPARQL Service Description and validated with SHACL/ShEx."@en ;
   dcterms:created "2026-04-23"^^xsd:date ;
+  dcterms:modified "2026-11-20"^^xsd:date ;
+  owl:versionInfo "0.3" ;
   dcterms:conformsTo <https://www.w3.org/TR/sparql12-service-description/> ;
   dcterms:conformsTo <https://www.w3.org/TR/shacl/> ;
   dcterms:conformsTo <https://www.w3.org/ns/shex> ;
@@ -37,7 +39,7 @@ vord:ResultSizeRestriction a owl:Class ;
 
 vord:CostModelRestriction a owl:Class ;
   rdfs:label "Cost Model Restriction"@en ;
-  rdfs:comment "Restriction based on internal query optimizer or execution cost estimation."@en ;
+  rdfs:comment "Restriction based on the cost that the endpoint's cost model assigns to requests: either a ceiling on the estimated cost of a single request (metric vord:estimatedCostUnits), or a usage budget of cost units per window that refills over time (metric vord:costUnitsPerWindow)."@en ;
   rdfs:subClassOf vord:Restriction .
 
 vord:ServerLoadRestriction a owl:Class ;
@@ -59,6 +61,15 @@ vord:QuotaRestriction a owl:Class ;
   rdfs:label "Quota Restriction"@en ;
   rdfs:comment "Rolling or fixed query submission quota over a longer period (day, week, month)."@en ;
   rdfs:subClassOf vord:Restriction .
+
+vord:IdentificationRestriction a owl:Class ;
+  rdfs:label "Identification Restriction"@en ;
+  rdfs:comment "Restriction that requires every request to identify the client, with contact information for its operator, in a given HTTP request header. Requests without valid identification are handled according to the restriction's enforcement mode, typically rejected. The identification is expected to stay the same for a client, so that other restrictions with scope vord:PerUser can be counted per identity."@en ;
+  rdfs:subClassOf vord:Restriction .
+
+vord:IdentificationFormat a owl:Class ;
+  rdfs:label "Identification Format"@en ;
+  rdfs:comment "Class of formats in which a client identifies itself in an HTTP request header. Standard format terms in this vocabulary are additionally modeled as SKOS concepts, but the class itself is kept separate from skos:Concept."@en .
 
 vord:Metric a owl:Class ;
   rdfs:label "Metric"@en ;
@@ -84,9 +95,13 @@ vord:EnforcementModeScheme a skos:ConceptScheme ;
   skos:prefLabel "VoRD enforcement mode scheme"@en ;
   rdfs:comment "Concept scheme for the controlled enforcement mode terms defined by VoRD."@en .
 
+vord:IdentificationFormatScheme a skos:ConceptScheme ;
+  skos:prefLabel "VoRD identification format scheme"@en ;
+  rdfs:comment "Concept scheme for the controlled identification format terms defined by VoRD."@en .
+
 vord:CostModel a owl:Class ;
   rdfs:label "Cost Model"@en ;
-  rdfs:comment "Identifier for an implementation-specific cost model used by an endpoint."@en .
+  rdfs:comment "Identifier for an implementation-specific cost model used by an endpoint, which determines how many cost units a request costs. Publishers are encouraged to describe the model with rdfs:comment or dcterms:description."@en .
 
 vord:hasRestriction a owl:ObjectProperty ;
   rdfs:label "has restriction"@en ;
@@ -115,7 +130,7 @@ vord:enforcement a owl:ObjectProperty ;
 
 vord:costModel a owl:ObjectProperty ;
   rdfs:label "cost model"@en ;
-  rdfs:comment "Cost model used to interpret an internal cost-model restriction."@en ;
+  rdfs:comment "Cost model used to interpret a cost-model restriction."@en ;
   rdfs:domain vord:CostModelRestriction ;
   rdfs:range vord:CostModel .
 
@@ -125,6 +140,19 @@ vord:httpSignalHeader a owl:ObjectProperty ;
   rdfs:domain vord:Restriction ;
   rdfs:range http:HeaderName ;
   rdfs:seeAlso http:hdrName .
+
+vord:identificationHeader a owl:ObjectProperty ;
+  rdfs:label "identification header"@en ;
+  rdfs:comment "HTTP request header in which a client must identify itself, such as From or User-Agent."@en ;
+  rdfs:domain vord:IdentificationRestriction ;
+  rdfs:range http:HeaderName ;
+  rdfs:seeAlso http:hdrName .
+
+vord:identificationFormat a owl:ObjectProperty ;
+  rdfs:label "identification format"@en ;
+  rdfs:comment "Format of the identification that a client must send in the identification header."@en ;
+  rdfs:domain vord:IdentificationRestriction ;
+  rdfs:range vord:IdentificationFormat .
 
 vord:maxValue a owl:DatatypeProperty ;
   rdfs:label "maximum value"@en ;
@@ -140,8 +168,8 @@ vord:minValue a owl:DatatypeProperty ;
 
 vord:burstValue a owl:DatatypeProperty ;
   rdfs:label "burst value"@en ;
-  rdfs:comment "Additional burst threshold for short spikes."@en ;
-  rdfs:domain vord:RateRestriction ;
+  rdfs:comment "Additional burst threshold for short spikes. For rate restrictions, the maximum number of requests in a short burst; for usage budgets (vord:costUnitsPerWindow), the maximum number of cost units that can be spent at once."@en ;
+  rdfs:domain vord:Restriction ;
   rdfs:range xsd:integer .
 
 vord:unit a owl:ObjectProperty ;
@@ -176,6 +204,19 @@ vord:hardRestriction a owl:DatatypeProperty ;
   rdfs:comment "True if the threshold is strictly enforced; false if advisory or load-dependent."@en ;
   rdfs:domain vord:Restriction ;
   rdfs:range xsd:boolean .
+
+vord:penaltyThreshold a owl:DatatypeProperty ;
+  rdfs:label "penalty threshold"@en ;
+  rdfs:comment "Number of violations of this restriction within vord:penaltyDuration after which the endpoint blocks the client for vord:penaltyDuration. A value of 1 means that the first violation is penalized."@en ;
+  rdfs:domain vord:Restriction ;
+  rdfs:range xsd:integer .
+
+vord:penaltyDuration a owl:DatatypeProperty ;
+  rdfs:label "penalty duration"@en ;
+  rdfs:comment "Duration for which the endpoint blocks a client that reached the penalty threshold, and the period in which violations are counted (xsd:duration)."@en ;
+  rdfs:domain vord:Restriction ;
+  rdfs:range xsd:duration ;
+  rdfs:seeAlso time:hasXSDDuration .
 
 vord:PerClientIP a vord:Scope, skos:Concept ;
   skos:prefLabel "Per Client IP"@en ;
@@ -251,3 +292,23 @@ vord:estimatedCostUnits a vord:Metric, skos:Concept ;
   skos:prefLabel "Estimated Cost Units"@en ;
   skos:inScheme vord:MetricScheme ;
   rdfs:comment "Optimizer- or planner-estimated internal cost score for query execution."@en .
+
+vord:costUnitsPerWindow a vord:Metric, skos:Concept ;
+  skos:prefLabel "Cost Units per Window"@en ;
+  skos:inScheme vord:MetricScheme ;
+  rdfs:comment "Cost units that the endpoint's cost model charges for the requests of a client within a window. Used for usage budgets that refill over time: vord:maxValue cost units per vord:windowDuration, of which at most vord:burstValue can be spent at once."@en .
+
+vord:concurrentRequests a vord:Metric, skos:Concept ;
+  skos:prefLabel "Concurrent Requests"@en ;
+  skos:inScheme vord:MetricScheme ;
+  rdfs:comment "Number of requests that the endpoint processes at the same time for the restriction's scope."@en .
+
+vord:EmailAddress a vord:IdentificationFormat, skos:Concept ;
+  skos:prefLabel "Email Address"@en ;
+  skos:inScheme vord:IdentificationFormatScheme ;
+  rdfs:comment "An email address at which the operator of the client can be reached, as in the HTTP From header (RFC 9110, section 10.1.2)."@en .
+
+vord:ProductWithContact a vord:IdentificationFormat, skos:Concept ;
+  skos:prefLabel "Product with Contact"@en ;
+  skos:inScheme vord:IdentificationFormatScheme ;
+  rdfs:comment "A product identifier followed by a comment that contains contact information, such as an email address or a URL, as in the User-Agent value 'ExampleBot/1.0 (https://example.org/bot; bot@example.org)'."@en .
