@@ -4,10 +4,10 @@
     "title": "VoRD: Vocabulary of Restrictive Datasets",
     "shortName": "VoRD",
     "slug": "vord",
-    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to publish live operational restrictions, including request rates, result sizes, evaluation time, quotas, scope, enforcement behavior, and HTTP response signals.",
+    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to publish live operational restrictions, including request rates, result sizes, evaluation time, quotas, usage budgets, identification requirements, penalties, scope, enforcement behavior, and HTTP response signals.",
     "namespace": "https://w3id.org/vord#",
     "canonicalUri": "https://w3id.org/vord",
-    "version": "0.2",
+    "version": "0.3",
     "maintainer": "Elias Crum"
   },
   "sources": {
@@ -34,6 +34,12 @@
         "label": "Wikidata Rate Restrictions",
         "path": "examples/wikidata-rate-restrictions.ttl",
         "description": "A worked example based on publicly documented Wikidata service guidance."
+      },
+      {
+        "key": "strict",
+        "label": "Strict Endpoints",
+        "path": "examples/strict-endpoints.ttl",
+        "description": "Strict restrictions: a usage budget, client identification, a ban at the first violation, a tarpit, degraded answers under load, a limit shared by all users, and a queue in front of the endpoint."
       }
     ],
     "artifacts": [
@@ -160,7 +166,7 @@
     "hero": {
       "kicker": "Machine-readable endpoint policy",
       "headline": "Publish the restrictions your SPARQL endpoint actually enforces.",
-      "body": "VoRD lets endpoint maintainers describe live restrictions as vord:Restriction resources linked from sd:Service. Query engines and users can discover request rates, result sizes, evaluation time, quotas, scopes, enforcement behavior, and HTTP signals before sending work."
+      "body": "VoRD lets endpoint maintainers describe live restrictions as vord:Restriction resources linked from sd:Service. Query engines and users can discover request rates, result sizes, evaluation time, quotas, usage budgets, identification requirements, penalties, scopes, enforcement behavior, and HTTP signals before sending work."
     },
     "resourcePanel": {
       "title": "Start With the VoRD Resources",

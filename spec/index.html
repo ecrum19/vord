@@ -103,6 +103,47 @@
             href: "https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits",
             publisher: "MediaWiki.org",
             date: "accessed 29 May 2026"
+          },
+          "WIKIMEDIA-USER-AGENT-POLICY": {
+            title: "Wikimedia Foundation User-Agent Policy",
+            href: "https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy",
+            publisher: "Wikimedia Foundation",
+            date: "accessed 20 November 2026"
+          },
+          "OPENALEX-RATE-LIMITS": {
+            title: "OpenAlex: Rate limits and authentication",
+            href: "https://help.openalex.org/how-to-use-the-api/rate-limits-and-authentication",
+            publisher: "OpenAlex",
+            date: "accessed 20 November 2026"
+          },
+          "GITHUB-GRAPHQL-LIMITS": {
+            title: "Rate limits and query limits for the GraphQL API",
+            href: "https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api",
+            publisher: "GitHub",
+            date: "accessed 20 November 2026"
+          },
+          "SHOPIFY-GRAPHQL-LIMITS": {
+            title: "Shopify GraphQL Admin API rate limits",
+            href: "https://shopify.dev/docs/apps/build/apis/graphql-admin/rate-limits",
+            publisher: "Shopify",
+            date: "accessed 20 November 2026"
+          },
+          "NGINX-RATE-LIMITING": {
+            title: "Rate Limiting with NGINX",
+            href: "https://blog.nginx.org/blog/rate-limiting-nginx",
+            publisher: "NGINX",
+            date: "accessed 20 November 2026"
+          },
+          "RATELIMIT-HEADERS": {
+            title: "RateLimit header fields for HTTP",
+            href: "https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/",
+            publisher: "IETF HTTPAPI Working Group",
+            status: "Internet-Draft"
+          },
+          "FAIL2BAN": {
+            title: "fail2ban",
+            href: "https://github.com/fail2ban/fail2ban",
+            publisher: "fail2ban project"
           }
         }
       };
@@ -141,9 +182,10 @@
         <code>https://w3id.org/vord#</code> (VoRD), a vocabulary for describing
         operational restrictions of SPARQL services. It is written primarily for
         SPARQL endpoint maintainers who need to publish rate limits, result-size
-        limits, timeouts, quotas, concurrency limits, load-shedding behavior, and
-        related HTTP signals in a machine-readable form that users and query
-        engines can discover.
+        limits, timeouts, quotas, concurrency limits, usage budgets priced by a
+        cost model, requirements to identify the client, penalties such as
+        temporary blocks, load-shedding behavior, and related HTTP signals in a
+        machine-readable form that users and query engines can discover.
       </p>
       <p>
         VoRD extends SPARQL Service Description by treating endpoint restrictions
@@ -168,7 +210,10 @@
       <p>
         Public SPARQL endpoints commonly enforce operational limits: requests per
         minute, execution deadlines, maximum result sizes, per-client quotas,
-        concurrency ceilings, or temporary throttling under load. These limits
+        concurrency ceilings, or temporary throttling under load. Some services
+        go further: they meter usage in cost units rather than requests, require
+        every client to identify itself with contact information, or block
+        clients that violate a limit for a period of time. These limits
         are often documented only in human-readable prose. That is not sufficient
         for federated query engines, crawlers, batch clients, or monitoring tools
         that need to adapt before sending work to an endpoint.
@@ -345,7 +390,7 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
       <section id="common-requirements">
         <h3>Common requirements</h3>
         <p>
-          Each standard VoRD restriction <em class="rfc2119">MUST</em> include
+          Each standard quantitative VoRD restriction <em class="rfc2119">MUST</em> include
           the following properties exactly once:
         </p>
         <ul>
@@ -355,6 +400,22 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
           <li><code>vord:enforcement</code>, identifying the action taken when the threshold is reached.</li>
           <li><code>vord:hardRestriction</code>, an <code>xsd:boolean</code> indicating whether the threshold is strict.</li>
         </ul>
+        <p>
+          A <code>vord:IdentificationRestriction</code> is a requirement rather
+          than a threshold. It <em class="rfc2119">MUST</em> include exactly one
+          <code>vord:identificationHeader</code>, exactly one
+          <code>vord:identificationFormat</code>, and exactly one
+          <code>vord:hasScope</code>, <code>vord:enforcement</code>, and
+          <code>vord:hardRestriction</code>. It does not need
+          <code>vord:metric</code> or <code>vord:maxValue</code>.
+        </p>
+        <p>
+          A restriction whose violations lead to a temporary block of the client
+          <em class="rfc2119">SHOULD</em> state <code>vord:penaltyThreshold</code>
+          and <code>vord:penaltyDuration</code>. If it states
+          <code>vord:penaltyThreshold</code>, it <em class="rfc2119">MUST</em>
+          also state <code>vord:penaltyDuration</code>.
+        </p>
         <p>
           If the unit is not obvious from the metric, the restriction
           <em class="rfc2119">MUST</em> include <code>vord:unit</code>. Publishers
@@ -397,13 +458,13 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
             </tr>
             <tr>
               <td><strong>Recommended</strong></td>
-              <td><code>vord:ConcurrentRequestsRestriction</code>, <code>vord:QuotaRestriction</code></td>
-              <td>Publish when clients can reduce parallelism or schedule work over longer periods.</td>
+              <td><code>vord:ConcurrentRequestsRestriction</code>, <code>vord:QuotaRestriction</code>, <code>vord:IdentificationRestriction</code></td>
+              <td>Publish concurrency limits and quotas when clients can reduce parallelism or schedule work over longer periods. Publish an identification restriction whenever the endpoint rejects or penalizes clients that do not identify themselves.</td>
             </tr>
             <tr>
               <td><strong>Advanced</strong></td>
-              <td><code>vord:ServerLoadRestriction</code>, <code>vord:CostModelRestriction</code></td>
-              <td>Publish when load- or cost-based behavior is stable enough to explain, or when an implementation-specific model is part of endpoint admission control.</td>
+              <td><code>vord:ServerLoadRestriction</code>, <code>vord:CostModelRestriction</code> (per-request cost ceilings and usage budgets with <code>vord:costUnitsPerWindow</code>)</td>
+              <td>Publish when load- or cost-based behavior is stable enough to explain, when an implementation-specific model is part of endpoint admission control, or when clients spend a budget of cost units over time.</td>
             </tr>
           </tbody>
         </table>
@@ -441,8 +502,8 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
             </tr>
             <tr>
               <td><code>vord:ConcurrentRequestsRestriction</code></td>
-              <td>Any <code>vord:Metric</code></td>
-              <td>Define a stable metric IRI and label if the standard vocabulary does not provide one.</td>
+              <td><code>vord:concurrentRequests</code>, or any other <code>vord:Metric</code></td>
+              <td>Use <code>vord:concurrentRequests</code> for the number of requests processed at the same time. Define a stable metric IRI and label for other measures, such as open connections.</td>
               <td>Limits on simultaneous requests, connections, or active query executions.</td>
             </tr>
             <tr>
@@ -459,9 +520,15 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
             </tr>
             <tr>
               <td><code>vord:CostModelRestriction</code></td>
-              <td><code>vord:estimatedCostUnits</code></td>
-              <td><code>vord:costModel</code> is required.</td>
-              <td>Admission control based on a planner or optimizer cost estimate.</td>
+              <td><code>vord:estimatedCostUnits</code> or <code>vord:costUnitsPerWindow</code></td>
+              <td><code>vord:costModel</code> is required, and the cost model <em class="rfc2119">SHOULD</em> be described in prose. With <code>vord:estimatedCostUnits</code>, <code>vord:maxValue</code> is a ceiling on the estimated cost of one request. With <code>vord:costUnitsPerWindow</code>, the restriction is a usage budget: <code>vord:maxValue</code> cost units per <code>vord:windowDuration</code>, which is required; the optional <code>vord:burstValue</code> is the number of units that can be spent at once.</td>
+              <td>Admission control based on a planner or optimizer cost estimate, or usage budgets that meter requests in cost units.</td>
+            </tr>
+            <tr>
+              <td><code>vord:IdentificationRestriction</code></td>
+              <td>None</td>
+              <td>Exactly one <code>vord:identificationHeader</code> and one <code>vord:identificationFormat</code>.</td>
+              <td>Endpoints that require every request to identify the client with contact information, such as an email address in the <code>From</code> header.</td>
             </tr>
           </tbody>
         </table>
@@ -543,11 +610,13 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
             <tr><td><code>vord:ConcurrentRequestsRestriction</code></td><td>Restriction on simultaneous open connections or active query executions.</td><td>Use for per-client or global concurrency ceilings.</td></tr>
             <tr><td><code>vord:QuotaRestriction</code></td><td>Rolling or fixed query submission quota over a longer period.</td><td>Use for daily or longer quotas rather than short rate windows.</td></tr>
             <tr><td><code>vord:ServerLoadRestriction</code></td><td>Restriction activated by host or cluster load conditions.</td><td>Use for load-shedding, degraded service, or global capacity thresholds.</td></tr>
-            <tr><td><code>vord:CostModelRestriction</code></td><td>Restriction based on internal query optimizer or execution cost estimation.</td><td>Use when admission control relies on a named cost model.</td></tr>
+            <tr><td><code>vord:CostModelRestriction</code></td><td>Restriction based on the cost that the endpoint's cost model assigns to requests.</td><td>Use for a ceiling on the estimated cost of one request (<code>vord:estimatedCostUnits</code>) or for a usage budget per window (<code>vord:costUnitsPerWindow</code>).</td></tr>
+            <tr><td><code>vord:IdentificationRestriction</code></td><td>Requirement that every request identifies the client with contact information in a given HTTP request header.</td><td>Use with <code>vord:identificationHeader</code> and <code>vord:identificationFormat</code>.</td></tr>
             <tr><td><code>vord:Metric</code></td><td>Measurable dimension constrained by a restriction.</td><td>Use standard metric instances when available; otherwise mint custom metric IRIs.</td></tr>
             <tr><td><code>vord:Scope</code></td><td>Scope at which a restriction is evaluated.</td><td>Use standard scope instances or custom scope concepts.</td></tr>
             <tr><td><code>vord:EnforcementMode</code></td><td>Operational behavior when a restriction is reached.</td><td>Use standard enforcement mode instances.</td></tr>
-            <tr><td><code>vord:CostModel</code></td><td>Identifier for an implementation-specific cost model.</td><td>Use with <code>vord:costModel</code> on cost-model restrictions.</td></tr>
+            <tr><td><code>vord:CostModel</code></td><td>Identifier for an implementation-specific cost model, which determines how many cost units a request costs.</td><td>Use with <code>vord:costModel</code> on cost-model restrictions, and describe it with <code>dcterms:description</code>.</td></tr>
+            <tr><td><code>vord:IdentificationFormat</code></td><td>Format in which a client identifies itself in an HTTP request header.</td><td>Use the standard format instances with <code>vord:identificationFormat</code>.</td></tr>
           </tbody>
         </table>
       </section>
@@ -561,7 +630,7 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
             <tr><td><code>vord:metric</code></td><td><code>vord:Metric</code></td><td>Exactly 1 per standard restriction</td><td>Identifies the quantity being constrained.</td></tr>
             <tr><td><code>vord:maxValue</code></td><td><code>xsd:integer</code></td><td>Exactly 1 per standard restriction</td><td>Primary threshold value.</td></tr>
             <tr><td><code>vord:minValue</code></td><td><code>xsd:integer</code></td><td>0 or 1</td><td>Optional lower threshold, such as a valid minimum value.</td></tr>
-            <tr><td><code>vord:burstValue</code></td><td><code>xsd:integer</code></td><td>0 or 1; rate restrictions only</td><td>Additional short-burst allowance.</td></tr>
+            <tr><td><code>vord:burstValue</code></td><td><code>xsd:integer</code></td><td>0 or 1; rate restrictions and usage budgets</td><td>Additional short-burst allowance: requests in a short burst, or cost units that can be spent at once.</td></tr>
             <tr><td><code>vord:unit</code></td><td><code>qudt:Unit</code></td><td>0 or 1</td><td>Unit of measure for <code>vord:maxValue</code> and <code>vord:minValue</code>.</td></tr>
             <tr><td><code>vord:windowDuration</code></td><td><code>xsd:duration</code></td><td>Exactly 1 for rate restrictions; otherwise 0 or 1</td><td>Time window for evaluating the threshold.</td></tr>
             <tr><td><code>vord:retryAfterHint</code></td><td><code>xsd:duration</code></td><td>0 or 1</td><td>Suggested wait time before retrying.</td></tr>
@@ -570,13 +639,17 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
             <tr><td><code>vord:returnsStatusCode</code></td><td><code>xsd:integer</code></td><td>0 or 1</td><td>Common HTTP status code returned when this restriction is exceeded.</td></tr>
             <tr><td><code>vord:httpSignalHeader</code></td><td>IRI</td><td>0 or 1</td><td>HTTP header IRI used to signal limit status, such as a Retry-After header. The W3C HTTP Vocabulary in RDF 1.0 is a Working Draft and should be treated as an informative source for header IRIs [[HTTP-IN-RDF10]].</td></tr>
             <tr><td><code>vord:hardRestriction</code></td><td><code>xsd:boolean</code></td><td>Exactly 1</td><td>True for strictly enforced limits; false for advisory or load-dependent limits.</td></tr>
-            <tr><td><code>vord:costModel</code></td><td><code>vord:CostModel</code></td><td>Exactly 1 for <code>vord:CostModelRestriction</code></td><td>Names the cost model used for cost-based admission control.</td></tr>
+            <tr><td><code>vord:costModel</code></td><td><code>vord:CostModel</code></td><td>Exactly 1 for <code>vord:CostModelRestriction</code></td><td>Names the cost model used for cost-based admission control or for pricing a usage budget.</td></tr>
+            <tr><td><code>vord:identificationHeader</code></td><td>IRI</td><td>Exactly 1 for <code>vord:IdentificationRestriction</code></td><td>HTTP request header in which the client must identify itself, such as <code>http:from</code> or <code>http:user-agent</code>.</td></tr>
+            <tr><td><code>vord:identificationFormat</code></td><td><code>vord:IdentificationFormat</code></td><td>Exactly 1 for <code>vord:IdentificationRestriction</code></td><td>Format of the identification in that header.</td></tr>
+            <tr><td><code>vord:penaltyThreshold</code></td><td><code>xsd:integer</code></td><td>0 or 1; at least 1</td><td>Number of violations within <code>vord:penaltyDuration</code> after which the endpoint blocks the client. <code>1</code> means zero tolerance.</td></tr>
+            <tr><td><code>vord:penaltyDuration</code></td><td><code>xsd:duration</code></td><td>0 or 1; required with <code>vord:penaltyThreshold</code></td><td>How long the endpoint blocks a client, and the period in which violations are counted.</td></tr>
           </tbody>
         </table>
       </section>
 
       <section id="controlled-values">
-        <h3>Standard metrics, scopes, and enforcement modes</h3>
+        <h3>Standard metrics, scopes, enforcement modes, and identification formats</h3>
         <p>
           VoRD represents controlled values as SKOS concepts. SKOS provides a
           model for concept schemes and labels [[SKOS-REFERENCE]].
@@ -584,9 +657,10 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
         <table class="simple term-table">
           <thead><tr><th>Category</th><th>Terms</th></tr></thead>
           <tbody>
-            <tr><td>Metrics</td><td><code>vord:requestsPerWindow</code>, <code>vord:requestsPerDay</code>, <code>vord:resultBindings</code>, <code>vord:evaluationTime</code>, <code>vord:estimatedCostUnits</code></td></tr>
+            <tr><td>Metrics</td><td><code>vord:requestsPerWindow</code>, <code>vord:requestsPerDay</code>, <code>vord:resultBindings</code>, <code>vord:evaluationTime</code>, <code>vord:estimatedCostUnits</code>, <code>vord:costUnitsPerWindow</code>, <code>vord:concurrentRequests</code></td></tr>
             <tr><td>Scopes</td><td><code>vord:PerClientIP</code>, <code>vord:PerAPIKey</code>, <code>vord:PerUser</code>, <code>vord:PerRequest</code>, <code>vord:GlobalScope</code></td></tr>
             <tr><td>Enforcement modes</td><td><code>vord:RejectRequest</code>, <code>vord:TruncateResult</code>, <code>vord:QueueRequest</code>, <code>vord:ThrottleResponse</code>, <code>vord:DegradeQuality</code></td></tr>
+            <tr><td>Identification formats</td><td><code>vord:EmailAddress</code>, <code>vord:ProductWithContact</code></td></tr>
           </tbody>
         </table>
       </section>
@@ -618,6 +692,25 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
           separate load or concurrency restriction rather than overloading the
           rate restriction.
         </p>
+        <p>
+          Some headers that endpoints use to signal restrictions, such as
+          <code>X-RateLimit-Remaining</code> or <code>X-SQL-State</code>, are not
+          defined by the HTTP Vocabulary in RDF [[HTTP-IN-RDF10]]. Publishers
+          <em class="rfc2119">MAY</em> mint IRIs for such headers. A minted
+          header IRI <em class="rfc2119">SHOULD</em> be typed
+          <code>httpv:HeaderName</code>, where <code>httpv:</code> is
+          <code>http://www.w3.org/2011/http#</code>, and
+          <em class="rfc2119">SHOULD</em> have an <code>rdfs:label</code> with
+          the header name. Consumers take the local name of a header IRI, after
+          the last <code>#</code> or <code>/</code>, as the case-insensitive
+          header name.
+        </p>
+        <pre class="example" title="A header IRI for a header that the HTTP Vocabulary in RDF does not define">@prefix ex: &lt;https://example.org/sparql/&gt; .
+@prefix httpv: &lt;http://www.w3.org/2011/http#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+ex:x-ratelimit-remaining a httpv:HeaderName ;
+  rdfs:label &quot;X-RateLimit-Remaining&quot; .</pre>
       </section>
 
       <section id="result-truncation">
@@ -641,6 +734,132 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
           load without a fixed threshold, use <code>vord:ServerLoadRestriction</code>,
           set <code>vord:hardRestriction false</code>, and describe the behavior
           in prose with <code>dcterms:description</code>.
+        </p>
+      </section>
+
+      <section id="usage-budgets">
+        <h3>Usage budgets</h3>
+        <p>
+          Some services meter usage in cost units rather than in requests: each
+          request costs a number of units that depends on its kind or size, and a
+          client may spend a budget of units per period. OpenAlex, for example,
+          gives each API key a daily budget, prices requests by type, and reports
+          the remaining budget in response headers [[OPENALEX-RATE-LIMITS]].
+          GitHub's GraphQL API charges points per query from a budget per hour
+          [[GITHUB-GRAPHQL-LIMITS]], and Shopify's GraphQL Admin API uses a bucket
+          of points that refills at a fixed rate [[SHOPIFY-GRAPHQL-LIMITS]].
+        </p>
+        <p>
+          A VoRD publisher <em class="rfc2119">SHOULD</em> describe such a budget
+          as a <code>vord:CostModelRestriction</code> with the metric
+          <code>vord:costUnitsPerWindow</code>. <code>vord:maxValue</code> is the
+          number of units per <code>vord:windowDuration</code>, and
+          <code>vord:burstValue</code>, if present, is the number of units that a
+          client can spend at once. The restriction <em class="rfc2119">MUST</em>
+          name its cost model with <code>vord:costModel</code>, and the cost model
+          <em class="rfc2119">SHOULD</em> explain with
+          <code>dcterms:description</code> how much a request costs, so that
+          clients can anticipate expensive requests.
+        </p>
+        <p>
+          Because clients cannot always predict the cost of a request, a publisher
+          <em class="rfc2119">SHOULD</em> report the remaining budget in a response
+          header, such as <code>X-RateLimit-Remaining</code>, and name that header
+          with <code>vord:httpSignalHeader</code>. When the budget is spent, the
+          endpoint <em class="rfc2119">SHOULD</em> reject requests with
+          <code>429</code> and a <code>Retry-After</code> header, and publish that
+          status code with <code>vord:returnsStatusCode</code>. The IETF
+          <code>RateLimit</code> and <code>RateLimit-Policy</code> header fields
+          are a standards-track alternative for reporting the budget
+          [[RATELIMIT-HEADERS]].
+        </p>
+      </section>
+
+      <section id="client-identification">
+        <h3>Client identification</h3>
+        <p>
+          Some services require every request to identify the client and a way to
+          reach its operator. Wikimedia's User-Agent policy, for example, asks for
+          a User-Agent that names the client and gives an email address, a website,
+          or a wiki user, and requests without one can be refused with
+          <code>403</code> [[WIKIMEDIA-USER-AGENT-POLICY]].
+        </p>
+        <p>
+          A VoRD publisher <em class="rfc2119">SHOULD</em> describe such a
+          requirement with a <code>vord:IdentificationRestriction</code>. It names
+          the request header that must carry the identification with
+          <code>vord:identificationHeader</code>, and the expected content with
+          <code>vord:identificationFormat</code>:
+        </p>
+        <ul>
+          <li><code>http:from</code> with <code>vord:EmailAddress</code>: an email
+            address at which the operator can be reached, as the HTTP
+            <code>From</code> header defines it [[RFC9110]] (section 10.1.2).</li>
+          <li><code>http:user-agent</code> with <code>vord:ProductWithContact</code>:
+            a product identifier followed by a comment with contact information,
+            such as <code>ExampleBot/1.0 (https://example.org/bot; bot@example.org)</code>.</li>
+        </ul>
+        <p>
+          The service description itself <em class="rfc2119">MUST NOT</em>
+          require identification, so that clients can learn the requirement
+          before they send their first query. When other limits are counted per
+          identity, they <em class="rfc2119">SHOULD</em> use the scope
+          <code>vord:PerUser</code>; the identification is then expected to stay
+          the same for a client.
+        </p>
+      </section>
+
+      <section id="penalties">
+        <h3>Penalties and temporary blocks</h3>
+        <p>
+          Some endpoints block clients that keep violating a restriction, for
+          example with a firewall rule in the style of fail2ban [[FAIL2BAN]]. A
+          VoRD publisher <em class="rfc2119">SHOULD</em> state such a penalty on
+          the restriction whose violations trigger it:
+          <code>vord:penaltyThreshold</code> is the number of violations within
+          <code>vord:penaltyDuration</code> after which the client is blocked, and
+          <code>vord:penaltyDuration</code> is how long the block lasts. A
+          threshold of <code>1</code> means zero tolerance: the first violation is
+          penalized. The status code that blocked requests receive, such as
+          <code>403</code>, <em class="rfc2119">SHOULD</em> be published with
+          <code>vord:returnsStatusCode</code>.
+        </p>
+      </section>
+
+      <section id="degraded-answers">
+        <h3>Limits without errors and degraded answers</h3>
+        <p>
+          Not every restriction produces an error. When an endpoint delays
+          requests over a limit instead of rejecting them, as a tarpit or
+          slow-down middleware does, the restriction <em class="rfc2119">MUST</em>
+          use <code>vord:ThrottleResponse</code>. Clients then cannot detect the
+          limit from status codes, so publishing it is the only way to make it
+          known.
+        </p>
+        <p>
+          When an endpoint answers with reduced quality under load, for example a
+          partial or empty result after an internal time limit, as Virtuoso's
+          anytime queries do, the restriction <em class="rfc2119">MUST</em> use
+          <code>vord:DegradeQuality</code>. If such answers are marked by a
+          response header, such as <code>X-SQL-State</code>, the publisher
+          <em class="rfc2119">SHOULD</em> name it with
+          <code>vord:httpSignalHeader</code>, and the status code of degraded
+          answers, typically <code>200</code>, with
+          <code>vord:returnsStatusCode</code>.
+        </p>
+      </section>
+
+      <section id="shared-limits">
+        <h3>Shared limits</h3>
+        <p>
+          A limit with scope <code>vord:GlobalScope</code> is shared by all users
+          of the endpoint: a client only gets what the other users leave. The
+          publisher <em class="rfc2119">SHOULD</em> still set
+          <code>vord:hardRestriction true</code> when the shared ceiling is
+          strictly enforced, even though the share that one client can use varies
+          over time. Publishers <em class="rfc2119">SHOULD</em> publish a
+          <code>Retry-After</code> signal for shared limits, because clients
+          cannot predict when capacity becomes free.
         </p>
       </section>
 
@@ -677,21 +896,29 @@ PREFIX xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt;</pre>
 PREFIX vord: &lt;https://w3id.org/vord#&gt;
 
 SELECT ?endpoint ?restriction ?restrictionType ?metric ?maxValue
-       ?unit ?windowDuration ?scope ?enforcement ?hardRestriction
+       ?unit ?windowDuration ?burstValue ?scope ?enforcement ?hardRestriction
+       ?penaltyThreshold ?penaltyDuration
+       ?identificationHeader ?identificationFormat
 WHERE {
   ?service a sd:Service ;
            sd:endpoint ?endpoint ;
            vord:hasRestriction ?restriction .
   ?restriction a vord:Restriction ;
                a ?restrictionType ;
-               vord:metric ?metric ;
-               vord:maxValue ?maxValue ;
                vord:hasScope ?scope ;
                vord:enforcement ?enforcement ;
                vord:hardRestriction ?hardRestriction .
   FILTER(?restrictionType != vord:Restriction)
+  # Identification restrictions have no metric or maximum value.
+  OPTIONAL { ?restriction vord:metric ?metric . }
+  OPTIONAL { ?restriction vord:maxValue ?maxValue . }
   OPTIONAL { ?restriction vord:unit ?unit . }
   OPTIONAL { ?restriction vord:windowDuration ?windowDuration . }
+  OPTIONAL { ?restriction vord:burstValue ?burstValue . }
+  OPTIONAL { ?restriction vord:penaltyThreshold ?penaltyThreshold . }
+  OPTIONAL { ?restriction vord:penaltyDuration ?penaltyDuration . }
+  OPTIONAL { ?restriction vord:identificationHeader ?identificationHeader . }
+  OPTIONAL { ?restriction vord:identificationFormat ?identificationFormat . }
 }
 ORDER BY ?endpoint ?restriction
 </pre>
@@ -702,6 +929,27 @@ ORDER BY ?endpoint ?restriction
         back to conservative defaults when a service description is missing or
         incomplete.
       </p>
+      <p>
+        The newer restriction kinds call for specific client behavior:
+      </p>
+      <ul>
+        <li><strong>Identification.</strong> Consumers should send identification
+          only to endpoints whose description requires it, in the header and
+          format that the description names. Contact details should not be
+          broadcast to every endpoint.</li>
+        <li><strong>Usage budgets.</strong> Consumers should expect the cost of
+          requests to vary, track the remaining budget from the header named by
+          <code>vord:httpSignalHeader</code>, and pace their requests so that the
+          budget refills, rather than spending it in a burst.</li>
+        <li><strong>Penalties.</strong> For a restriction with a penalty,
+          consumers should never risk a violation, and should not retry blocked
+          requests while the block of <code>vord:penaltyDuration</code> lasts:
+          retries cannot succeed and may extend the block.</li>
+        <li><strong>Degraded answers.</strong> Consumers should treat answers to a
+          restriction with <code>vord:DegradeQuality</code> that carry its signal
+          header as possibly incomplete, even when their status code is
+          <code>200</code>.</li>
+      </ul>
     </section>
 
     <section id="validation">
@@ -717,14 +965,16 @@ ORDER BY ?endpoint ?restriction
         <thead><tr><th>Shape</th><th>Target</th><th>Main constraints</th></tr></thead>
         <tbody>
           <tr><td><code>vords:ServiceWithRestrictionsShape</code></td><td><code>sd:Service</code></td><td>At least one <code>vord:hasRestriction</code> whose value is a <code>vord:Restriction</code>.</td></tr>
-          <tr><td><code>vords:RestrictionShape</code></td><td><code>vord:Restriction</code></td><td>At most one metric, value, unit, window, retry hint, status code, and HTTP header; exactly one scope, enforcement mode, and hard-restriction boolean.</td></tr>
+          <tr><td><code>vords:RestrictionShape</code></td><td><code>vord:Restriction</code></td><td>At most one metric, value, unit, window, retry hint, status code, HTTP header, burst value, penalty threshold (at least 1), and penalty duration; exactly one scope, enforcement mode, and hard-restriction boolean.</td></tr>
+          <tr><td><code>vords:PenaltyShape</code></td><td>Subjects of <code>vord:penaltyThreshold</code></td><td>A penalty duration whenever a penalty threshold is given.</td></tr>
           <tr><td><code>vords:RateRestrictionShape</code></td><td><code>vord:RateRestriction</code></td><td>Exactly one metric in <code>vord:requestsPerWindow</code> or <code>vord:requestsPerDay</code>; exactly one maximum value and window duration.</td></tr>
           <tr><td><code>vords:ResultSizeRestrictionShape</code></td><td><code>vord:ResultSizeRestriction</code></td><td>Exactly one <code>vord:resultBindings</code> metric and maximum value.</td></tr>
           <tr><td><code>vords:ResponseTimeRestrictionShape</code></td><td><code>vord:ResponseTimeRestriction</code></td><td>Exactly one <code>vord:evaluationTime</code> metric and maximum value.</td></tr>
-          <tr><td><code>vords:CostModelRestrictionShape</code></td><td><code>vord:CostModelRestriction</code></td><td>Exactly one <code>vord:estimatedCostUnits</code> metric, maximum value, and cost model.</td></tr>
+          <tr><td><code>vords:CostModelRestrictionShape</code></td><td><code>vord:CostModelRestriction</code></td><td>Exactly one metric in <code>vord:estimatedCostUnits</code> or <code>vord:costUnitsPerWindow</code>, maximum value, and cost model; a window duration for usage budgets (<code>vord:costUnitsPerWindow</code>).</td></tr>
           <tr><td><code>vords:ServerLoadRestrictionShape</code></td><td><code>vord:ServerLoadRestriction</code></td><td>Exactly one metric and maximum value.</td></tr>
           <tr><td><code>vords:ConcurrentRequestsRestrictionShape</code></td><td><code>vord:ConcurrentRequestsRestriction</code></td><td>Exactly one metric and maximum value.</td></tr>
           <tr><td><code>vords:QuotaRestrictionShape</code></td><td><code>vord:QuotaRestriction</code></td><td>Exactly one <code>vord:requestsPerDay</code> metric and maximum value.</td></tr>
+          <tr><td><code>vords:IdentificationRestrictionShape</code></td><td><code>vord:IdentificationRestriction</code></td><td>Exactly one identification header IRI and one <code>vord:IdentificationFormat</code>.</td></tr>
         </tbody>
       </table>
       <details>
@@ -802,6 +1052,30 @@ vords:RestrictionShape a sh:NodeShape ;
     sh:path vord:httpSignalHeader ;
     sh:maxCount 1 ;
     sh:nodeKind sh:IRI ;
+  ] ;
+  sh:property [
+    sh:path vord:burstValue ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+  ] ;
+  sh:property [
+    sh:path vord:penaltyThreshold ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+  ] ;
+  sh:property [
+    sh:path vord:penaltyDuration ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:duration ;
+  ] .
+
+vords:PenaltyShape a sh:NodeShape ;
+  sh:targetSubjectsOf vord:penaltyThreshold ;
+  sh:property [
+    sh:path vord:penaltyDuration ;
+    sh:minCount 1 ;
+    sh:message &quot;A restriction with vord:penaltyThreshold must state vord:penaltyDuration.&quot; ;
   ] .
 
 vords:RateRestrictionShape a sh:NodeShape ;
@@ -851,8 +1125,14 @@ vords:CostModelRestrictionShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:estimatedCostUnits ) ;
+    sh:in ( vord:estimatedCostUnits vord:costUnitsPerWindow ) ;
   ] ;
+  # A usage budget (vord:costUnitsPerWindow) needs the window in which its units are counted.
+  sh:or (
+    [ sh:property [ sh:path vord:metric ; sh:hasValue vord:estimatedCostUnits ] ]
+    [ sh:property [ sh:path vord:windowDuration ; sh:minCount 1 ] ]
+  ) ;
+  sh:message &quot;A cost-model restriction with metric vord:costUnitsPerWindow must state vord:windowDuration.&quot; ;
   sh:property [
     sh:path vord:maxValue ;
     sh:minCount 1 ;
@@ -922,6 +1202,21 @@ vords:QuotaRestrictionShape a sh:NodeShape ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
     sh:datatype xsd:integer ;
+  ] .
+
+vords:IdentificationRestrictionShape a sh:NodeShape ;
+  sh:targetClass vord:IdentificationRestriction ;
+  sh:property [
+    sh:path vord:identificationHeader ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:nodeKind sh:IRI ;
+  ] ;
+  sh:property [
+    sh:path vord:identificationFormat ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class vord:IdentificationFormat ;
   ] .
 </pre>
       </details>
@@ -1193,6 +1488,205 @@ ex:wdqsProcessingTimeBudget a vord:Restriction, ex:ProcessingTimeBudgetRestricti
   vord:httpSignalHeader http:retry-after .
 </pre>
       </section>
+
+      <section id="example-strict">
+        <h3>Strict endpoints</h3>
+        <p>
+          This example describes eight endpoints, each with a stricter pattern
+          than a simple rate limit. Each pattern follows a mechanism that real
+          services use; the values are illustrative.
+        </p>
+        <ol>
+          <li><strong>Usage budget:</strong> 600 cost units per minute, of which
+            at most 200 can be spent at once, priced by a described cost model,
+            with the remaining budget in <code>X-RateLimit-Remaining</code>.</li>
+          <li><strong>Identification in the User-Agent:</strong> every request must
+            carry a User-Agent with contact information, and the rate limit is
+            counted per identity.</li>
+          <li><strong>Identification in the From header:</strong> every request
+            must carry an email address in <code>From</code>.</li>
+          <li><strong>Zero tolerance:</strong> the first request over 10 per
+            second blocks the client for 10 minutes.</li>
+          <li><strong>Tarpit:</strong> requests over 100 per 10 seconds are
+            delayed, never rejected.</li>
+          <li><strong>Degraded answers:</strong> a request that arrives while
+            three requests of the same client are running gets a partial,
+            possibly empty, answer, marked with <code>X-SQL-State</code>.</li>
+          <li><strong>Shared limit:</strong> all users share 20 requests per
+            second.</li>
+          <li><strong>Reverse-proxy queue:</strong> requests over 10 per second
+            are queued, and rejected with <code>503</code> without
+            <code>Retry-After</code> once the queue is full, as nginx's
+            <code>limit_req</code> does [[NGINX-RATE-LIMITING]].</li>
+        </ol>
+        <pre class="example" title="Strict endpoint restrictions">@prefix ex: &lt;https://example.org/sparql/strict/&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix sd: &lt;http://www.w3.org/ns/sparql-service-description#&gt; .
+@prefix http: &lt;http://www.w3.org/2011/http-headers#&gt; .
+@prefix httpv: &lt;http://www.w3.org/2011/http#&gt; .
+@prefix vord: &lt;https://w3id.org/vord#&gt; .
+@prefix unit: &lt;http://qudt.org/vocab/unit/&gt; .
+
+# Strict restrictions, one endpoint per pattern. Each pattern follows a mechanism that real services use;
+# the values are illustrative. A client that ignores these restrictions fails in a different way at each endpoint:
+# it runs out of budget, is rejected for lack of identification, is banned, is slowed down without any error,
+# receives silently empty answers, or competes with other users for a shared limit.
+
+# Headers that the HTTP Vocabulary in RDF does not define get their own IRIs.
+ex:x-ratelimit-remaining a httpv:HeaderName ;
+  rdfs:label &quot;X-RateLimit-Remaining&quot; .
+
+ex:x-sql-state a httpv:HeaderName ;
+  rdfs:label &quot;X-SQL-State&quot; .
+
+# 1. A usage budget in cost units, as OpenAlex, GitHub's GraphQL API and Shopify's GraphQL Admin API meter usage:
+#    600 units per minute, of which at most 200 can be spent at once. The remaining budget is reported in every response.
+ex:meteredService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/metered&gt; ;
+  vord:hasRestriction ex:usageBudget .
+
+ex:meteredUnits a vord:CostModel ;
+  rdfs:label &quot;Metered usage units, version 1&quot;@en ;
+  dcterms:description &quot;A request costs 1 unit, plus 1 unit if it is an aggregate query, plus 1 unit per full 100 result rows.&quot;@en .
+
+ex:usageBudget a vord:Restriction, vord:CostModelRestriction ;
+  vord:metric vord:costUnitsPerWindow ;
+  vord:maxValue &quot;600&quot;^^xsd:integer ;
+  vord:burstValue &quot;200&quot;^^xsd:integer ;
+  vord:windowDuration &quot;PT1M&quot;^^xsd:duration ;
+  vord:unit unit:ONE ;
+  vord:costModel ex:meteredUnits ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;429&quot;^^xsd:integer ;
+  vord:httpSignalHeader ex:x-ratelimit-remaining .
+
+# 2. Identified access, as Wikimedia's User-Agent policy requires: every request must carry a User-Agent that names
+#    the client and gives a contact. The rate limit is counted per identity.
+ex:identifiedService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/identified&gt; ;
+  vord:hasRestriction ex:userAgentContact, ex:ratePerUser .
+
+ex:userAgentContact a vord:Restriction, vord:IdentificationRestriction ;
+  vord:identificationHeader http:user-agent ;
+  vord:identificationFormat vord:ProductWithContact ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;403&quot;^^xsd:integer .
+
+ex:ratePerUser a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue &quot;20&quot;^^xsd:integer ;
+  vord:windowDuration &quot;PT2S&quot;^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerUser ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;429&quot;^^xsd:integer ;
+  vord:retryAfterHint &quot;PT1S&quot;^^xsd:duration ;
+  vord:httpSignalHeader http:retry-after .
+
+# 3. The same requirement with an email address in the From header (RFC 9110, section 10.1.2).
+ex:contactService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/contact&gt; ;
+  vord:hasRestriction ex:fromContact .
+
+ex:fromContact a vord:Restriction, vord:IdentificationRestriction ;
+  vord:identificationHeader http:from ;
+  vord:identificationFormat vord:EmailAddress ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;403&quot;^^xsd:integer .
+
+# 4. Zero tolerance, as a firewall rule that blocks a client at its first violation
+#    (fail2ban blocks for 10 minutes by default): the first request over the limit bans the client for 10 minutes.
+ex:zeroToleranceService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/zero-tolerance&gt; ;
+  vord:hasRestriction ex:rateWithBan .
+
+ex:rateWithBan a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue &quot;10&quot;^^xsd:integer ;
+  vord:windowDuration &quot;PT1S&quot;^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;403&quot;^^xsd:integer ;
+  vord:penaltyThreshold &quot;1&quot;^^xsd:integer ;
+  vord:penaltyDuration &quot;PT10M&quot;^^xsd:duration .
+
+# 5. A tarpit, as slow-down middleware: requests over the limit are delayed, never rejected, so no error signals the limit.
+ex:tarpitService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/tarpit&gt; ;
+  vord:hasRestriction ex:slowDown .
+
+ex:slowDown a vord:Restriction, vord:RateRestriction ;
+  dcterms:description &quot;Each request over the limit within the window is delayed by 100 ms for every request by which the client exceeds it.&quot;@en ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue &quot;100&quot;^^xsd:integer ;
+  vord:windowDuration &quot;PT10S&quot;^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:ThrottleResponse ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean .
+
+# 6. Degraded answers under pressure, as Virtuoso's anytime queries: a request that arrives while three requests
+#    of the same client are running gets a partial, possibly empty, answer with status 200 and an X-SQL-State header.
+ex:anytimeService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/anytime&gt; ;
+  vord:hasRestriction ex:degradeAboveThree .
+
+ex:degradeAboveThree a vord:Restriction, vord:ConcurrentRequestsRestriction ;
+  vord:metric vord:concurrentRequests ;
+  vord:maxValue &quot;3&quot;^^xsd:integer ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:DegradeQuality ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;200&quot;^^xsd:integer ;
+  vord:httpSignalHeader ex:x-sql-state .
+
+# 7. A limit shared by all users: a client gets what other users leave of 20 requests per second.
+ex:sharedService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/shared&gt; ;
+  vord:hasRestriction ex:sharedRate .
+
+ex:sharedRate a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue &quot;20&quot;^^xsd:integer ;
+  vord:windowDuration &quot;PT1S&quot;^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;429&quot;^^xsd:integer ;
+  vord:retryAfterHint &quot;PT1S&quot;^^xsd:duration ;
+  vord:httpSignalHeader http:retry-after .
+
+# 8. A reverse proxy in front of the endpoint, as nginx's limit_req: requests over 10 per second are queued,
+#    and once the queue is full they are rejected with 503, without Retry-After.
+ex:reverseProxyService a sd:Service ;
+  sd:endpoint &lt;https://example.org/sparql/reverse-proxy&gt; ;
+  vord:hasRestriction ex:queuedRate .
+
+ex:queuedRate a vord:Restriction, vord:RateRestriction ;
+  dcterms:description &quot;Up to 20 requests over the rate are queued; further requests are rejected.&quot;@en ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue &quot;10&quot;^^xsd:integer ;
+  vord:windowDuration &quot;PT1S&quot;^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:QueueRequest ;
+  vord:hardRestriction &quot;true&quot;^^xsd:boolean ;
+  vord:returnsStatusCode &quot;503&quot;^^xsd:integer .
+</pre>
+      </section>
     </section>
 
     <section id="security-privacy" class="informative">
@@ -1210,6 +1704,21 @@ ex:wdqsProcessingTimeBudget a vord:Restriction, ex:ProcessingTimeBudgetRestricti
         disclose actual user identifiers, API keys, IP addresses, or other
         personal data.
       </p>
+      <p>
+        An identification requirement makes clients disclose personal data, such
+        as an email address, to the endpoint. Publishers
+        should require identification only when they
+        need it, for example to contact or throttle abusive clients, and
+        should accept role or project addresses rather
+        than personal ones. Consumers should send
+        identification only to endpoints whose description requires it.
+      </p>
+      <p>
+        Penalties are part of abuse detection. Publishers
+        should not reveal more of their abuse-detection
+        rules than clients need to stay within them; publishing conservative
+        penalty values is sufficient.
+      </p>
     </section>
 
     <section id="checklist" class="appendix informative">
@@ -1221,6 +1730,9 @@ ex:wdqsProcessingTimeBudget a vord:Restriction, ex:ProcessingTimeBudgetRestricti
         <li>Are units and window durations explicit where clients need them?</li>
         <li>Are HTTP status codes and retry headers represented when they are part of real endpoint behavior?</li>
         <li>Are custom metrics and scopes typed and labelled?</li>
+        <li>If clients must identify themselves, is the requirement published as a <code>vord:IdentificationRestriction</code>, and can the service description be retrieved without identification?</li>
+        <li>For usage budgets, is the cost model described, and is the remaining budget signalled in a response header?</li>
+        <li>If violations lead to temporary blocks, are <code>vord:penaltyThreshold</code> and <code>vord:penaltyDuration</code> stated?</li>
         <li>Does the RDF pass the VoRD SHACL validation profile?</li>
         <li>Is the published RDF updated whenever the deployed endpoint policy changes?</li>
       </ul>

@@ -1,0 +1,166 @@
+@prefix ex: <https://example.org/sparql/strict/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix http: <http://www.w3.org/2011/http-headers#> .
+@prefix httpv: <http://www.w3.org/2011/http#> .
+@prefix vord: <https://w3id.org/vord#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+
+# Strict restrictions, one endpoint per pattern. Each pattern follows a mechanism that real services use;
+# the values are illustrative. A client that ignores these restrictions fails in a different way at each endpoint:
+# it runs out of budget, is rejected for lack of identification, is banned, is slowed down without any error,
+# receives silently empty answers, or competes with other users for a shared limit.
+
+# Headers that the HTTP Vocabulary in RDF does not define get their own IRIs.
+ex:x-ratelimit-remaining a httpv:HeaderName ;
+  rdfs:label "X-RateLimit-Remaining" .
+
+ex:x-sql-state a httpv:HeaderName ;
+  rdfs:label "X-SQL-State" .
+
+# 1. A usage budget in cost units, as OpenAlex, GitHub's GraphQL API and Shopify's GraphQL Admin API meter usage:
+#    600 units per minute, of which at most 200 can be spent at once. The remaining budget is reported in every response.
+ex:meteredService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/metered> ;
+  vord:hasRestriction ex:usageBudget .
+
+ex:meteredUnits a vord:CostModel ;
+  rdfs:label "Metered usage units, version 1"@en ;
+  dcterms:description "A request costs 1 unit, plus 1 unit if it is an aggregate query, plus 1 unit per full 100 result rows."@en .
+
+ex:usageBudget a vord:Restriction, vord:CostModelRestriction ;
+  vord:metric vord:costUnitsPerWindow ;
+  vord:maxValue "600"^^xsd:integer ;
+  vord:burstValue "200"^^xsd:integer ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:unit unit:ONE ;
+  vord:costModel ex:meteredUnits ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:httpSignalHeader ex:x-ratelimit-remaining .
+
+# 2. Identified access, as Wikimedia's User-Agent policy requires: every request must carry a User-Agent that names
+#    the client and gives a contact. The rate limit is counted per identity.
+ex:identifiedService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/identified> ;
+  vord:hasRestriction ex:userAgentContact, ex:ratePerUser .
+
+ex:userAgentContact a vord:Restriction, vord:IdentificationRestriction ;
+  vord:identificationHeader http:user-agent ;
+  vord:identificationFormat vord:ProductWithContact ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "403"^^xsd:integer .
+
+ex:ratePerUser a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "20"^^xsd:integer ;
+  vord:windowDuration "PT2S"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerUser ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:retryAfterHint "PT1S"^^xsd:duration ;
+  vord:httpSignalHeader http:retry-after .
+
+# 3. The same requirement with an email address in the From header (RFC 9110, section 10.1.2).
+ex:contactService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/contact> ;
+  vord:hasRestriction ex:fromContact .
+
+ex:fromContact a vord:Restriction, vord:IdentificationRestriction ;
+  vord:identificationHeader http:from ;
+  vord:identificationFormat vord:EmailAddress ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "403"^^xsd:integer .
+
+# 4. Zero tolerance, as a firewall rule that blocks a client at its first violation
+#    (fail2ban blocks for 10 minutes by default): the first request over the limit bans the client for 10 minutes.
+ex:zeroToleranceService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/zero-tolerance> ;
+  vord:hasRestriction ex:rateWithBan .
+
+ex:rateWithBan a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "10"^^xsd:integer ;
+  vord:windowDuration "PT1S"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "403"^^xsd:integer ;
+  vord:penaltyThreshold "1"^^xsd:integer ;
+  vord:penaltyDuration "PT10M"^^xsd:duration .
+
+# 5. A tarpit, as slow-down middleware: requests over the limit are delayed, never rejected, so no error signals the limit.
+ex:tarpitService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/tarpit> ;
+  vord:hasRestriction ex:slowDown .
+
+ex:slowDown a vord:Restriction, vord:RateRestriction ;
+  dcterms:description "Each request over the limit within the window is delayed by 100 ms for every request by which the client exceeds it."@en ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "100"^^xsd:integer ;
+  vord:windowDuration "PT10S"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:ThrottleResponse ;
+  vord:hardRestriction "true"^^xsd:boolean .
+
+# 6. Degraded answers under pressure, as Virtuoso's anytime queries: a request that arrives while three requests
+#    of the same client are running gets a partial, possibly empty, answer with status 200 and an X-SQL-State header.
+ex:anytimeService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/anytime> ;
+  vord:hasRestriction ex:degradeAboveThree .
+
+ex:degradeAboveThree a vord:Restriction, vord:ConcurrentRequestsRestriction ;
+  vord:metric vord:concurrentRequests ;
+  vord:maxValue "3"^^xsd:integer ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:DegradeQuality ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "200"^^xsd:integer ;
+  vord:httpSignalHeader ex:x-sql-state .
+
+# 7. A limit shared by all users: a client gets what other users leave of 20 requests per second.
+ex:sharedService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/shared> ;
+  vord:hasRestriction ex:sharedRate .
+
+ex:sharedRate a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "20"^^xsd:integer ;
+  vord:windowDuration "PT1S"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:GlobalScope ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:retryAfterHint "PT1S"^^xsd:duration ;
+  vord:httpSignalHeader http:retry-after .
+
+# 8. A reverse proxy in front of the endpoint, as nginx's limit_req: requests over 10 per second are queued,
+#    and once the queue is full they are rejected with 503, without Retry-After.
+ex:reverseProxyService a sd:Service ;
+  sd:endpoint <https://example.org/sparql/reverse-proxy> ;
+  vord:hasRestriction ex:queuedRate .
+
+ex:queuedRate a vord:Restriction, vord:RateRestriction ;
+  dcterms:description "Up to 20 requests over the rate are queued; further requests are rejected."@en ;
+  vord:metric vord:requestsPerWindow ;
+  vord:maxValue "10"^^xsd:integer ;
+  vord:windowDuration "PT1S"^^xsd:duration ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:QueueRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "503"^^xsd:integer .

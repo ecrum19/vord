@@ -23,5 +23,9 @@ start = @<ServiceWithRestrictions>
   vord:returnsStatusCode xsd:integer ? ;
   vord:httpSignalHeader IRI * ;
   vord:costModel IRI ? ;
-  vord:burstValue xsd:integer ?
+  vord:burstValue xsd:integer ? ;
+  vord:penaltyThreshold xsd:integer MININCLUSIVE 1 ? ;
+  vord:penaltyDuration xsd:duration ? ;
+  vord:identificationHeader IRI ? ;
+  vord:identificationFormat IRI ?
 }
