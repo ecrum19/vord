@@ -14,6 +14,8 @@ EXAMPLE_PATHS = [
     ROOT / "examples" / "exhaustive-service.ttl",
     ROOT / "examples" / "wikidata-rate-restrictions.ttl",
     ROOT / "examples" / "strict-endpoints.ttl",
+    ROOT / "examples" / "wikidata-query-service.ttl",
+    ROOT / "examples" / "bgee.ttl",
 ]
 SHEX_PATH = ROOT / "shex" / "vord.shex"
 
@@ -175,6 +177,55 @@ def test_identification_restriction_requires_a_format_term():
     assert "identificationformat" in report_text.lower()
 
 
+def test_request_method_restriction_conforms():
+    """A request-method restriction lists the accepted ways of sending a query, with no metric or maximum value."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:allowedRequestMethod vord:QueryViaGet ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean ;
+          vord:returnsStatusCode "403"^^xsd:integer .
+    """)
+    assert conforms, report_text
+
+
+def test_request_method_restriction_may_allow_several_methods():
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:allowedRequestMethod vord:QueryViaGet, vord:QueryViaUrlEncodedPost ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean ;
+          vord:returnsStatusCode "405"^^xsd:integer .
+    """)
+    assert conforms, report_text
+
+
+def test_request_method_restriction_requires_a_method():
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "allowedrequestmethod" in report_text.lower()
+
+
+def test_request_method_must_be_a_term():
+    """The method must be a vord:RequestMethod term, not a literal such as "GET"."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:allowedRequestMethod "GET" ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "allowedrequestmethod" in report_text.lower()
+
+
 USAGE_BUDGET = """
     ex:units a vord:CostModel .
     ex:restriction a vord:Restriction, vord:CostModelRestriction ;
@@ -251,6 +302,89 @@ def test_penalty_threshold_must_be_positive():
     assert "penaltythreshold" in report_text.lower()
 
 
+def test_penalized_without_published_numbers_conforms():
+    conforms, _, report_text = _validate_restriction(RATE_WITH_PENALTY + """ ;
+      vord:penalized "true"^^xsd:boolean .
+    """)
+    assert conforms, report_text
+
+
+def test_penalty_threshold_contradicts_penalized_false():
+    conforms, _, report_text = _validate_restriction(RATE_WITH_PENALTY + """ ;
+      vord:penaltyThreshold "3"^^xsd:integer ;
+      vord:penaltyDuration "PT10M"^^xsd:duration ;
+      vord:penalized "false"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "penalized" in report_text.lower()
+
+
+PROCESSING_TIME_BUDGET = """
+    ex:restriction a vord:Restriction, vord:QuotaRestriction ;
+      vord:metric vord:evaluationTimePerWindow ;
+      vord:maxValue "60"^^xsd:integer ;
+      vord:hasScope vord:PerClientIdentity ;
+      vord:enforcement vord:RejectRequest ;
+      vord:hardRestriction "true"^^xsd:boolean ;
+      vord:returnsStatusCode "429"^^xsd:integer"""
+
+
+def test_processing_time_budget_conforms():
+    """A budget of evaluation time per window, counted per User-Agent and IP address."""
+    conforms, _, report_text = _validate_restriction(
+        PROCESSING_TIME_BUDGET + ' ;\n      vord:windowDuration "PT60S"^^xsd:duration .'
+    )
+    assert conforms, report_text
+
+
+def test_processing_time_budget_requires_window():
+    conforms, _, report_text = _validate_restriction(PROCESSING_TIME_BUDGET + " .")
+    assert not conforms
+    assert "windowduration" in report_text.lower()
+
+
+def test_daily_quota_needs_no_window():
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:QuotaRestriction ;
+          vord:metric vord:requestsPerDay ;
+          vord:maxValue "10000"^^xsd:integer ;
+          vord:hasScope vord:PerClientIP ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert conforms, report_text
+
+
+def test_failed_requests_limit_conforms():
+    """A limit on error queries per window is a rate restriction on failed requests."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RateRestriction ;
+          vord:metric vord:failedRequestsPerWindow ;
+          vord:maxValue "30"^^xsd:integer ;
+          vord:windowDuration "PT1M"^^xsd:duration ;
+          vord:hasScope vord:PerClientIdentity ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean ;
+          vord:penalized "true"^^xsd:boolean .
+    """)
+    assert conforms, report_text
+
+
+def test_rate_restriction_rejects_time_metric():
+    """Evaluation time per window is a quota, not a request rate."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RateRestriction ;
+          vord:metric vord:evaluationTimePerWindow ;
+          vord:maxValue "60"^^xsd:integer ;
+          vord:windowDuration "PT60S"^^xsd:duration ;
+          vord:hasScope vord:PerClientIdentity ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "metric" in report_text.lower()
+
+
 def test_controlled_values_are_in_their_schemes():
     """New controlled values are typed, labelled, and in their concept schemes."""
     vocab = _load_graph(VOCAB_PATH)
@@ -258,8 +392,14 @@ def test_controlled_values_are_in_their_schemes():
     expected = {
         "costUnitsPerWindow": ("Metric", "MetricScheme"),
         "concurrentRequests": ("Metric", "MetricScheme"),
+        "evaluationTimePerWindow": ("Metric", "MetricScheme"),
+        "failedRequestsPerWindow": ("Metric", "MetricScheme"),
+        "PerClientIdentity": ("Scope", "ScopeScheme"),
         "EmailAddress": ("IdentificationFormat", "IdentificationFormatScheme"),
         "ProductWithContact": ("IdentificationFormat", "IdentificationFormatScheme"),
+        "QueryViaGet": ("RequestMethod", "RequestMethodScheme"),
+        "QueryViaUrlEncodedPost": ("RequestMethod", "RequestMethodScheme"),
+        "QueryViaDirectPost": ("RequestMethod", "RequestMethodScheme"),
     }
     for name, (class_name, scheme) in expected.items():
         term = VORD_NS[name]

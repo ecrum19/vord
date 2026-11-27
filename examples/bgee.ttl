@@ -1,0 +1,44 @@
+@prefix ex: <https://example.org/bgee/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix httpv: <http://www.w3.org/2011/http#> .
+@prefix vord: <https://w3id.org/vord#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+
+# Bgee's SPARQL endpoint as a client observes it: Bgee publishes no usage policy, so this description is not Bgee's own.
+# Observed from a benchmark VM on 27 November 2026 (vord-bench, realworld suite, phase 0):
+# - a query sent with GET is answered (200);
+# - a query sent with POST is refused with 403, whether URL-encoded or as the request body. To the POST with the query as
+#   its body, Cloudflare, in front of the endpoint, answered with its challenge page and the header
+#   cf-mitigated: challenge;
+# - Cloudflare ends requests after about 125 seconds with 524 (observed in earlier benchmark runs).
+
+ex:bgeeService a sd:Service ;
+  sd:endpoint <https://www.bgee.org/sparql/> ;
+  dcterms:description "Restrictions observed by a client, not published by Bgee."@en ;
+  vord:hasRestriction ex:getOnly,
+                      ex:gatewayTimeout .
+
+# Cloudflare marks the responses of its challenge with this header; the HTTP Vocabulary in RDF does not define it.
+ex:cf-mitigated a httpv:HeaderName ;
+  rdfs:label "cf-mitigated" .
+
+# Queries are accepted with GET only: both kinds of POST are refused.
+ex:getOnly a vord:Restriction, vord:RequestMethodRestriction ;
+  vord:allowedRequestMethod vord:QueryViaGet ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "403"^^xsd:integer ;
+  vord:httpSignalHeader ex:cf-mitigated .
+
+ex:gatewayTimeout a vord:Restriction, vord:ResponseTimeRestriction ;
+  vord:metric vord:evaluationTime ;
+  vord:maxValue "125"^^xsd:integer ;
+  vord:unit unit:SEC ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "524"^^xsd:integer .

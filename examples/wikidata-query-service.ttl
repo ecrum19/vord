@@ -1,0 +1,76 @@
+@prefix ex: <https://example.org/wikidata/query-service/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix http: <http://www.w3.org/2011/http-headers#> .
+@prefix vord: <https://w3id.org/vord#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+
+# The query limits of the Wikidata Query Service, as its user manual states them (read on 27 November 2026; the manual
+# says that the limits may change). Two of them count per client, where a client is a User-Agent and an IP address
+# together: 60 seconds of processing time per 60 seconds, and 30 error queries per minute. Clients over these limits
+# get 429 with Retry-After, and clients that ignore the 429s can be banned temporarily, for a time that is not
+# published.
+# Sources:
+# - https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
+# - https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+
+ex:wdqsService a sd:Service ;
+  sd:endpoint <https://query.wikidata.org/sparql> ;
+  dcterms:source <https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits> ;
+  dcterms:source <https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy> ;
+  vord:hasRestriction ex:userAgent,
+                      ex:parallelQueries,
+                      ex:queryTimeout,
+                      ex:processingTime,
+                      ex:errorQueries .
+
+ex:userAgent a vord:Restriction, vord:IdentificationRestriction ;
+  vord:identificationHeader http:user-agent ;
+  vord:identificationFormat vord:ProductWithContact ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "403"^^xsd:integer .
+
+ex:parallelQueries a vord:Restriction, vord:ConcurrentRequestsRestriction ;
+  vord:metric vord:concurrentRequests ;
+  vord:maxValue "5"^^xsd:integer ;
+  vord:unit unit:COUNT ;
+  vord:hasScope vord:PerClientIP ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean .
+
+ex:queryTimeout a vord:Restriction, vord:ResponseTimeRestriction ;
+  vord:metric vord:evaluationTime ;
+  vord:maxValue "60"^^xsd:integer ;
+  vord:unit unit:SEC ;
+  vord:hasScope vord:PerRequest ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean .
+
+# 60 seconds of processing time per 60 seconds, per User-Agent and IP address.
+ex:processingTime a vord:Restriction, vord:QuotaRestriction ;
+  vord:metric vord:evaluationTimePerWindow ;
+  vord:maxValue "60"^^xsd:integer ;
+  vord:unit unit:SEC ;
+  vord:windowDuration "PT60S"^^xsd:duration ;
+  vord:hasScope vord:PerClientIdentity ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:httpSignalHeader http:retry-after ;
+  vord:penalized "true"^^xsd:boolean .
+
+# 30 error queries per minute, per User-Agent and IP address.
+ex:errorQueries a vord:Restriction, vord:RateRestriction ;
+  vord:metric vord:failedRequestsPerWindow ;
+  vord:maxValue "30"^^xsd:integer ;
+  vord:unit unit:COUNT ;
+  vord:windowDuration "PT1M"^^xsd:duration ;
+  vord:hasScope vord:PerClientIdentity ;
+  vord:enforcement vord:RejectRequest ;
+  vord:hardRestriction "true"^^xsd:boolean ;
+  vord:returnsStatusCode "429"^^xsd:integer ;
+  vord:httpSignalHeader http:retry-after ;
+  vord:penalized "true"^^xsd:boolean .
