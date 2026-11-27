@@ -67,6 +67,16 @@ vord:IdentificationRestriction a owl:Class ;
   rdfs:comment "Restriction that requires every request to identify the client, with contact information for its operator, in a given HTTP request header. Requests without valid identification are handled according to the restriction's enforcement mode, typically rejected. The identification is expected to stay the same for a client, so that other restrictions with scope vord:PerUser can be counted per identity."@en ;
   rdfs:subClassOf vord:Restriction .
 
+vord:RequestMethodRestriction a owl:Class ;
+  rdfs:label "Request Method Restriction"@en ;
+  rdfs:comment "Restriction on the ways in which a client may send a query: the endpoint accepts only the ways given with vord:allowedRequestMethod, such as query via GET only. Requests sent in another way are handled according to the restriction's enforcement mode, typically rejected with a status code such as 403 or 405. A client can then send its query in an allowed way instead. A query via GET carries the query in the request URL, whose length the endpoint or a gateway in front of it may limit."@en ;
+  rdfs:subClassOf vord:Restriction .
+
+vord:RequestMethod a owl:Class ;
+  rdfs:label "Request Method"@en ;
+  rdfs:comment "Class of the ways in which a client sends a query to a SPARQL endpoint, such as the three ways of invoking the query operation of the SPARQL protocol. Standard request method terms in this vocabulary are additionally modeled as SKOS concepts, but the class itself is kept separate from skos:Concept."@en ;
+  rdfs:seeAlso <https://www.w3.org/TR/sparql11-protocol/> .
+
 vord:IdentificationFormat a owl:Class ;
   rdfs:label "Identification Format"@en ;
   rdfs:comment "Class of formats in which a client identifies itself in an HTTP request header. Standard format terms in this vocabulary are additionally modeled as SKOS concepts, but the class itself is kept separate from skos:Concept."@en .
@@ -98,6 +108,10 @@ vord:EnforcementModeScheme a skos:ConceptScheme ;
 vord:IdentificationFormatScheme a skos:ConceptScheme ;
   skos:prefLabel "VoRD identification format scheme"@en ;
   rdfs:comment "Concept scheme for the controlled identification format terms defined by VoRD."@en .
+
+vord:RequestMethodScheme a skos:ConceptScheme ;
+  skos:prefLabel "VoRD request method scheme"@en ;
+  rdfs:comment "Concept scheme for the controlled request method terms defined by VoRD."@en .
 
 vord:CostModel a owl:Class ;
   rdfs:label "Cost Model"@en ;
@@ -153,6 +167,12 @@ vord:identificationFormat a owl:ObjectProperty ;
   rdfs:comment "Format of the identification that a client must send in the identification header."@en ;
   rdfs:domain vord:IdentificationRestriction ;
   rdfs:range vord:IdentificationFormat .
+
+vord:allowedRequestMethod a owl:ObjectProperty ;
+  rdfs:label "allowed request method"@en ;
+  rdfs:comment "A way of sending a query that the endpoint accepts. A vord:RequestMethodRestriction lists every way that the endpoint accepts; requests sent in any other way are refused."@en ;
+  rdfs:domain vord:RequestMethodRestriction ;
+  rdfs:range vord:RequestMethod .
 
 vord:maxValue a owl:DatatypeProperty ;
   rdfs:label "maximum value"@en ;
@@ -333,3 +353,21 @@ vord:ProductWithContact a vord:IdentificationFormat, skos:Concept ;
   skos:prefLabel "Product with Contact"@en ;
   skos:inScheme vord:IdentificationFormatScheme ;
   rdfs:comment "A product identifier followed by a comment that contains contact information, such as an email address or a URL, as in the User-Agent value 'ExampleBot/1.0 (https://example.org/bot; bot@example.org)'."@en .
+
+vord:QueryViaGet a vord:RequestMethod, skos:Concept ;
+  skos:prefLabel "Query via GET"@en ;
+  skos:inScheme vord:RequestMethodScheme ;
+  rdfs:comment "The query in the query string of an HTTP GET request, as in the SPARQL 1.1 Protocol, section 2.1.1 (query via GET)."@en ;
+  rdfs:seeAlso <http://www.w3.org/2011/http-methods#GET> .
+
+vord:QueryViaUrlEncodedPost a vord:RequestMethod, skos:Concept ;
+  skos:prefLabel "Query via URL-encoded POST"@en ;
+  skos:inScheme vord:RequestMethodScheme ;
+  rdfs:comment "The query in the body of an HTTP POST request of media type application/x-www-form-urlencoded, as in the SPARQL 1.1 Protocol, section 2.1.2 (query via URL-encoded POST)."@en ;
+  rdfs:seeAlso <http://www.w3.org/2011/http-methods#POST> .
+
+vord:QueryViaDirectPost a vord:RequestMethod, skos:Concept ;
+  skos:prefLabel "Query via POST directly"@en ;
+  skos:inScheme vord:RequestMethodScheme ;
+  rdfs:comment "The query as the body of an HTTP POST request of media type application/sparql-query, as in the SPARQL 1.1 Protocol, section 2.1.3 (query via POST directly)."@en ;
+  rdfs:seeAlso <http://www.w3.org/2011/http-methods#POST> .

@@ -28,5 +28,6 @@ start = @<ServiceWithRestrictions>
   vord:penaltyDuration xsd:duration ? ;
   vord:penalized xsd:boolean ? ;
   vord:identificationHeader IRI ? ;
-  vord:identificationFormat IRI ?
+  vord:identificationFormat IRI ? ;
+  vord:allowedRequestMethod IRI *
 }

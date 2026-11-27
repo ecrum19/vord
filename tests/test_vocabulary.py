@@ -15,6 +15,7 @@ EXAMPLE_PATHS = [
     ROOT / "examples" / "wikidata-rate-restrictions.ttl",
     ROOT / "examples" / "strict-endpoints.ttl",
     ROOT / "examples" / "wikidata-query-service.ttl",
+    ROOT / "examples" / "bgee.ttl",
 ]
 SHEX_PATH = ROOT / "shex" / "vord.shex"
 
@@ -174,6 +175,55 @@ def test_identification_restriction_requires_a_format_term():
     """)
     assert not conforms
     assert "identificationformat" in report_text.lower()
+
+
+def test_request_method_restriction_conforms():
+    """A request-method restriction lists the accepted ways of sending a query, with no metric or maximum value."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:allowedRequestMethod vord:QueryViaGet ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean ;
+          vord:returnsStatusCode "403"^^xsd:integer .
+    """)
+    assert conforms, report_text
+
+
+def test_request_method_restriction_may_allow_several_methods():
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:allowedRequestMethod vord:QueryViaGet, vord:QueryViaUrlEncodedPost ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean ;
+          vord:returnsStatusCode "405"^^xsd:integer .
+    """)
+    assert conforms, report_text
+
+
+def test_request_method_restriction_requires_a_method():
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "allowedrequestmethod" in report_text.lower()
+
+
+def test_request_method_must_be_a_term():
+    """The method must be a vord:RequestMethod term, not a literal such as "GET"."""
+    conforms, _, report_text = _validate_restriction("""
+        ex:restriction a vord:Restriction, vord:RequestMethodRestriction ;
+          vord:allowedRequestMethod "GET" ;
+          vord:hasScope vord:PerRequest ;
+          vord:enforcement vord:RejectRequest ;
+          vord:hardRestriction "true"^^xsd:boolean .
+    """)
+    assert not conforms
+    assert "allowedrequestmethod" in report_text.lower()
 
 
 USAGE_BUDGET = """
@@ -347,6 +397,9 @@ def test_controlled_values_are_in_their_schemes():
         "PerClientIdentity": ("Scope", "ScopeScheme"),
         "EmailAddress": ("IdentificationFormat", "IdentificationFormatScheme"),
         "ProductWithContact": ("IdentificationFormat", "IdentificationFormatScheme"),
+        "QueryViaGet": ("RequestMethod", "RequestMethodScheme"),
+        "QueryViaUrlEncodedPost": ("RequestMethod", "RequestMethodScheme"),
+        "QueryViaDirectPost": ("RequestMethod", "RequestMethodScheme"),
     }
     for name, (class_name, scheme) in expected.items():
         term = VORD_NS[name]

@@ -253,3 +253,11 @@ vords:IdentificationRestrictionShape a sh:NodeShape ;
     sh:maxCount 1 ;
     sh:class vord:IdentificationFormat ;
   ] .
+
+vords:RequestMethodRestrictionShape a sh:NodeShape ;
+  sh:targetClass vord:RequestMethodRestriction ;
+  sh:property [
+    sh:path vord:allowedRequestMethod ;
+    sh:minCount 1 ;
+    sh:class vord:RequestMethod ;
+  ] .

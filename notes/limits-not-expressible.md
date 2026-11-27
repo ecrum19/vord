@@ -3,8 +3,13 @@
 Found on 27 November 2026, while completing the endpoint policies for phase 0 of vord-bench's `realworld` suite (`PLAN-REALWORLD.md` §13, `suites/realworld/policies/`).
 
 **Status:**
-- **Added in VoRD 0.4:** the Wikidata Query Service's limits, with `vord:evaluationTimePerWindow`, `vord:failedRequestsPerWindow`, `vord:PerClientIdentity` and `vord:penalized` (`examples/wikidata-query-service.ttl`).
-- **Still open:** the smaller cases at the end, and the question of which responses count as failed.
+- **Added in VoRD 0.4:**
+  - the Wikidata Query Service's limits, with `vord:evaluationTimePerWindow`, `vord:failedRequestsPerWindow`, `vord:PerClientIdentity` and `vord:penalized` (`examples/wikidata-query-service.ttl`);
+  - Bgee's refusal of POST, with `vord:RequestMethodRestriction` and `vord:allowedRequestMethod` (`examples/bgee.ttl`).
+- **Still open:**
+  - the smaller cases at the end;
+  - the question of which responses count as failed;
+  - the length limit on request URLs.
 
 ## The Wikidata Query Service
 
@@ -83,6 +88,29 @@ ex:errorQueries a vord:Restriction, vord:RateRestriction ;
   vord:httpSignalHeader http:retry-after ;
   vord:penalized "true"^^xsd:boolean .
 ```
+
+## Bgee: queries via GET only (added in 0.4)
+
+**What was observed:** Bgee publishes no usage policy. From vord-bench's VM, on 27 November 2026:
+- a query sent with GET is answered (200);
+- a query sent as a URL-encoded POST is refused with 403 (phase 0's live query check, and Comunica's runs of June 2026);
+- a query sent as the body of a POST (`application/sparql-query`) is refused with 403 too: Cloudflare, in front of the endpoint, answers with its challenge page and `cf-mitigated: challenge` (one request, `results/phase0-2026-11-27-fixed/bgee-direct-post.jsonl` in vord-bench).
+
+**What was missing:** VoRD 0.3 had no way to say which ways of sending a query an endpoint accepts. Comunica sends its longer queries by POST, so it fails on exactly those queries at Bgee, unless something resends them as GET (vord-bench's proxy does: `methodFallback`).
+
+**Added:**
+- `vord:RequestMethodRestriction`, which lists every accepted way with `vord:allowedRequestMethod`. Ways that are not listed are refused.
+- The ways are `vord:RequestMethod` values for the three ways of invoking the SPARQL protocol's query operation:
+  - `vord:QueryViaGet`;
+  - `vord:QueryViaUrlEncodedPost`;
+  - `vord:QueryViaDirectPost`.
+
+  They separate the two kinds of POST, which an HTTP method alone (or a 405 response's `Allow` header) cannot.
+- The example `examples/bgee.ttl`: `vord:allowedRequestMethod vord:QueryViaGet`, status 403, and the `cf-mitigated` header as a minted signal header.
+
+**Still open:** the length limit on request URLs, which bounds queries via GET. VoRD has no metric for it; the specification asks publishers to state it in `dcterms:description`. Bgee's limit is not known.
+
+**What the fork would need:** read the restriction and send queries to Bgee with GET. Comunica's `forceHttpGet` does this, but for every endpoint at once.
 
 ## Other limits from the same search (still open)
 

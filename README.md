@@ -17,6 +17,7 @@ It extends SPARQL Service Description with explicit restriction resources and va
 - `examples/wikidata-rate-restrictions.ttl`: Wikidata/WMF rate-restriction example based on public docs
 - `examples/strict-endpoints.ttl`: strict restrictions: usage budgets, client identification, bans, tarpits, degraded answers, shared limits and queues
 - `examples/wikidata-query-service.ttl`: the Wikidata Query Service's query limits: a processing-time budget and an error-query limit per client identity, with penalties of unpublished size
+- `examples/bgee.ttl`: Bgee's endpoint as a client observed it: queries accepted with GET only, and a gateway timeout
 - `notes/limits-not-expressible.md`: limits found on live endpoints that VoRD could not express, what VoRD 0.4 added for them, and what remains open
 
 ## Publishing Pattern
@@ -36,6 +37,8 @@ A processing-time budget is a `vord:QuotaRestriction` with the metric `vord:eval
 
 A `vord:IdentificationRestriction` requires every request to identify the client: it names the request header (`vord:identificationHeader`, e.g. `From` or `User-Agent`) and the format of the identification (`vord:identificationFormat`: `vord:EmailAddress` or `vord:ProductWithContact`). It has no metric or maximum value.
 
+A `vord:RequestMethodRestriction` says in which ways the endpoint accepts a query: every accepted way is a `vord:allowedRequestMethod` (`vord:QueryViaGet`, `vord:QueryViaUrlEncodedPost` or `vord:QueryViaDirectPost`, the three ways of the SPARQL protocol), and requests sent in another way are refused. An endpoint that accepts GET only, for example, has one restriction with `vord:allowedRequestMethod vord:QueryViaGet`. Like an identification restriction, it has no metric or maximum value.
+
 ## Complete Term Index
 
 ### Classes
@@ -49,11 +52,13 @@ A `vord:IdentificationRestriction` requires every request to identify the client
 - `vord:ResponseTimeRestriction`
 - `vord:QuotaRestriction`
 - `vord:IdentificationRestriction`
+- `vord:RequestMethodRestriction`
 - `vord:Metric`
 - `vord:Scope`
 - `vord:EnforcementMode`
 - `vord:CostModel`
 - `vord:IdentificationFormat`
+- `vord:RequestMethod`
 
 ### Object Properties
 
@@ -65,6 +70,7 @@ A `vord:IdentificationRestriction` requires every request to identify the client
 - `vord:httpSignalHeader`
 - `vord:identificationHeader`
 - `vord:identificationFormat`
+- `vord:allowedRequestMethod`
 - `vord:unit`
 
 ### Datatype Properties
@@ -86,6 +92,7 @@ A `vord:IdentificationRestriction` requires every request to identify the client
 - Scopes: `vord:PerClientIP`, `vord:PerClientIdentity`, `vord:PerAPIKey`, `vord:PerUser`, `vord:PerRequest`, `vord:GlobalScope`
 - Enforcement modes: `vord:RejectRequest`, `vord:TruncateResult`, `vord:QueueRequest`, `vord:ThrottleResponse`, `vord:DegradeQuality`
 - Identification formats: `vord:EmailAddress`, `vord:ProductWithContact`
+- Request methods: `vord:QueryViaGet`, `vord:QueryViaUrlEncodedPost`, `vord:QueryViaDirectPost`
 
 ## Development
 
