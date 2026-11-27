@@ -26,6 +26,7 @@ start = @<ServiceWithRestrictions>
   vord:burstValue xsd:integer ? ;
   vord:penaltyThreshold xsd:integer MININCLUSIVE 1 ? ;
   vord:penaltyDuration xsd:duration ? ;
+  vord:penalized xsd:boolean ? ;
   vord:identificationHeader IRI ? ;
   vord:identificationFormat IRI ?
 }

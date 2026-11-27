@@ -87,6 +87,11 @@ vords:RestrictionShape a sh:NodeShape ;
     sh:path vord:penaltyDuration ;
     sh:maxCount 1 ;
     sh:datatype xsd:duration ;
+  ] ;
+  sh:property [
+    sh:path vord:penalized ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:boolean ;
   ] .
 
 vords:PenaltyShape a sh:NodeShape ;
@@ -95,6 +100,11 @@ vords:PenaltyShape a sh:NodeShape ;
     sh:path vord:penaltyDuration ;
     sh:minCount 1 ;
     sh:message "A restriction with vord:penaltyThreshold must state vord:penaltyDuration." ;
+  ] ;
+  sh:property [
+    sh:path vord:penalized ;
+    sh:in ( true ) ;
+    sh:message "A restriction with vord:penaltyThreshold is penalized: vord:penalized cannot be false." ;
   ] .
 
 vords:RateRestrictionShape a sh:NodeShape ;
@@ -103,7 +113,7 @@ vords:RateRestrictionShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:requestsPerWindow vord:requestsPerDay ) ;
+    sh:in ( vord:requestsPerWindow vord:requestsPerDay vord:failedRequestsPerWindow ) ;
   ] ;
   sh:property [
     sh:path vord:maxValue ;
@@ -214,8 +224,14 @@ vords:QuotaRestrictionShape a sh:NodeShape ;
     sh:path vord:metric ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
-    sh:in ( vord:requestsPerDay ) ;
+    sh:in ( vord:requestsPerDay vord:evaluationTimePerWindow ) ;
   ] ;
+  # A processing-time budget (vord:evaluationTimePerWindow) needs the window in which its time is summed.
+  sh:or (
+    [ sh:property [ sh:path vord:metric ; sh:hasValue vord:requestsPerDay ] ]
+    [ sh:property [ sh:path vord:windowDuration ; sh:minCount 1 ] ]
+  ) ;
+  sh:message "A quota restriction with metric vord:evaluationTimePerWindow must state vord:windowDuration." ;
   sh:property [
     sh:path vord:maxValue ;
     sh:minCount 1 ;

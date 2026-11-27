@@ -14,8 +14,8 @@
   dcterms:title "VoRD: Vocabulary of Restrictive Datasets"@en ;
   dcterms:description "Vocabulary for describing operational restrictions of SPARQL services, aligned with SPARQL Service Description and validated with SHACL/ShEx."@en ;
   dcterms:created "2026-04-23"^^xsd:date ;
-  dcterms:modified "2026-11-20"^^xsd:date ;
-  owl:versionInfo "0.3" ;
+  dcterms:modified "2026-11-27"^^xsd:date ;
+  owl:versionInfo "0.4" ;
   dcterms:conformsTo <https://www.w3.org/TR/sparql12-service-description/> ;
   dcterms:conformsTo <https://www.w3.org/TR/shacl/> ;
   dcterms:conformsTo <https://www.w3.org/ns/shex> ;
@@ -29,7 +29,7 @@ vord:Restriction a owl:Class ;
 
 vord:RateRestriction a owl:Class ;
   rdfs:label "Rate Restriction"@en ;
-  rdfs:comment "Restriction on request frequency over time."@en ;
+  rdfs:comment "Restriction on request frequency over time: of all requests (vord:requestsPerWindow, vord:requestsPerDay), or of failed requests only (vord:failedRequestsPerWindow)."@en ;
   rdfs:subClassOf vord:Restriction .
 
 vord:ResultSizeRestriction a owl:Class ;
@@ -59,7 +59,7 @@ vord:ResponseTimeRestriction a owl:Class ;
 
 vord:QuotaRestriction a owl:Class ;
   rdfs:label "Quota Restriction"@en ;
-  rdfs:comment "Rolling or fixed query submission quota over a longer period (day, week, month)."@en ;
+  rdfs:comment "Rolling or fixed quota over a period: of submitted requests (vord:requestsPerDay), typically over a longer period (day, week, month), or of evaluation time (vord:evaluationTimePerWindow), such as a processing-time budget per minute."@en ;
   rdfs:subClassOf vord:Restriction .
 
 vord:IdentificationRestriction a owl:Class ;
@@ -218,10 +218,21 @@ vord:penaltyDuration a owl:DatatypeProperty ;
   rdfs:range xsd:duration ;
   rdfs:seeAlso time:hasXSDDuration .
 
+vord:penalized a owl:DatatypeProperty ;
+  rdfs:label "penalized"@en ;
+  rdfs:comment "Whether the endpoint blocks clients that keep violating this restriction, for example clients that ignore its rejections. Use it when the endpoint does not publish the threshold or the duration of the block; when it does, state vord:penaltyThreshold and vord:penaltyDuration, which imply true."@en ;
+  rdfs:domain vord:Restriction ;
+  rdfs:range xsd:boolean .
+
 vord:PerClientIP a vord:Scope, skos:Concept ;
   skos:prefLabel "Per Client IP"@en ;
   skos:inScheme vord:ScopeScheme ;
   rdfs:comment "The restriction is enforced independently for each client IP address."@en .
+
+vord:PerClientIdentity a vord:Scope, skos:Concept ;
+  skos:prefLabel "Per Client Identity"@en ;
+  skos:inScheme vord:ScopeScheme ;
+  rdfs:comment "The restriction is enforced independently for each combination of a client's IP address and its identification: the value of its User-Agent header, or of the header named by a vord:IdentificationRestriction of the same service. Requests from one IP address with different identifications are counted separately."@en .
 
 vord:PerAPIKey a vord:Scope, skos:Concept ;
   skos:prefLabel "Per API Key"@en ;
@@ -286,7 +297,7 @@ vord:resultBindings a vord:Metric, skos:Concept ;
 vord:evaluationTime a vord:Metric, skos:Concept ;
   skos:prefLabel "Evaluation Time"@en ;
   skos:inScheme vord:MetricScheme ;
-  rdfs:comment "Integer amount of time a request is evaluated in seconds."@en .
+  rdfs:comment "Integer amount of time a single request is evaluated in seconds. For evaluation time summed over the requests within a window, use vord:evaluationTimePerWindow."@en .
 
 vord:estimatedCostUnits a vord:Metric, skos:Concept ;
   skos:prefLabel "Estimated Cost Units"@en ;
@@ -302,6 +313,16 @@ vord:concurrentRequests a vord:Metric, skos:Concept ;
   skos:prefLabel "Concurrent Requests"@en ;
   skos:inScheme vord:MetricScheme ;
   rdfs:comment "Number of requests that the endpoint processes at the same time for the restriction's scope."@en .
+
+vord:evaluationTimePerWindow a vord:Metric, skos:Concept ;
+  skos:prefLabel "Evaluation Time per Window"@en ;
+  skos:inScheme vord:MetricScheme ;
+  rdfs:comment "Total time, in seconds, that the endpoint spends evaluating the requests of the restriction's scope within a window. Used for processing-time budgets, such as 60 seconds of evaluation time per 60 seconds: a vord:QuotaRestriction with vord:maxValue seconds per vord:windowDuration. Clients observe response times, which bound evaluation times from above."@en .
+
+vord:failedRequestsPerWindow a vord:Metric, skos:Concept ;
+  skos:prefLabel "Failed Requests per Window"@en ;
+  skos:inScheme vord:MetricScheme ;
+  rdfs:comment "Count of the requests of the restriction's scope within a window that fail, as the endpoint counts failures: typically requests answered with an error, such as queries with syntax errors or queries that time out. Used for limits on error queries, such as 30 per minute: a vord:RateRestriction with vord:maxValue failed requests per vord:windowDuration."@en .
 
 vord:EmailAddress a vord:IdentificationFormat, skos:Concept ;
   skos:prefLabel "Email Address"@en ;

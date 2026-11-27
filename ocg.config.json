@@ -4,10 +4,10 @@
     "title": "VoRD: Vocabulary of Restrictive Datasets",
     "shortName": "VoRD",
     "slug": "vord",
-    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to publish live operational restrictions, including request rates, result sizes, evaluation time, quotas, usage budgets, identification requirements, penalties, scope, enforcement behavior, and HTTP response signals.",
+    "description": "A machine-readable vocabulary for SPARQL endpoint maintainers to publish live operational restrictions, including request rates, result sizes, evaluation time, quotas, usage budgets, processing-time budgets, error limits, identification requirements, penalties, scope, enforcement behavior, and HTTP response signals.",
     "namespace": "https://w3id.org/vord#",
     "canonicalUri": "https://w3id.org/vord",
-    "version": "0.3",
+    "version": "0.4",
     "maintainer": "Elias Crum"
   },
   "sources": {
@@ -40,6 +40,12 @@
         "label": "Strict Endpoints",
         "path": "examples/strict-endpoints.ttl",
         "description": "Strict restrictions: a usage budget, client identification, a ban at the first violation, a tarpit, degraded answers under load, a limit shared by all users, and a queue in front of the endpoint."
+      },
+      {
+        "key": "wdqs",
+        "label": "Wikidata Query Service",
+        "path": "examples/wikidata-query-service.ttl",
+        "description": "The query limits of the Wikidata Query Service: identification, parallel queries, a timeout, a processing-time budget and an error-query limit per client identity, with penalties of unpublished size."
       }
     ],
     "artifacts": [
